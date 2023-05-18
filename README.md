@@ -1,4 +1,4 @@
-# Housing Assessment Resource Tools (HART) Dashboard
+# Housing Needs Assessment (HNA) Dashboard
 
 ## Introduction
 
@@ -8,7 +8,7 @@ The tool is powered by census data custom built by Statistics Canada in collabor
 
 The HART tool and dashboard includes data for Canada; the Provinces and Territories; Census divisions (CD), a general term for regional planning areas; and Census subdivisions (CSD), a general term for municipalities.  
 
-The dashboard was created in collaboration with [Licker Geospatial](https://www.lgeo.co/), who can be reached for further questions regarding dashboard functionality and design.
+The repository of code is used to create and run the HART Housing Needs Assessment (HNA) Dashboard, as built by Licker Geospatial Consulting Co. (LGeo) on behalf of the Pater A. Allard School of Law at The University of British Columbia.
 
 Link: https://hart.ubc.ca/housing-needs-assessment-tool/
 
