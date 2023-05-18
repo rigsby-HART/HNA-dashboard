@@ -1,0 +1,43 @@
+venv
+*.pyc
+.DS_Store
+.env
+*.ipynb
+*.csv
+geo_db_uploader.py
+db_uploader.py
+app_backup.py
+app_backup_230116.py
+app_backup_230117.py
+app_backup_230118.py
+app_backup_230125.py
+app_backup_230130.py
+app_backup_230131.py
+app_backup_230208.py
+app_backup_230213.py
+app_backup_230217.py
+app_backup_230223.py
+app_backup_230223_refactored.py
+app_backup_230227_page_split_test.py
+app_backup_230228_no_split.py
+app_backup_230125_map.py
+app_backup_230118_2.py
+app_test.py
+test-hart.ipynb
+test-hart-checkpoint.ipynb
+Untitled.ipynb
+Untitled-checkpoint.ipynb
+test-hart_area_code_mapping.ipynb
+test-hart_area_code_mapping-checkpoint.ipynb
+test-hart-Copy1.ipynb
+test-hart-Copy1-checkpoint.ipynb
+app_wip_230111.py
+preset1_hart_backup.css
+preset1_hart_backup_0131.css
+geo_db_uploader.py
+.~test-hart.ipynb
+test.html
+test2.html
+**/Census Divisions/
+**/Census SubDivisions/
+**/Province Boundaries/
