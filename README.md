@@ -49,4 +49,4 @@ Please make sure you have the following installed(Requirements.txt is provided i
     
 ## Technical Support
 
-Please email ooo@ooo.ooo for any technical questions related to the dashboard.
+Please email contact@hart.ubc.ca for any technical questions related to the dashboard.
