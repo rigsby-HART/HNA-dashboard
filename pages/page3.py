@@ -35,6 +35,7 @@ config = {'displayModeBar': True, 'displaylogo': False, 'modeBarButtonsToRemove'
 # Color lists
 
 colors = ['#D7F3FD', '#88D9FA', '#39C0F7', '#099DD7', '#044762']
+bar_colors = ['#39C0F7', '#002145']
 hh_colors = ['#D8EBD4', '#93CD8A', '#3DB54A', '#297A32', '#143D19']
 hh_type_color = ['#3949CE', '#3EB549', '#39C0F7']
 columns_color_fill = ['#F3F4F5', '#EBF9FE', '#F0FAF1']
@@ -74,14 +75,15 @@ layout = html.Div(children = [
 
             html.Div([
 
-                # 2026 Household Projections by Income Category 
+                # 2031 Household Projections by Income Category
 
                 html.Div([
                     # Title
-                    html.H3(children = html.Strong('2026 Household Projections by Income Category'), className = 'subtitle-lgeo'),
+                    html.H3(children = html.Strong('2031 Household Projections by Income Category'), className = 'subtitle-lgeo'),
+
                     # Table Description
                     html.Div([
-                        html.H6('This table shows the total number of households in 2016, for each household income category, as well as the projected gain (positive) or loss (negative) of households over the 10-year period between 2016 and 2026 by applying the percentage change from 2006-2016, to 2016 households.')
+                        html.H6('The following table shows the total number of households in 2021, for each household income category, as well as the projected gain (positive) or loss (negative) of households over the 15-year period between 2021 and 2031 by applying the percentage change from 2006-2021, to 2021 households.')
                     ], className = 'muni-reg-text-lgeo'),
 
                     # Table
@@ -117,8 +119,10 @@ layout = html.Div(children = [
 
                     # Graph Description
                     html.Div([
-                        html.H6('This graph illustrates the above table, displaying the total number of households in 2016, for each income category, with the projected gain of households between 2016 and 2026 stacked on top, and the projected loss of household stacked underneath.')
-                    ], className = 'muni-reg-text-lgeo'),
+                        html.H6(
+                            'The following graph illustrates the above table, displaying the total number of households in 2021, for each income category, with the projected gain of households between 2021 and 2031 stacked on top, and the projected loss of household stacked underneath.')
+                    ], className='muni-reg-text-lgeo'),
+
 
                     # Graph
 
@@ -136,17 +140,19 @@ layout = html.Div(children = [
                 ], className = 'pg3-table-plot-box-lgeo'),
 
 
-                # 2026 Household Projections by Household Size
+                # 2031 Household Projections by Household Size
 
                 html.Div([
                     # Title
 
-                    html.H3(children = html.Strong('2026 Household Projections by Household Size'), className = 'subtitle-lgeo'),
+                    html.H3(children = html.Strong('2031 Household Projections by Household Size'), className = 'subtitle-lgeo'),
+
                     # Table Description
 
                     html.Div([
-                        html.H6('This table shows the total number of households in 2016, for each household size category, as well as the projected gain (positive) or loss (negative) of households over the 10-year period between 2016 and 2026 by applying the percentage change from 2006-2016, to 2016 households.')
-                    ], className = 'muni-reg-text-lgeo'),
+                        html.H6(
+                            'The following table shows the total number of households in 2021, for each household size category, as well as the projected gain (positive) or loss (negative) of households over the 15-year period between 2021 and 2031 by applying the percentage change from 2006-2021, to 2021 households.')
+                    ], className='muni-reg-text-lgeo'),
 
                     # Table
 
@@ -181,8 +187,10 @@ layout = html.Div(children = [
                     # Graph Description
 
                     html.Div([
-                        html.H6('This graph illustrates the above table, displaying the total number of households in 2016, for each size of household, with the projected gain of households between 2016 and 2026 stacked on top, and the projected loss of household stacked underneath.')
-                    ], className = 'muni-reg-text-lgeo'),
+                        html.H6(
+                            'The following graph illustrates the above table, displaying the total number of households in 2021, for each size of household, with the projected gain of households between 2021 and 2031 stacked on top, and the projected loss of household stacked underneath.')
+                    ], className='muni-reg-text-lgeo'),
+
 
                     # Graph
 
@@ -197,18 +205,21 @@ layout = html.Div(children = [
                 ], className = 'pg3-table-plot-box-lgeo'),
 
 
-                # 2026 Projected Households by Household Size and Income Category
+
+
+                # 2031 Projected Households by Household Size and Income Category
 
                 html.Div([
                     # Title
 
-                    html.H3(children = html.Strong('2026 Projected Households by Household Size and Income Category'), className = 'subtitle-lgeo'),
+                    html.H3(children = html.Strong('2031 Projected Households by Household Size and Income Category'), className = 'subtitle-lgeo'),
 
                     # Table Description
 
                     html.Div([
-                        html.H6('This table shows the projected total number of households in 2026 by household size and income category.')
-                    ], className = 'muni-reg-text-lgeo'),
+                        html.H6(
+                            'The following table shows the projected total number of households in 2031 by household size and income category.')
+                    ], className='muni-reg-text-lgeo'),
                     
                     # Table
 
@@ -243,8 +254,11 @@ layout = html.Div(children = [
                     # Graph Description
 
                     html.Div([
-                        html.H6('This graph illustrates the above table, displaying the projected total number of households in 2026 by household size and income category. Each bar is broken out by the projected number of households within each income category.')
-                    ], className = 'muni-reg-text-lgeo'),
+                        html.H6(
+                            'The following graph illustrates the above table, displaying the projected total number of households in 2031 by household size and income category. Each bar is broken out by the projected number of households within each income category.')
+                    ], className='muni-reg-text-lgeo'),
+
+
 
                     # Graph
 
@@ -260,19 +274,22 @@ layout = html.Div(children = [
                     ),
                 ], className = 'pg3-table-plot-box-lgeo'),
 
-                # 2026 Projected Household Gain/Loss (2016 to 2026)
+
+
+                # 2031 Projected Household Gain/Loss (2021 to 2031)
 
                 html.Div([
     
                     # Title
 
-                    html.H3(children = html.Strong('2026 Projected Household Gain/Loss (2016 to 2026)'), className = 'table-title'),
+                    html.H3(children = html.Strong('2031 Projected Household Gain/Loss (2021 to 2031)'), className = 'table-title'),
 
                     # Table Description
 
                     html.Div([
-                        html.H6('This table shows the projected gain or loss of households by household size and income. These values represent projections for the period between 2016 and 2026.')
-                    ], className = 'muni-reg-text-lgeo'),
+                        html.H6(
+                            'The following table shows the projected gain or loss of households by household size and income. These values represent projections for the period between 2021 and 2031.')
+                    ], className='muni-reg-text-lgeo'),
 
                     # Table
 
@@ -307,8 +324,11 @@ layout = html.Div(children = [
                     # Graph Description
 
                     html.Div([
-                        html.H6('This graph illustrates the above table, displaying the projected gain or loss of households between 2016 and 2026 for each size of household. Each bar is broken out by the projected number of households within each income category. Projected loss of households are stacked underneath.')
-                    ], className = 'muni-reg-text-lgeo'),
+                        html.H6(
+                            'The following graph illustrates the above table, displaying the projected gain or loss of households between 2021 and 2031 for each size of household. Each bar is broken out by the projected number of households within each income category. Projected loss of households are stacked underneath.')
+                    ], className='muni-reg-text-lgeo'),
+
+
 
                     # Graph
 
@@ -323,6 +343,8 @@ layout = html.Div(children = [
                     ),
                 ], className = 'pg3-table-plot-box-lgeo'),
 
+
+
                 # Municipal vs Regional Growth Rates
 
                 html.Div([
@@ -331,21 +353,21 @@ layout = html.Div(children = [
                     html.H3(children = html.Strong('Municipal vs Regional Growth Rates'), className = 'subtitle-lgeo'),
 
                     # Description
-                    html.H6(['Comparing a local community’s growth rates to the growth rate of the region allows for insight into if the community is matching regional patterns of change. There are numerous potential causes for discrepencies, which are further discussed in ', html.A('the project methods.', href = 'https://hart.ubc.ca/wp-content/uploads/2023/03/HNA-Methodology.pdf', target="_blank")])
+                    html.H6(['Comparing a local community’s growth rates to the growth rate of the region allows for insight into if the community is matching regional patterns of change. There are numerous potential causes for discrepencies, which are further discussed in ', html.A('the project methods.', href = 'https://hart.ubc.ca/wp-content/uploads/2023/06/HNA-Methodology-06-09-2023.pdf', target="_blank")])
                 ], className = 'muni-reg-text-lgeo'),
 
 
-                # 2026 Projected Municipal vs Regional Household Growth Rates by Income Category
+                # 2031 Projected Municipal vs Regional Household Growth Rates by Income Category
 
                 html.Div([
                     # Title
 
-                    html.H3(children = html.Strong('2026 Projected Municipal vs Regional Household Growth Rates by Income Category'), className = 'subtitle-lgeo'),
+                    html.H3(children = html.Strong('2031 Projected Municipal vs Regional Household Growth Rates by Income Category'), className = 'subtitle-lgeo'),
 
                     # Table Description
 
                     html.Div([
-                        html.H6('The following table illustrates the projected household growth rates between 2016 and 2026 in the community and surrounding region for each income category.')
+                        html.H6('The following table illustrates the projected household growth rates between 2021 and 2031 in the community and surrounding region for each income category.')
                     ], className = 'muni-reg-text-lgeo'),
 
                     # Table
@@ -382,20 +404,23 @@ layout = html.Div(children = [
                     # Graph Description
 
                     html.Div([
-                        html.H6('This graph illustrates the above table, displaying the projected household growth rates between 2016 and 2026 in the community and surrounding region for each income category.')
-                    ], className = 'muni-reg-text-lgeo'),
+                        html.H6(
+                            'The following graph illustrates the above table, displaying the projected household growth rates between 2021 and 2031 in the community and surrounding region for each income category.')
+                    ], className='muni-reg-text-lgeo'),
 
                     # Graph
 
-                    html.Div(children = [ 
+                    html.Div(children=[
                         dcc.Graph(
                             id='graph12',
                             figure=fig,
-                            config = config,
+                            config=config,
                         )
                     ],
-                    className = 'pg3-plot-lgeo'
+                        className='pg3-plot-lgeo'
                     ),
+
+
                 ], className = 'pg3-table-plot-box-lgeo'),
 
                 # Municipal vs Regional Growth Rates by Household Size
@@ -405,10 +430,12 @@ layout = html.Div(children = [
 
                     html.H3(children = html.Strong('Municipal vs Regional Growth Rates by Household Size'), className = 'subtitle-lgeo'),
 
+
+
                     # Table Description
 
                     html.Div([
-                        html.H6('The following table illustrates the projected household growth rates between 2016 and 2026 in the community and surrounding region for each household size.')
+                        html.H6('The following table illustrates the projected household growth rates between 2021 and 2031 in the community and surrounding region for each household size.')
                     ], className = 'muni-reg-text-lgeo'),
 
                     # Table
@@ -445,27 +472,28 @@ layout = html.Div(children = [
                     # Graph Description
 
                     html.Div([
-                        html.H6('This graph illustrates the above table, displaying the projected household growth rates between 2016 and 2026 in the community and surrounding region for each income category.')
-                    ], className = 'muni-reg-text-lgeo'),
+                        html.H6(
+                            'The following graph illustrates the above table, displaying the projected household growth rates between 2021 and 2031 in the community and surrounding region for each income category.')
+                    ], className='muni-reg-text-lgeo'),
 
                     # Graph
 
-                    html.Div(children = [ 
+                    html.Div(children=[
 
                         dcc.Graph(
                             id='graph13',
                             figure=fig,
-                            config = config,
-                            )
+                            config=config,
+                        )
                     ],
-                    className = 'pg3-plot-lgeo'
+                        className='pg3-plot-lgeo'
                     ),
                 ], className = 'pg3-table-plot-box-lgeo'),
 
             # LGEO
 
             html.Div([
-                    'This dashboard was created in collaboration with ',  html.A('Licker Geospatial', href = 'https://www.lgeo.co/)', target="_blank"),' using Plotly.'
+                    'This dashboard was created in collaboration with ',  html.A('Licker Geospatial', href = 'https://www.lgeo.co/', target="_blank"),' using Plotly.'
                 ], className = 'lgeo-credit-text'),
 
 
@@ -532,7 +560,7 @@ style_header_conditional=[
 width_num = 1000
 
 
-# 2026 Household Projections by Income Category
+# 2031 Household Projections by Income Category
 
 
 # Plot DF/Table Generator
@@ -542,7 +570,7 @@ def plot1_new_projection(geo, IsComparison):
     geo_code_clicked = mapped_geo_code.loc[mapped_geo_code['Geography'] == geo,:]['Geo_Code'].tolist()[0]
     updated_csd_filtered = updated_csd.query('Geo_Code ==' +  f"{geo_code_clicked}")
 
-    updated_csd_filtered_2016_plot1 = updated_csd_filtered[[
+    updated_csd_filtered_2021_plot1 = updated_csd_filtered[[
         'Total - Private households by household type including census family structure -   Households with income 20% or under of area median household income (AMHI) - Total - Household size', 
         'Total - Private households by household type including census family structure -   Households with income 21% to 50% of AMHI - Total - Household size',
         'Total - Private households by household type including census family structure -   Households with income 51% to 80% of AMHI - Total - Household size',
@@ -550,31 +578,31 @@ def plot1_new_projection(geo, IsComparison):
         'Total - Private households by household type including census family structure -   Households with income 121% or over of AMHI - Total - Household size'
         ]].T.reset_index().drop(columns = ['index'])
 
-    updated_csd_filtered_2026_plot1 = updated_csd_filtered[[
-        '2026 Population Delta with income 20% or under of area median household income (AMHI)',
-        '2026 Population Delta with income 21% to 50% of AMHI',
-        '2026 Population Delta with income 51% to 80% of AMHI',
-        '2026 Population Delta with income 81% to 120% of AMHI',
-        '2026 Population Delta with income 121% or over of AMHI'
+    updated_csd_filtered_2031_plot1 = updated_csd_filtered[[
+        '2031 Population Delta with income 20% or under of area median household income (AMHI)',
+        '2031 Population Delta with income 21% to 50% of AMHI',
+        '2031 Population Delta with income 51% to 80% of AMHI',
+        '2031 Population Delta with income 81% to 120% of AMHI',
+        '2031 Population Delta with income 121% or over of AMHI'
         ]].T.reset_index().drop(columns = ['index'])
 
     income_category = ['Very Low Income', 'Low Income', 'Moderate Income', 'Median Income', 'High Income']
 
 
     table1 = pd.DataFrame({'Income Category': income_category, 
-                            'Category': (['2016 Pop'] * len(income_category)),
-                            'Pop': updated_csd_filtered_2016_plot1.iloc[:,0]})
+                            'Category': (['2021 Pop'] * len(income_category)),
+                            'Pop': updated_csd_filtered_2021_plot1.iloc[:,0]})
     table1 = table1.replace([np.inf, -np.inf], 0)
     table1 = table1.fillna(0)
-    table1_2016 = table1.copy()
+    table1_2021 = table1.copy()
 
-    table1['2026 Delta'] = np.round(updated_csd_filtered_2026_plot1.iloc[:,0],0)
+    table1['2031 Delta'] = np.round(updated_csd_filtered_2031_plot1.iloc[:,0],0)
     table1 = table1.drop(columns = ['Category'])
 
-    plot_df = pd.concat([table1_2016,
+    plot_df = pd.concat([table1_2021,
                         pd.DataFrame({'Income Category': income_category,
-                            'Category': (['2026 Delta'] * len(income_category)),
-                            'Pop': np.round(updated_csd_filtered_2026_plot1.iloc[:,0],0)})])
+                            'Category': (['2031 Delta'] * len(income_category)),
+                            'Pop': np.round(updated_csd_filtered_2031_plot1.iloc[:,0],0)})])
     
     table1['Total'] = table1.sum(axis = 1)
     row_total_csd = table1.sum(axis=0)
@@ -582,9 +610,9 @@ def plot1_new_projection(geo, IsComparison):
     table1.loc[len(table1['Income Category']), :] = row_total_csd
 
     if IsComparison != True:
-        table1.columns = ['HH Income Category', '2016 HHs', 'Projected Gain/Loss of HHs by 2026', 'Total']
+        table1.columns = ['HH Income Category', '2021 HHs', 'Projected Gain/Loss of HHs by 2031', 'Total']
     else:
-        table1.columns = ['HH Income Category', '2016 HHs ', 'Projected Gain/Loss of HHs by 2026 ', 'Total ']
+        table1.columns = ['HH Income Category', '2021 HHs ', 'Projected Gain/Loss of HHs by 2031 ', 'Total ']
     
     return plot_df, table1
     
@@ -628,7 +656,7 @@ def update_geo_figure6(geo, geo_c, scale, selected_columns):
         # Generating plot
         fig_new_proj_1 = go.Figure()
 
-        for i, c in zip(plot_df['Category'].unique(), colors[3:]):
+        for i, c in zip(plot_df['Category'].unique(), bar_colors):
             plot_df_frag = plot_df.loc[plot_df['Category'] == i, :]
             fig_new_proj_1.add_trace(go.Bar(
                 x = plot_df_frag['Income Category'],
@@ -647,9 +675,9 @@ def update_geo_figure6(geo, geo_c, scale, selected_columns):
                                     modebar_activecolor = modebar_activecolor, 
                                     barmode='relative', 
                                     plot_bgcolor='#F8F9F9', 
-                                    title = f'2026 Household Projections by Income Category<br>{geo}', 
+                                    title = f'2031 Household Projections by Income Category<br>{geo}',
                                     legend = dict(font = dict(size = 9)), 
-                                    legend_title = "2016 households<br>and 2016-2026 change<br>"
+                                    legend_title = "2021 households<br>and 2021-2031 change<br>"
                                     )
         fig_new_proj_1.update_xaxes(
                                     title_font = dict(size = 10), 
@@ -719,7 +747,7 @@ def update_geo_figure6(geo, geo_c, scale, selected_columns):
 
         fig_new_proj_1 = make_subplots(rows=1, cols=2, subplot_titles=(f"{geo}", f"{geo_c}"), shared_yaxes=True, shared_xaxes=True)
 
-        for i, c in zip(plot_df['Category'].unique(), colors[3:]):
+        for i, c in zip(plot_df['Category'].unique(), bar_colors):
             plot_df_frag = plot_df.loc[plot_df['Category'] == i, :]
             fig_new_proj_1.add_trace(go.Bar(
                 x = plot_df_frag['Income Category'],
@@ -738,7 +766,7 @@ def update_geo_figure6(geo, geo_c, scale, selected_columns):
 
         # Generating comparison plot
 
-        for i, c in zip(plot_df_c['Category'].unique(), colors[3:]):
+        for i, c in zip(plot_df_c['Category'].unique(), bar_colors):
             plot_df_frag = plot_df_c.loc[plot_df['Category'] == i, :]
             fig_new_proj_1.add_trace(go.Bar(
                 x = plot_df_frag['Income Category'],
@@ -757,9 +785,9 @@ def update_geo_figure6(geo, geo_c, scale, selected_columns):
                                     modebar_activecolor = modebar_activecolor, 
                                     barmode='relative', 
                                     plot_bgcolor='#F8F9F9', 
-                                    title = f'2026 Household Projections by Income Category', 
+                                    title = f'2031 Household Projections by Income Category',
                                     legend = dict(font = dict(size = 9)), 
-                                    legend_title = "2016 households<br>and 2016-2026 change<br>")
+                                    legend_title = "2021 households<br>and 2021-2031 change<br>")
         fig_new_proj_1.update_yaxes(
                                     range=[min(plot_df['Pop'].min(), plot_df_c['Pop'].min()) * 1.1, max(plot_df.groupby('Income Category')['Pop'].sum().max(), plot_df_c.groupby('Income Category')['Pop'].sum().max()) * 1.1],
                                     title_font = dict(size = 10), 
@@ -835,7 +863,7 @@ def update_geo_figure6(geo, geo_c, scale, selected_columns):
 
 
 
-# 2026 Household Projections by Household Size
+# 2031 Household Projections by Household Size
 
 # Plot DF/Table Generator
 
@@ -844,7 +872,7 @@ def plot2_new_projection(geo, IsComparison):
     geo_code_clicked = mapped_geo_code.loc[mapped_geo_code['Geography'] == geo,:]['Geo_Code'].tolist()[0]
     updated_csd_filtered = updated_csd.query('Geo_Code ==' +  f"{geo_code_clicked}")
 
-    updated_csd_filtered_2016_plot2 = updated_csd_filtered[[
+    updated_csd_filtered_2021_plot2 = updated_csd_filtered[[
 'Total - Private households by household type including census family structure - Total – Private households by household income proportion to AMHI_1 -   1pp',
 'Total - Private households by household type including census family structure - Total – Private households by household income proportion to AMHI_1 -   2pp',
 'Total - Private households by household type including census family structure - Total – Private households by household income proportion to AMHI_1 -   3pp',
@@ -852,43 +880,43 @@ def plot2_new_projection(geo, IsComparison):
 'Total - Private households by household type including census family structure - Total – Private households by household income proportion to AMHI_1 -   5pp'
         ]].T.reset_index().drop(columns = ['index'])
 
-    updated_csd_filtered_2026_plot2 = updated_csd_filtered[[
-    '2026 Population Delta 1pp HH',
-    '2026 Population Delta 2pp HH',
-    '2026 Population Delta 3pp HH',
-    '2026 Population Delta 4pp HH',
-    '2026 Population Delta 5pp HH'
+    updated_csd_filtered_2031_plot2 = updated_csd_filtered[[
+    '2031 Population Delta 1pp HH',
+    '2031 Population Delta 2pp HH',
+    '2031 Population Delta 3pp HH',
+    '2031 Population Delta 4pp HH',
+    '2031 Population Delta 5pp HH'
         ]].T.reset_index().drop(columns = ['index'])
 
     hh_category = ['1 Person', '2 Person', '3 Person', '4 Person', '5+ Person']
 
 
     table2 = pd.DataFrame({'HH Category': hh_category, 
-                            'Category': (['2016 Pop'] * len(hh_category)),
-                            'Pop': updated_csd_filtered_2016_plot2.iloc[:,0]})
+                            'Category': (['2021 Pop'] * len(hh_category)),
+                            'Pop': updated_csd_filtered_2021_plot2.iloc[:,0]})
     
     table2 = table2.replace([np.inf, -np.inf], 0)
     table2 = table2.fillna(0)
 
-    table2_2016 = table2.copy()
+    table2_2021 = table2.copy()
 
-    table2['2026 Delta'] = np.round(updated_csd_filtered_2026_plot2.iloc[:,0],0)
+    table2['2031 Delta'] = np.round(updated_csd_filtered_2031_plot2.iloc[:,0],0)
     table2 = table2.drop(columns = ['Category'])
 
-    table2['Total'] = table2.sum(axis = 1)
+    table2['Total 2031 HHs'] = table2.sum(axis = 1)
     row_total_csd = table2.sum(axis=0)
     row_total_csd[0] = 'Total'
     table2.loc[len(table2['HH Category']), :] = row_total_csd
 
     if IsComparison != True:
-        table2.columns = ['HH Size', '2016 HHs', 'Projected Gain/Loss of HHs by 2026', 'Total']
+        table2.columns = ['HH Size', '2021 HHs', 'Projected Gain/Loss of HHs by 2031', 'Total 2031 HHs']
     else:
-        table2.columns = ['HH Size', '2016 HHs ', 'Projected Gain/Loss of HHs by 2026 ', 'Total ']
+        table2.columns = ['HH Size', '2021 HHs ', 'Projected Gain/Loss of HHs by 2031 ', 'Total 2031 HHs ']
 
-    plot_df = pd.concat([table2_2016,
+    plot_df = pd.concat([table2_2021,
                         pd.DataFrame({'HH Category': hh_category,
-                            'Category': (['2026 Delta'] * len(hh_category)),
-                            'Pop': np.round(updated_csd_filtered_2026_plot2.iloc[:,0],0)})])
+                            'Category': (['2031 Delta'] * len(hh_category)),
+                            'Pop': np.round(updated_csd_filtered_2031_plot2.iloc[:,0],0)})])
     
     plot_df = plot_df.replace([np.inf, -np.inf], 0)
 
@@ -934,7 +962,7 @@ def update_geo_figure7(geo, geo_c, scale, selected_columns):
         # Generating plot
         fig_new_proj_1 = go.Figure()
 
-        for i, c in zip(plot_df['Category'].unique(), colors[3:]):
+        for i, c in zip(plot_df['Category'].unique(), bar_colors):
             plot_df_frag = plot_df.loc[plot_df['Category'] == i, :]
             fig_new_proj_1.add_trace(go.Bar(
                                             x = plot_df_frag['HH Category'],
@@ -952,9 +980,9 @@ def update_geo_figure7(geo, geo_c, scale, selected_columns):
                                     modebar_activecolor = modebar_activecolor, 
                                     barmode='relative', 
                                     plot_bgcolor='#F8F9F9', 
-                                    title = f'2026 Household Projections by Household Size<br>{geo}', 
+                                    title = f'2031 Household Projections by Household Size<br>{geo}',
                                     legend = dict(font = dict(size = 9)), 
-                                    legend_title = "2016 households<br>and 2016-2026 change<br>"
+                                    legend_title = "2021 households<br>and 2021-2031 change<br>"
                                     )
         
         fig_new_proj_1.update_xaxes(
@@ -1025,7 +1053,7 @@ def update_geo_figure7(geo, geo_c, scale, selected_columns):
 
         fig_new_proj_1 = make_subplots(rows=1, cols=2, subplot_titles=(f"{geo}", f"{geo_c}"), shared_yaxes=True, shared_xaxes=True)
 
-        for i, c in zip(plot_df['Category'].unique(), colors[3:]):
+        for i, c in zip(plot_df['Category'].unique(), bar_colors):
             plot_df_frag = plot_df.loc[plot_df['Category'] == i, :]
             fig_new_proj_1.add_trace(go.Bar(
                 x = plot_df_frag['HH Category'],
@@ -1043,7 +1071,7 @@ def update_geo_figure7(geo, geo_c, scale, selected_columns):
 
         # Generating comparison plot
 
-        for i, c in zip(plot_df_c['Category'].unique(), colors[3:]):
+        for i, c in zip(plot_df_c['Category'].unique(), bar_colors):
             plot_df_frag = plot_df_c.loc[plot_df['Category'] == i, :]
             fig_new_proj_1.add_trace(go.Bar(
                 x = plot_df_frag['HH Category'],
@@ -1062,9 +1090,9 @@ def update_geo_figure7(geo, geo_c, scale, selected_columns):
                                     modebar_activecolor = modebar_activecolor, 
                                     barmode='relative', 
                                     plot_bgcolor='#F8F9F9', 
-                                    title = f'2026 Household Projections by Household Size', 
+                                    title = f'2031 Household Projections by Household Size',
                                     legend = dict(font = dict(size = 9)), 
-                                    legend_title = "2016 households<br>and 2016-2026 change<br>"
+                                    legend_title = "2021 households<br>and 2021-2031 change<br>"
                                     )
         fig_new_proj_1.update_yaxes(
                                     range=[min(plot_df['Pop'].min(), plot_df_c['Pop'].min()) * 1.1, max(plot_df.groupby('HH Category')['Pop'].sum().max(), plot_df_c.groupby('HH Category')['Pop'].sum().max()) * 1.1],
@@ -1142,7 +1170,7 @@ def update_geo_figure7(geo, geo_c, scale, selected_columns):
 
 
 
-# 2026 Projected Households by Household Size and Income Category
+# 2031 Projected Households by Household Size and Income Category
 
 # Presetting global variables for table/plot
 
@@ -1156,7 +1184,7 @@ pp_list = ['1pp', '2pp', '3pp', '4pp', '5pp']
 
 # Plot DF/Table Generator
 
-def projections_2026_hh_size(geo, IsComparison):
+def projections_2031_hh_size(geo, IsComparison):
     
     geo_code_clicked = mapped_geo_code.loc[mapped_geo_code['Geography'] == geo, 'Geo_Code'].tolist()[0]
     updated_csd_filtered = updated_csd.query('Geo_Code ==' +  f"{geo_code_clicked}")
@@ -1168,7 +1196,7 @@ def projections_2026_hh_size(geo, IsComparison):
 
     for i in income_col_list:
         for p in pp_list:
-            col_format = f'2026 Projected {p} HH with income {i}'
+            col_format = f'2031 Projected {p} HH with income {i}'
             income_l.append(i)
             pp_l.append(p)
             result_csd_l.append(updated_csd_filtered[col_format].tolist()[0])
@@ -1237,7 +1265,7 @@ def update_geo_figure_h(geo, geo_c, scale, selected_columns):
 
         # Generating plot dataframe/table
 
-        table1, table1_csd_plot = projections_2026_hh_size(geo, False)
+        table1, table1_csd_plot = projections_2031_hh_size(geo, False)
 
         # Generating plot
 
@@ -1261,7 +1289,7 @@ def update_geo_figure_h(geo, geo_c, scale, selected_columns):
                             modebar_activecolor = modebar_activecolor, 
                             barmode='relative', 
                             plot_bgcolor='#F8F9F9', 
-                            title = f'2026 Projected Households by Household Size and Income Category<br>{geo}', 
+                            title = f'2031 Projected Households by Household Size and Income Category<br>{geo}',
                             legend = dict(font = dict(size = 9)), 
                             legend_title = "HH Size"
                             )
@@ -1326,7 +1354,7 @@ def update_geo_figure_h(geo, geo_c, scale, selected_columns):
 
         # Generating main plot df/table
 
-        table1, table1_csd_plot = projections_2026_hh_size(geo, False)
+        table1, table1_csd_plot = projections_2031_hh_size(geo, False)
 
         # Generating main plot
 
@@ -1346,7 +1374,7 @@ def update_geo_figure_h(geo, geo_c, scale, selected_columns):
         # Comparison Plot/Table
 
         # Generating comparison plot df/table
-        table1_c, table1_csd_plot_c = projections_2026_hh_size(geo_c, True)
+        table1_c, table1_csd_plot_c = projections_2031_hh_size(geo_c, True)
 
         for i, c in zip(table1_csd_plot_c['HH Category'].unique(), colors):
             plot_df_frag = table1_csd_plot_c.loc[table1_csd_plot_c['HH Category'] == i, :]
@@ -1367,7 +1395,7 @@ def update_geo_figure_h(geo, geo_c, scale, selected_columns):
                                 modebar_activecolor = modebar_activecolor, 
                                 barmode='relative', 
                                 plot_bgcolor='#F8F9F9', 
-                                title = f'2026 Projected Households by Household Size and Income Category', 
+                                title = f'2031 Projected Households by Household Size and Income Category',
                                 legend = dict(font = dict(size = 9)), 
                                 legend_title = "HH Size"
                                 )
@@ -1446,7 +1474,7 @@ def update_geo_figure_h(geo, geo_c, scale, selected_columns):
 
 
 
-# 2026 Projected Household Gain/Loss (2016 to 2026)
+# 2031 Projected Household Gain/Loss (2021 to 2031)
 
 # Presetting global variables for table/plot
 
@@ -1460,7 +1488,7 @@ pp_list = ['1pp', '2pp', '3pp', '4pp', '5pp']
 
 # Plot DF/Table Generator
 
-def projections_2026_deltas(geo, IsComparison):
+def projections_2031_deltas(geo, IsComparison):
     
     geo_code_clicked = mapped_geo_code.loc[mapped_geo_code['Geography'] == geo, 'Geo_Code'].tolist()[0]
     updated_csd_filtered = updated_csd.query('Geo_Code ==' +  f"{geo_code_clicked}")
@@ -1471,7 +1499,7 @@ def projections_2026_deltas(geo, IsComparison):
 
     for i in income_col_list:
         for p in pp_list:
-            col_format = f'2026 Population Delta {p} HH with income {i}'
+            col_format = f'2031 Population Delta {p} HH with income {i}'
             income_l.append(i)
             pp_l.append(p)
             result_csd_l.append(updated_csd_filtered[col_format].tolist()[0])
@@ -1537,7 +1565,7 @@ def update_geo_figure8(geo, geo_c, scale, selected_columns):
             geo = mapped_geo_code.loc[mapped_geo_code['Geography'] == geo,:]['Province'].tolist()[0]
 
         # Generating plot dataframe/table
-        table1, table1_csd_plot = projections_2026_deltas(geo, False)
+        table1, table1_csd_plot = projections_2031_deltas(geo, False)
 
         # Generating plot
         fig_csd = go.Figure()
@@ -1560,7 +1588,7 @@ def update_geo_figure8(geo, geo_c, scale, selected_columns):
                             modebar_activecolor = modebar_activecolor, 
                             barmode='relative', 
                             plot_bgcolor='#F8F9F9', 
-                            title = f'2026 Projected Household Gain/Loss (2016 to 2026)<br>{geo}', 
+                            title = f'2031 Projected Household Gain/Loss (2021 to 2031)<br>{geo}',
                             legend = dict(font = dict(size = 9)), 
                             legend_title = "HH Size"
                             )
@@ -1624,7 +1652,7 @@ def update_geo_figure8(geo, geo_c, scale, selected_columns):
 
         # Generating main plot df/table
 
-        table1, table1_csd_plot = projections_2026_deltas(geo, False)
+        table1, table1_csd_plot = projections_2031_deltas(geo, False)
 
         # Generating main plot
 
@@ -1644,7 +1672,7 @@ def update_geo_figure8(geo, geo_c, scale, selected_columns):
 
         # Generating comparison plot df/table
 
-        table1_c, table1_csd_plot_c = projections_2026_deltas(geo_c, True)
+        table1_c, table1_csd_plot_c = projections_2031_deltas(geo_c, True)
 
         # Generating comparison plot
 
@@ -1667,7 +1695,7 @@ def update_geo_figure8(geo, geo_c, scale, selected_columns):
                             modebar_activecolor = modebar_activecolor, 
                             barmode='relative', 
                             plot_bgcolor='#F8F9F9', 
-                            title = f'2026 Projected Household Gain/Loss (2016 to 2026)', 
+                            title = f'2031 Projected Household Gain/Loss (2021 to 2031)',
                             legend = dict(font = dict(size = 9)), 
                             legend_title = "HH Size"
                             )
@@ -1743,7 +1771,7 @@ def update_geo_figure8(geo, geo_c, scale, selected_columns):
         return col_list, table1_j.to_dict('record'), style_data_conditional, style_cell_conditional, style_header_conditional, fig_csd
 
 
-# 2026 Projected Municipal vs Regional Household Growth Rates by Income Category
+# 2031 Projected Municipal vs Regional Household Growth Rates by Income Category
 
 # Presetting global variables for table/plot
 
@@ -1751,13 +1779,12 @@ def update_geo_figure8(geo, geo_c, scale, selected_columns):
 
 m_r_colors = ['#002145', '#39c0f7']
 
-def projections_2026_pop_income(geo, IsComparison):
+def projections_2031_pop_income(geo, IsComparison):
 
     geo_code_clicked = mapped_geo_code.loc[mapped_geo_code['Geography'] == geo, 'Geo_Code'].tolist()[0]
     geo_region_code_clicked = mapped_geo_code.loc[mapped_geo_code['Geography'] == geo, 'Region_Code'].tolist()[0]
     updated_csd_filtered = updated_csd.query('Geo_Code ==' +  f"{geo_code_clicked}")
     updated_cd_filtered = updated_cd.query('Geo_Code ==' +  f"{geo_region_code_clicked}")
-    updated_csd_filtered
 
     income_categories_g11 = [
         'income 20% or under of area median household income (AMHI)',
@@ -1767,9 +1794,10 @@ def projections_2026_pop_income(geo, IsComparison):
         'income 121% or over of AMHI'
     ]
 
-    pop_2016 = []
+    pop_2021 = []
     gr_csd = []
     gr_cd = []
+    tr_cd = []
     delta = []
 
     i_l = [
@@ -1782,22 +1810,24 @@ def projections_2026_pop_income(geo, IsComparison):
 
     for i in income_categories_g11:
         p = updated_csd_filtered[f'Total - Private households by household type including census family structure -   Households with {i} - Total - Household size'].tolist()[0]
-        g = updated_csd_filtered[f'2026 Population Growth Rate with {i}'].tolist()[0]
-        g_cd = updated_cd_filtered[f'2026 Population Growth Rate with {i}'].tolist()[0]
-        d = updated_csd_filtered[f'2026 Population Delta with {i}'].tolist()[0]
-        pop_2016.append(p)
+        g = updated_csd_filtered[f'2031 Population Growth Rate with {i}'].tolist()[0]
+        g_cd = updated_cd_filtered[f'2031 Population Growth Rate with {i}'].tolist()[0]
+        t_cd = updated_cd_filtered[f'2031 Population Trend with {i}'].tolist()[0]
+        d = updated_csd_filtered[f'2031 Population Delta with {i}'].tolist()[0]
+        pop_2021.append(p)
         gr_csd.append(g)
         gr_cd.append(g_cd)
+        tr_cd.append(t_cd)
         delta.append(d)
 
-    table = pd.DataFrame({'Income Category':  i_l, '2016 Pop.': pop_2016, 'Muni. Growth (%)': gr_csd, 'Regional Growth (%)': gr_cd, 'Delta(Muni. GR)': np.round(delta, 0)})
+    table = pd.DataFrame({'Income Category':  i_l, '2021 Pop.': pop_2021, 'Muni. Growth (%)': gr_csd, 'Regional Growth (%)': gr_cd, 'Delta(Muni. GR)': np.round(delta, 0)})
 
     table = table.replace([np.inf, -np.inf], 0)
     table = table.fillna(0)
 
-    table['Delta(Regional GR)'] = np.round(table['2016 Pop.'] * table['Regional Growth (%)'], 0)
-    table['2026 Pop.(Muni.)'] = np.round(table['2016 Pop.'] + (table['2016 Pop.'] * table['Muni. Growth (%)']), 0)
-    table['2026 Pop.(Regional)'] = np.round(table['2016 Pop.'] + (table['2016 Pop.'] * table['Regional Growth (%)']), 0)
+    table['Delta(Regional GR)'] = np.round(table['2021 Pop.'] * table['Regional Growth (%)'], 0)
+    table['2031 Pop.(Muni.)'] = np.round(table['2021 Pop.'] + (table['2021 Pop.'] * table['Muni. Growth (%)']), 0)
+    table['2031 Pop.(Regional)'] = tr_cd
 
     table_for_plot = table[['Income Category', 'Muni. Growth (%)', 'Regional Growth (%)']]
     table_for_plot.columns = ['Income Category', 'Municipal', 'Regional']
@@ -1810,12 +1840,12 @@ def projections_2026_pop_income(geo, IsComparison):
 
     if IsComparison == True:
 
-        table.columns = ['HH Income Category', '2016 HHs ', 'Muni. Growth Rate (%) ',
-           'Regional Growth Rate (%) ', '2026 HHs (Muni. Rate) ', '2026 HHs (Region. Rate) ']
+        table.columns = ['HH Income Category', '2021 HHs ', 'Muni. Growth Rate (%) ',
+           'Regional Growth Rate (%) ', '2031 HHs (Muni. Rate) ', '2031 HHs (Region. Rate) ']
         
     else:
-        table.columns = ['HH Income Category', '2016 HHs', 'Muni. Growth Rate (%)',
-           'Regional Growth Rate (%)', '2026 HHs (Muni. Rate)', '2026 HHs (Region. Rate)']
+        table.columns = ['HH Income Category', '2021 HHs', 'Muni. Growth Rate (%)',
+           'Regional Growth Rate (%)', '2031 HHs (Muni. Rate)', '2031 HHs (Region. Rate)']
 
     return table, plot_df
 
@@ -1909,7 +1939,7 @@ def update_geo_figure8(geo, geo_c, scale, selected_columns):
             geo = mapped_geo_code.loc[mapped_geo_code['Geography'] == geo,:]['Province'].tolist()[0]
 
         # Generating plot dataframe/table
-        table1, plot_df = projections_2026_pop_income(geo, True)
+        table1, plot_df = projections_2031_pop_income(geo, True)
 
         # Generating plot
         fig_pgr = go.Figure()
@@ -1932,7 +1962,7 @@ def update_geo_figure8(geo, geo_c, scale, selected_columns):
                             modebar_color = modebar_color, 
                             modebar_activecolor = modebar_activecolor, 
                             plot_bgcolor='#F8F9F9', 
-                            title = f'2026 Projected Municipal vs Regional Household Growth Rates by Income Category<br>{geo}', 
+                            title = f'2031 Projected Municipal vs Regional Household Growth Rates by Income Category<br>{geo}',
                             legend = dict(font = dict(size = 9)), 
                             legend_title = "Category"
                             )
@@ -1999,7 +2029,7 @@ def update_geo_figure8(geo, geo_c, scale, selected_columns):
 
         # Generating main plot df/table
 
-        table1, plot_df = projections_2026_pop_income(geo, True)
+        table1, plot_df = projections_2031_pop_income(geo, True)
 
         # Generating main plot
 
@@ -2023,7 +2053,7 @@ def update_geo_figure8(geo, geo_c, scale, selected_columns):
 
         # Generating comparison plot df/table
 
-        table1_c, plot_df_c = projections_2026_pop_income(geo_c, False)
+        table1_c, plot_df_c = projections_2031_pop_income(geo_c, False)
 
         # Generating comparison plot
 
@@ -2051,7 +2081,7 @@ def update_geo_figure8(geo, geo_c, scale, selected_columns):
                             modebar_color = modebar_color, 
                             modebar_activecolor = modebar_activecolor, 
                             plot_bgcolor='#F8F9F9', 
-                            title = f'2026 Projected Municipal vs Regional Household Growth Rates by Income Category', 
+                            title = f'2031 Projected Municipal vs Regional Household Growth Rates by Income Category',
                             legend_title = "Category"
                             )
         fig_pgr.update_yaxes(
@@ -2133,7 +2163,7 @@ def update_geo_figure8(geo, geo_c, scale, selected_columns):
 
 # Plot DF/Table Generator
 
-def projections_2026_pop_hh(geo, IsComparison):
+def projections_2031_pop_hh(geo, IsComparison):
 
     geo_code_clicked = mapped_geo_code.loc[mapped_geo_code['Geography'] == geo, 'Geo_Code'].tolist()[0]
     geo_region_code_clicked = mapped_geo_code.loc[mapped_geo_code['Geography'] == geo, 'Region_Code'].tolist()[0]
@@ -2149,31 +2179,34 @@ def projections_2026_pop_hh(geo, IsComparison):
         '5pp'
     ]
 
-    pop_2016 = []
+    pop_2021 = []
     gr_csd = []
     gr_cd = []
+    tr_cd = []
     delta = []
 
     h_l = ['1 Person', '2 People', '3 People', '4 People', '5+ People']
 
     for i in hh_category:
         p = updated_csd_filtered[f'Total - Private households by household type including census family structure - Total – Private households by household income proportion to AMHI_1 -   {i}'].tolist()[0]
-        g = updated_csd_filtered[f'2026 Population Growth Rate {i} HH'].tolist()[0]
-        g_cd = updated_cd_filtered[f'2026 Population Growth Rate {i} HH'].tolist()[0]
-        d = updated_csd_filtered[f'2026 Population Delta {i} HH'].tolist()[0]
-        pop_2016.append(p)
+        g = updated_csd_filtered[f'2031 Population Growth Rate {i} HH'].tolist()[0]
+        g_cd = updated_cd_filtered[f'2031 Population Growth Rate {i} HH'].tolist()[0]
+        t_cd = updated_cd_filtered[f'2031 Population Trend {i} HH'].tolist()[0]
+        d = updated_csd_filtered[f'2031 Population Delta {i} HH'].tolist()[0]
+        pop_2021.append(p)
         gr_csd.append(g)
         gr_cd.append(g_cd)
+        tr_cd.append(t_cd)
         delta.append(d)
 
-    table = pd.DataFrame({'HH Category':  h_l, '2016 Pop.': pop_2016, 'Muni. Growth (%)': gr_csd, 'Regional Growth (%)': gr_cd, 'Delta(Muni. GR)': np.round(delta, 0)})
+    table = pd.DataFrame({'HH Category':  h_l, '2021 Pop.': pop_2021, 'Muni. Growth (%)': gr_csd, 'Regional Growth (%)': gr_cd, 'Delta(Muni. GR)': np.round(delta, 0)})
 
     table = table.replace([np.inf, -np.inf], 0)
     table = table.fillna(0)
 
-    table['Delta(Regional GR)'] = np.round(table['2016 Pop.'] * table['Regional Growth (%)'], 0)
-    table['2026 Pop.(Muni.)'] = np.round(table['2016 Pop.'] + (table['2016 Pop.'] * table['Muni. Growth (%)']), 0)
-    table['2026 Pop.(Regional)'] = np.round(table['2016 Pop.'] + (table['2016 Pop.'] * table['Regional Growth (%)']), 0)
+    table['Delta(Regional GR)'] = np.round(table['2021 Pop.'] * table['Regional Growth (%)'], 0)
+    table['2031 Pop.(Muni.)'] = np.round(table['2021 Pop.'] + (table['2021 Pop.'] * table['Muni. Growth (%)']), 0)
+    table['2031 Pop.(Regional)'] = tr_cd
 
     table_for_plot = table[['HH Category', 'Muni. Growth (%)', 'Regional Growth (%)']]
     table_for_plot.columns = ['HH Category', 'Municipal', 'Regional']
@@ -2186,12 +2219,12 @@ def projections_2026_pop_hh(geo, IsComparison):
 
     if IsComparison == True:
    
-        table.columns = ['HH Size', '2016 HHs ', 'Muni. Growth Rate (%) ',
-           'Regional Growth Rate (%) ', '2026 HHs (Muni. Rate) ', '2026 HHs (Region. Rate) ']
+        table.columns = ['HH Size', '2021 HHs ', 'Muni. Growth Rate (%) ',
+           'Regional Growth Rate (%) ', '2031 HHs (Muni. Rate) ', '2031 HHs (Region. Rate) ']
 
     else:
-        table.columns = ['HH Size', '2016 HHs', 'Muni. Growth Rate (%)',
-           'Regional Growth Rate (%)', '2026 HHs (Muni. Rate)', '2026 HHs (Region. Rate)']
+        table.columns = ['HH Size', '2021 HHs', 'Muni. Growth Rate (%)',
+           'Regional Growth Rate (%)', '2031 HHs (Muni. Rate)', '2031 HHs (Region. Rate)']
         
     table['HH Size'] = ['1 Person', '2 Person', '3 Person', '4 Person', '5+ Person']
 
@@ -2285,7 +2318,7 @@ def update_geo_figure9(geo, geo_c, scale, selected_columns):
             geo = mapped_geo_code.loc[mapped_geo_code['Geography'] == geo,:]['Province'].tolist()[0]
 
         # Generating plot dataframe/table
-        table1, plot_df = projections_2026_pop_hh(geo, True)
+        table1, plot_df = projections_2031_pop_hh(geo, True)
 
         # Generating plot
         fig_pgr = go.Figure()
@@ -2308,7 +2341,7 @@ def update_geo_figure9(geo, geo_c, scale, selected_columns):
                             modebar_color = modebar_color, 
                             modebar_activecolor = modebar_activecolor, 
                             plot_bgcolor='#F8F9F9', 
-                            title = f'2026 Projected Community and Regional Household Growth Rates <br>{geo}', 
+                            title = f'2031 Projected Community and Regional Household Growth Rates <br>{geo}',
                             legend = dict(font = dict(size = 9)), 
                             legend_title = "Population"
                             )
@@ -2375,7 +2408,7 @@ def update_geo_figure9(geo, geo_c, scale, selected_columns):
 
         # Generating main plot df/table
 
-        table1, plot_df = projections_2026_pop_hh(geo, True)
+        table1, plot_df = projections_2031_pop_hh(geo, True)
 
         # Generating main plot
 
@@ -2400,7 +2433,7 @@ def update_geo_figure9(geo, geo_c, scale, selected_columns):
 
         # Generating comparison plot df/table
 
-        table1_c, plot_df_c = projections_2026_pop_hh(geo_c, False)
+        table1_c, plot_df_c = projections_2031_pop_hh(geo_c, False)
 
         # Generating comparison plot
 
@@ -2428,7 +2461,7 @@ def update_geo_figure9(geo, geo_c, scale, selected_columns):
                             modebar_color = modebar_color, 
                             modebar_activecolor = modebar_activecolor, 
                             plot_bgcolor='#F8F9F9', 
-                            title = f'2026 Projected Community and Regional Household Growth Rates ', 
+                            title = f'2031 Projected Community and Regional Household Growth Rates ',
                             legend_title = "Population"
                             )
         fig_pgr.update_yaxes(

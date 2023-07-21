@@ -149,15 +149,18 @@ layout = html.Div(children = [
             html.Div(children = [ 
 
                     html.Div(children = [                     
-                        html.Button('View Census Subdivision (CSD)', id='to-geography-1', n_clicks=0, className = 'region-button-lgeo'),     
+                        html.Button('View Census Subdivision (CSD)', title= 'A provincially-legislated area at the municipal scale, or areas treated as municipal equivalents for statistical purposes (e.g. reserves, settlements and unorganized territories). Municipal status is defined by laws in effect in each province and territory in Canada.',
+                                    id='to-geography-1', n_clicks=0, className = 'region-button-lgeo'),
                                         ], className = 'region-button-box-lgeo'
                         ),           
                     html.Div(children = [ 
-                        html.Button('View Census Division (CD)', id='to-region-1', n_clicks=0, className = 'region-button-lgeo'),
+                        html.Button('View Census Division (CD)', title= 'A provincially legislated area like counties, regional districts or equivalent areas. Census divisions are intermediate geographic areas between the province/territory level and the municipality (census subdivision).',
+                                    id='to-region-1', n_clicks=0, className = 'region-button-lgeo'),
                                         ], className = 'region-button-box-lgeo'
                         ),         
                     html.Div(children = [ 
-                        html.Button('View Province / Territory', id='to-province-1', n_clicks=0, className = 'region-button-lgeo'),
+                        html.Button('View Province / Territory', title= "'Province' and 'territory' refer to the major political units of Canada. Canada is divided into 10 provinces and 3 territories.",
+                                    id='to-province-1', n_clicks=0, className = 'region-button-lgeo'),
                                         ], className = 'region-button-box-lgeo'
                         ),    
 
