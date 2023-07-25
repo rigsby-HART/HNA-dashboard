@@ -98,7 +98,7 @@ province_code_table = province_code_table[['Province_Code', 'Province']]
 
 # Defining sqlalchemy engine
 
-engine = create_engine('sqlite:///L:\\Projects\\22005 - Housing Needs Assessment\\Scripts\\Dashboard\\Code_Package\\sources\\hart.db')#, echo=True)
+engine = create_engine('sqlite:///L:\\Projects\\22005 - Housing Needs Assessment\\Scripts\\Dashboard\\Code_Package_2021\\sources\\hart.db')#, echo=True)
 
 # Creating tables
 
