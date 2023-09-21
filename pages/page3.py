@@ -84,7 +84,7 @@ layout = html.Div(children = [
 
                     # Table Description
                     html.Div([
-                        html.H6('The following table shows the total number of households in 2021, for each household income category, as well as the projected gain (positive) or loss (negative) of households over the 15-year period between 2021 and 2031 by applying the percentage change from 2006-2021, to 2021 households.')
+                        html.H6('The following table shows the total number of households in 2021, for each household income category, as well as the projected gain (positive) or loss (negative) of households over the period between 2021 and 2031 by applying the percentage change from 2006-2021, to 2021 households.')
                     ], className = 'muni-reg-text-lgeo'),
 
                     # Table
@@ -152,7 +152,7 @@ layout = html.Div(children = [
 
                     html.Div([
                         html.H6(
-                            'The following table shows the total number of households in 2021, for each household size category, as well as the projected gain (positive) or loss (negative) of households over the 15-year period between 2021 and 2031 by applying the percentage change from 2006-2021, to 2021 households.')
+                            'The following table shows the total number of households in 2021, for each household size category, as well as the projected gain (positive) or loss (negative) of households over the period between 2021 and 2031 by applying the percentage change from 2006-2021, to 2021 households.')
                     ], className='muni-reg-text-lgeo'),
 
                     # Table
