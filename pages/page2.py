@@ -214,7 +214,7 @@ layout = html.Div(children = [
                 html.H3(children = html.Strong('Percentage of Households in Core Housing Need, by Income Category and HH Size, 2021'), id = 'visualization2'),
                 # Description
                 html.Div([
-                    html.H6('The following chart looks at those households in Core Housing Need and shows their relative distribution by household size (i.e. the number of individuals in a given houshold) for each household income category. When there is no bar for an income category, it means that either there are no households in Core Housing Need within an income category, or that there are too few households to report.')
+                    html.H6('The following chart looks at those households in Core Housing Need and shows their relative distribution by household size (i.e. the number of individuals in a given household) for each household income category. When there is no bar for an income category, it means that either there are no households in Core Housing Need within an income category, or that there are too few households to report.')
                 ], className = 'muni-reg-text-lgeo'),
 
 
