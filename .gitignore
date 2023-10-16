@@ -41,3 +41,8 @@ test2.html
 **/Census Divisions/
 **/Census SubDivisions/
 **/Province Boundaries/
+/.idea/misc.xml
+/.idea/vcs.xml
+/.idea/workspace.xml
+/env/*
+/ubuntu/

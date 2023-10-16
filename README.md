@@ -27,7 +27,10 @@ The HART dashboard provides the following features:
 
 ### System requirements
 
-Please make sure you have the following installed(Requirements.txt is provided in the repository):
+Please make sure you have the following installed (requirements.txt is provided in the repository):
+
+Changelog: 
+2023/10/16 - To use the requirements.txt as is, python 3.11 is recommended as one of the packages uses the deprecated "distutils" setup package.  It is set to be completely removed from python 3.11 in 2025 (https://peps.python.org/pep-0632/)
 
 - Python 3
 - Pandas
@@ -41,7 +44,7 @@ Please make sure you have the following installed(Requirements.txt is provided i
 
 1. Git Clone or Download the code package from the repository
 2. Type `python app.py` on your Shell inside of the folder of the code package.
-3. Type `000.000.0.00:8050/page1`, `000.000.0.00:8050/page2`, `000.000.0.00:8050/page3`, and `000.000.0.00:8050/page4` on your browser. 000.000.0.00 is your IP address. Each page indicates:
+3. Type `localhost:8050/page1`, `localhost:8050/page2`, `localhost:8050/page3`, and `localhost:8050/page4` on your browser. Each page indicates:
     - page1: Map Picker
     - page2: Core Housing Need page
     - page3: Household Projections page
