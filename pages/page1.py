@@ -7,7 +7,7 @@ import json
 import geopandas as gpd
 import fiona
 import plotly.graph_objects as go
-from dash import dcc, html, Input, Output, ctx, callback
+from dash import dcc, html, Input, Output, ctx, callback, State
 from sqlalchemy import create_engine
 
 fiona.supported_drivers  
@@ -210,9 +210,8 @@ layout = html.Div(children = [
     Input('to-region-1', 'n_clicks'),
     Input('to-province-1', 'n_clicks')
     )
-def store_geo(geo, geo_c, btn1, btn2, btn3, btn4, btn5):
+def store_geo(geo, geo_c, *args):
     id_name = str(ctx.triggered_id)
-
     return geo, geo_c, id_name
 
 
@@ -369,31 +368,33 @@ def subregion_map(value, random_color, clicked_code):
 @callback(
     Output('canada_map', 'figure'),
     Output('all-geo-dropdown', 'value'),
+    Output('comparison-geo-dropdown', 'value'),
     [Input('canada_map', 'clickData')],
     Input('reset-map', 'n_clicks'),
     Input('all-geo-dropdown', 'value'),
+    Input('comparison-geo-dropdown', 'value'),
     Input('all-geo-dropdown-parent', 'n_clicks'),
     Input('to-geography-1', 'n_clicks'),
     Input('to-region-1', 'n_clicks'),
     Input('to-province-1', 'n_clicks')
     )
-def update_map(clickData, btn1, value, btn2, btn3, btn4, btn5):
+def update_map(clickData, reset_map, select_region, comparison_region, *args):
     
     # If no area is selected, then map will show Canada Map
 
-    if value == None:
-        value = default_value
+    if select_region is None:
+        select_region = default_value
 
-    clicked_code = mapped_geo_code.loc[mapped_geo_code['Geography'] == value, :]['Geo_Code'].tolist()[0]
+    clicked_code = mapped_geo_code.loc[mapped_geo_code['Geography'] == select_region, :]['Geo_Code'].tolist()[0]
     clicked_code = str(clicked_code)
 
     # When users click 'View Province' button or select a province on dropbox menu
 
     if (len(clicked_code) == 2 and 'all-geo-dropdown-parent' == ctx.triggered_id) or "to-province-1" == ctx.triggered_id:
 
-        fig_m = province_map(value, False)
+        fig_m = province_map(select_region, False)
         
-        return fig_m, value
+        return fig_m, select_region, comparison_region
 
     # When users click 'View Census Division' button or select a Census Division on dropbox menu
 
@@ -404,17 +405,17 @@ def update_map(clickData, btn1, value, btn2, btn3, btn4, btn5):
 
         if len(clicked_code) == 2:
 
-            fig_m = province_map(value, False)
+            fig_m = province_map(select_region, False)
 
-            return fig_m, value
+            return fig_m, select_region, comparison_region
 
         # When users select Census Division on dropbox menu
         # or When users click 'View Census Division' button after selecting Census Division on dropbox menu
         # -> Show map for Census Division
 
-        fig_mr = region_map(value, False, 'N')
+        fig_mr = region_map(select_region, False, 'N')
 
-        return fig_mr, value
+        return fig_mr, select_region, comparison_region
 
     # When users click 'View Census SubDivision' button or select a Census SubDivision on dropbox menu
 
@@ -425,18 +426,18 @@ def update_map(clickData, btn1, value, btn2, btn3, btn4, btn5):
 
         if len(clicked_code) == 4:
 
-            fig_mr = region_map(value, False, 'N')
+            fig_mr = region_map(select_region, False, 'N')
                         
-            return fig_mr, value
+            return fig_mr, select_region, comparison_region
 
         # When users click 'View Census SubDivision' button after selecting Province on dropbox menu
         # -> Show map for Province
 
         elif len(clicked_code) == 2:
 
-            fig_m = province_map(value, False)
+            fig_m = province_map(select_region, False)
 
-            return fig_m, value
+            return fig_m, select_region, comparison_region
 
         # When users select Census SubDivision on dropbox menu 
         # or when users click 'View Census SubDivision' button after selecting Census SubDivision on dropbox menu
@@ -444,17 +445,17 @@ def update_map(clickData, btn1, value, btn2, btn3, btn4, btn5):
 
         elif len(clicked_code) == 7:
             
-            fig_msr = subregion_map(value, False, 'N')
+            fig_msr = subregion_map(select_region, False, 'N')
             
-            return fig_msr, value
+            return fig_msr, select_region, comparison_region
 
     # When Reset-Map button is clicked
 
     if "reset-map" == ctx.triggered_id:
 
-        fig_m = province_map(value, True)
+        fig_m = province_map(select_region, True)
 
-        return fig_m, default_value
+        return fig_m, default_value, None
 
 
     # When users clicked province on the map
@@ -465,39 +466,39 @@ def update_map(clickData, btn1, value, btn2, btn3, btn4, btn5):
 
         if len(clicked_code) == 2:
 
-            fig_mr = region_map(value, True, clicked_code)
+            fig_mr = region_map(select_region, True, clicked_code)
 
             region_name = df_province_list.query("Geo_Code == " + f"{clicked_code}")['Geography'].tolist()[0]
 
-            return fig_mr, region_name
+            return fig_mr, region_name, comparison_region
 
         # When users clicked region on the regional map after clicking province 
         # -> show subregion map
 
         elif len(clicked_code) == 4:
 
-            fig_msr = subregion_map(value, True, clicked_code)
+            fig_msr = subregion_map(select_region, True, clicked_code)
 
             region_name = df_region_list.query("Geo_Code == " + f"{clicked_code}")['Geography'].tolist()[0]
 
-            return fig_msr, region_name
+            return fig_msr, region_name, comparison_region
 
         # When users clicked subregion on the regional map after clicking province 
         # -> remains subregion map and send subregion code to area selection dropdown
 
         elif len(clicked_code) > 4:
             
-            fig_msr = subregion_map(value, False, clicked_code)
+            fig_msr = subregion_map(select_region, False, clicked_code)
 
             subregion_name = mapped_geo_code.query("Geo_Code == " + f"{clicked_code}")['Geography'].tolist()[0]
 
-            return fig_msr, subregion_name
+            return fig_msr, subregion_name, comparison_region
 
     # default map (show provinces) before clicking anything on the map
 
     else:
 
-        fig_m = province_map(value, True)
+        fig_m = province_map(select_region, True)
 
-        return fig_m, default_value
+        return fig_m, default_value, comparison_region
 
