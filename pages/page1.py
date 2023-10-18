@@ -1,5 +1,6 @@
 # Importing Libraries
 
+import dash
 import pandas as pd
 import numpy as np
 import warnings
@@ -9,6 +10,8 @@ import plotly.graph_objects as go
 from dash import dcc, html, Input, Output, ctx, callback, State
 
 from helpers.create_engine import engine_2021, df_income, df_partners
+
+dash.register_page(__name__)
 
 warnings.filterwarnings("ignore")
 

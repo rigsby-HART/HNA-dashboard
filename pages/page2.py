@@ -1,6 +1,7 @@
 # Importing Libraries
 import pdb
 
+import dash
 import pandas as pd
 import numpy as np
 import plotly.express as px
@@ -14,6 +15,7 @@ from helpers.create_engine import engine_2021, df_income, df_partners
 
 warnings.filterwarnings("ignore")
 
+dash.register_page(__name__)
 
 # Importing Geo Code Information
 

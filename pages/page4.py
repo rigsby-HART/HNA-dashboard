@@ -1,6 +1,7 @@
 # Importing Libraries
 import pdb
 
+import dash
 import pandas as pd
 import numpy as np
 import plotly.express as px
@@ -13,6 +14,8 @@ from plotly.subplots import make_subplots
 from helpers.create_engine import engine_2021
 
 warnings.filterwarnings("ignore")
+
+dash.register_page(__name__)
 
 # Importing indigenous data
 
