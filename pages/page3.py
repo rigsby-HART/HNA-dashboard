@@ -10,24 +10,23 @@ import warnings
 from dash.dash_table.Format import Format, Scheme, Group
 from plotly.subplots import make_subplots
 from dash import dcc, dash_table, html, Input, Output, ctx, callback
-from sqlalchemy import create_engine
+from helpers.create_engine import engine_2021
 
 warnings.filterwarnings("ignore")
-engine = create_engine('sqlite:///sources//hart.db')
 
 # Importing Geo Code Information
 
-mapped_geo_code = pd.read_sql_table('geocodes_integrated', engine.connect())
-df_geo_list = pd.read_sql_table('geocodes', engine.connect())
-df_region_list = pd.read_sql_table('regioncodes', engine.connect())
+mapped_geo_code = pd.read_sql_table('geocodes_integrated', engine_2021.connect())
+df_geo_list = pd.read_sql_table('geocodes', engine_2021.connect())
+df_region_list = pd.read_sql_table('regioncodes', engine_2021.connect())
 df_region_list.columns = df_geo_list.columns
-df_province_list = pd.read_sql_table('provincecodes', engine.connect())
+df_province_list = pd.read_sql_table('provincecodes', engine_2021.connect())
 df_province_list.columns = df_geo_list.columns
 
 # Importing Projection Data
 
-updated_csd = pd.read_sql_table('csd_hh_projections', engine.connect()) # CSD level projections
-updated_cd = pd.read_sql_table('cd_hh_projections', engine.connect()) # CD level projections
+updated_csd = pd.read_sql_table('csd_hh_projections', engine_2021.connect()) # CSD level projections
+updated_cd = pd.read_sql_table('cd_hh_projections', engine_2021.connect()) # CD level projections
 
 # Configuration for plot icons
 

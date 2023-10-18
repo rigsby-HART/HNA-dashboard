@@ -5,22 +5,11 @@ import numpy as np
 import warnings
 import json
 import geopandas as gpd
-import fiona
 import plotly.graph_objects as go
 from dash import dcc, html, Input, Output, ctx, callback, State
-from sqlalchemy import create_engine
 
-fiona.supported_drivers  
+from helpers.create_engine import engine_2021, df_income, df_partners
 warnings.filterwarnings("ignore")
-engine = create_engine('sqlite:///sources//hart.db')
-
-# Importing income data
-
-df_income = pd.read_sql_table('income', engine.connect())
-
-# Importing partners data
-
-df_partners = pd.read_sql_table('partners', engine.connect())
 
 # Joining income and partners data
 
@@ -30,11 +19,11 @@ joined_df = income_category.merge(df_partners, how = 'left', on = 'Geography')
 
 # Importing Geo Code Information
 
-mapped_geo_code = pd.read_sql_table('geocodes_integrated', engine.connect())
-df_geo_list = pd.read_sql_table('geocodes', engine.connect())
-df_region_list = pd.read_sql_table('regioncodes', engine.connect())
+mapped_geo_code = pd.read_sql_table('geocodes_integrated', engine_2021.connect())
+df_geo_list = pd.read_sql_table('geocodes', engine_2021.connect())
+df_region_list = pd.read_sql_table('regioncodes', engine_2021.connect())
 df_region_list.columns = df_geo_list.columns
-df_province_list = pd.read_sql_table('provincecodes', engine.connect())
+df_province_list = pd.read_sql_table('provincecodes', engine_2021.connect())
 df_province_list.columns = df_geo_list.columns
 
 # Importing Province Map
@@ -44,7 +33,7 @@ gdf_p_code_added = gdf_p_code_added.set_index('Geo_Code')
 
 # Importing subregions which don't have data
 
-not_avail = pd.read_sql_table('not_available_csd', engine.connect())
+not_avail = pd.read_sql_table('not_available_csd', engine_2021.connect())
 not_avail['CSDUID'] = not_avail['CSDUID'].astype(str)
 
 # Configuration for plot icons
@@ -500,5 +489,5 @@ def update_map(clickData, reset_map, select_region, comparison_region, *args):
 
         fig_m = province_map(select_region, True)
 
-        return fig_m, default_value, comparison_region
+        return fig_m, select_region, comparison_region
 

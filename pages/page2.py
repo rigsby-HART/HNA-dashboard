@@ -10,22 +10,14 @@ import warnings
 from dash import dcc, dash_table, html, Input, Output, ctx, callback
 from dash.dash_table.Format import Format, Scheme, Group
 from plotly.subplots import make_subplots
-from sqlalchemy import create_engine
+from helpers.create_engine import engine_2021, df_income, df_partners
 
-engine = create_engine('sqlite:///sources//hart.db')
 warnings.filterwarnings("ignore")
 
-# Importing income data
-
-df_income = pd.read_sql_table('income', engine.connect())
-
-# Importing partners data
-
-df_partners = pd.read_sql_table('partners', engine.connect())
 
 # Importing Geo Code Information
 
-mapped_geo_code = pd.read_sql_table('geocodes_integrated', engine.connect())
+mapped_geo_code = pd.read_sql_table('geocodes_integrated', engine_2021.connect())
 
 # Configuration for plot icons
 

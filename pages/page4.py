@@ -10,18 +10,17 @@ import warnings
 from dash import dcc, dash_table, html, Input, Output, ctx, callback
 from dash.dash_table.Format import Format, Scheme, Group
 from plotly.subplots import make_subplots
-from sqlalchemy import create_engine
+from helpers.create_engine import engine_2021
 
-engine = create_engine('sqlite:///sources//hart.db')
 warnings.filterwarnings("ignore")
 
 # Importing indigenous data
 
-df_ind = pd.read_sql_table('indigenous', engine.connect())
+df_ind = pd.read_sql_table('indigenous', engine_2021.connect())
 
 # Importing income data
 
-df_income = pd.read_sql_table('income', engine.connect())
+df_income = pd.read_sql_table('income', engine_2021.connect())
 
 # Preprocessing - Preparing main dataset and categories being used for plots
 
@@ -31,7 +30,7 @@ joined_df = income_category.merge(df_ind, how = 'left', on = 'Geography')
 
 # Importing Geo Code Information
 
-mapped_geo_code = pd.read_sql_table('geocodes_integrated', engine.connect())
+mapped_geo_code = pd.read_sql_table('geocodes_integrated', engine_2021.connect())
 
 # Configuration for plot icons
 
