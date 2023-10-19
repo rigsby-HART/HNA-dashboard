@@ -434,7 +434,7 @@ def update_map(clickData, reset_map, select_region, comparison_region, *args):
 
             return fig_m, select_region, comparison_region
 
-        # When users select Census SubDivision on dropbox menu 
+        # When users select Census SubDivision on dropbox menu
         # or when users click 'View Census SubDivision' button after selecting Census SubDivision on dropbox menu
         # -> Show map for Census SubDivision
 
@@ -465,7 +465,7 @@ def update_map(clickData, reset_map, select_region, comparison_region, *args):
 
             return fig_mr, region_name, comparison_region
 
-        # When users clicked region on the regional map after clicking province 
+        # When users clicked region on the regional map after clicking province
         # -> show subregion map
 
         elif len(clicked_code) == 4:
@@ -476,7 +476,7 @@ def update_map(clickData, reset_map, select_region, comparison_region, *args):
 
             return fig_msr, region_name, comparison_region
 
-        # When users clicked subregion on the regional map after clicking province 
+        # When users clicked subregion on the regional map after clicking province
         # -> remains subregion map and send subregion code to area selection dropdown
 
         elif len(clicked_code) > 4:
@@ -485,7 +485,7 @@ def update_map(clickData, reset_map, select_region, comparison_region, *args):
 
             subregion_name = mapped_geo_code.query("Geo_Code == " + f"{clicked_code}")['Geography'].tolist()[0]
 
-            return fig_msr, subregion_name, comparison_region
+            return fig_msr, subregion_name
 
     # default map (show provinces) before clicking anything on the map
 
