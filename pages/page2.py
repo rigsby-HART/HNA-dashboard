@@ -1,27 +1,18 @@
 # Importing Libraries
 
-import dash
 import pandas as pd
-import plotly.express as px
 import plotly.graph_objects as go
 import math as math
 import warnings
-from dash import dcc, dash_table, html, Input, Output, ctx, callback
+from dash import dcc, Input, Output, ctx, callback
 from dash.dash_table.Format import Format, Scheme, Group
 from plotly.subplots import make_subplots
-from helpers.create_engine import joined_df
-from helpers.table_helper import area_scale_comparison, area_scale_primary_only, storage_variables
+from helpers.style_helper import style_header_conditional, style_data_conditional
+from helpers.create_engine import joined_df_current, joined_df_year
+from helpers.table_helper import area_scale_comparison, area_scale_primary_only
+from pages.page2_helpers.page2_main import layout
 
 warnings.filterwarnings("ignore")
-
-
-# Importing Geo Code Information
-
-# Configuration for plot icons
-
-config = {'displayModeBar': True, 'displaylogo': False,
-          'modeBarButtonsToRemove': ['zoom', 'lasso2d', 'pan', 'select', 'zoomIn', 'zoomOut', 'autoScale',
-                                     'resetScale']}
 
 # Preprocessing - Preparing main dataset and categories being used for plots
 
@@ -63,19 +54,7 @@ default_value = 'Canada'
 
 income_ct = [x + f" ({a})" for x, a in zip(x_base, amhi_range)]
 
-joined_df_filtered = joined_df.query('Geography == "Fraser Valley (CD, BC)"')
-
 x_list = []
-
-i = 0
-for b, c in zip(x_base, x_columns):
-    if i < 4:
-        x = b + " ($" + str(joined_df_filtered[c].tolist()[0]) + ")"
-        x_list.append(x)
-    else:
-        x = b + " (>$" + str(joined_df_filtered[c].tolist()[0]) + ")"
-        x_list.append(x)
-    i += 1
 
 columns = ['Percent HH with income 20% or under of AMHI in core housing need',
            'Percent HH with income 21% to 50% of AMHI in core housing need',
@@ -84,324 +63,9 @@ columns = ['Percent HH with income 20% or under of AMHI in core housing need',
            'Percent HH with income 121% or more of AMHI in core housing need'
            ]
 
-plot_df = pd.DataFrame({'Income_Category': x_list, 'Percent HH': joined_df_filtered[columns].T.iloc[:, 0].tolist()})
-
-fig = px.line(x=['Not Available'], y=['Not Available'])
-
-table = joined_df_filtered[['Rent 20% of AMHI', 'Rent 50% of AMHI']]
-table2 = joined_df_filtered[['Rent 20% of AMHI', 'Rent 50% of AMHI']]
-
 # Setting layout for dashboard
 
-
-layout = html.Div(children=
-                  # Fetching Area/Comparison Area/Clicked area scale info in local storage
-                  storage_variables()
-                  + [
-                      # Main Layout
-
-                      html.Div(
-                          children=[
-
-                              # Income Categories and Affordable Shelter Costs, 2021
-
-                              html.Div([
-                                  # Title
-                                  html.H3(children=html.Strong('Income Categories and Affordable Shelter Costs, 2021'),
-                                          id='visualization3'),
-                                  # Description
-                                  html.Div([
-                                      html.H6(
-                                          'The following table shows the range of household incomes and affordable shelter costs for each income category, in 2020 dollar values, as well what percentage of the total number of households falls within each category.')
-                                  ], className='muni-reg-text-lgeo'),
-
-                                  # Table
-
-                                  html.Div([
-                                      dash_table.DataTable(
-                                          id='datatable-interactivity',
-                                          columns=[
-                                              {"name": i, 'id': i, "deletable": False, "selectable": False} for i in
-                                              table.columns
-                                          ],
-                                          data=table.to_dict('records'),
-                                          editable=True,
-                                          sort_action="native",
-                                          sort_mode="multi",
-                                          column_selectable=False,
-                                          row_selectable=False,
-                                          row_deletable=False,
-                                          selected_columns=[],
-                                          selected_rows=[],
-                                          page_action="native",
-                                          page_current=0,
-                                          page_size=10,
-                                          merge_duplicate_headers=True,
-                                          export_format="xlsx",
-                                          # style_table={
-                                          #               'padding':'20px',
-                                          #
-                                          #               },
-                                          style_data={'whiteSpace': 'normal', 'overflow': 'hidden',
-                                                      'textOverflow': 'ellipsis'},
-                                          style_cell={'font-family': 'Bahnschrift',
-                                                      'height': 'auto',
-                                                      'whiteSpace': 'normal',
-                                                      'overflow': 'hidden',
-                                                      'textOverflow': 'ellipsis'
-                                                      },
-                                          style_header={'textAlign': 'right', 'fontWeight': 'bold',
-
-                                                        }
-                                      ),
-                                      html.Div(id='datatable-interactivity-container')
-                                  ], className='pg2-table-lgeo'
-
-                                  ),
-
-                              ], className='pg2-table-plot-box-lgeo'),
-
-                              # Percentage of Households in Core Housing Need, by Income Category, 2021
-
-                              html.Div([
-                                  # Title
-                                  html.H3(children=html.Strong(
-                                      'Percentage of Households in Core Housing Need, by Income Category, 2021'),
-                                      id='visualization'),
-                                  # Description
-                                  html.Div([
-                                      html.H6(
-                                          'Income categories are determined by their relationship with each geography’s Area Median Household Income (AMHI). This table shows the range of household incomes and affordable shelter costs for each income category, in 2020 dollar values, as well what percentage of the total number of households falls within each category.')
-                                  ], className='muni-reg-text-lgeo'),
-
-                                  # Graph
-
-                                  html.Div(children=[
-
-                                      dcc.Graph(
-                                          id='graph',
-                                          figure=fig,
-                                          config=config,
-                                      )
-                                  ],
-                                      className='pg2-plot-lgeo'
-
-                                  ),
-
-                              ], className='pg2-table-plot-box-lgeo'),
-
-                              # Percentage of Households in Core Housing Need, by Income Category and HH Size, 2021
-
-                              html.Div([
-                                  # Title
-                                  html.H3(children=html.Strong(
-                                      'Percentage of Households in Core Housing Need, by Income Category and HH Size, 2021'),
-                                      id='visualization2'),
-                                  # Description
-                                  html.Div([
-                                      html.H6(
-                                          'The following chart looks at those households in Core Housing Need and shows their relative distribution by household size (i.e. the number of individuals in a given household) for each household income category. When there is no bar for an income category, it means that either there are no households in Core Housing Need within an income category, or that there are too few households to report.')
-                                  ], className='muni-reg-text-lgeo'),
-
-                                  # Graph
-
-                                  html.Div(children=[
-
-                                      dcc.Graph(
-                                          id='graph2',
-                                          figure=fig,
-                                          config=config,
-                                      )
-                                  ],
-                                      className='pg2-plot-lgeo'
-                                  ),
-
-                              ], className='pg2-table-plot-box-lgeo'),
-
-                              # 2021 Affordable Housing Deficit
-
-                              html.Div([
-                                  # Title
-                                  html.H3(children=html.Strong('2021 Affordable Housing Deficit'), id='visualization4'),
-                                  # Description
-                                  html.Div([
-                                      html.H6(
-                                          'The following table shows the total number of households in Core Housing Need by household size and income category, which may be considered as the existing deficit of housing options in the community.')
-                                  ], className='muni-reg-text-lgeo'),
-
-                                  # Table
-
-                                  html.Div(children=[
-
-                                      html.Div([
-                                          dash_table.DataTable(
-                                              id='datatable2-interactivity',
-                                              columns=[
-                                                  {"name": i, "id": i, "deletable": False, "selectable": False} for i in
-                                                  table2.columns
-                                              ],
-                                              data=table2.to_dict('records'),
-                                              editable=True,
-                                              sort_action="native",
-                                              sort_mode="multi",
-                                              column_selectable=False,
-                                              row_selectable=False,
-                                              row_deletable=False,
-                                              selected_columns=[],
-                                              selected_rows=[],
-                                              page_action="native",
-                                              page_current=0,
-                                              page_size=25,
-                                              merge_duplicate_headers=True,
-                                              style_data={'whiteSpace': 'normal', 'overflow': 'hidden',
-                                                          'textOverflow': 'ellipsis'},
-                                              style_cell={'font-family': 'Bahnschrift',
-                                                          'height': 'auto',
-                                                          'whiteSpace': 'normal',
-                                                          'overflow': 'hidden',
-                                                          'textOverflow': 'ellipsis'},
-                                              style_header={'text-align': 'middle', 'fontWeight': 'bold'},
-                                              export_format="xlsx"
-                                          ),
-                                          html.Div(id='datatable2-interactivity-container')
-                                      ], className='pg2-table-lgeo'
-                                      ),
-                                  ]
-                                  ),
-                              ], className='pg2-table-plot-box-lgeo'),
-
-                              # Percentage of Households in Core Housing Need by Priority Population, 2021
-
-                              html.Div([
-                                  # Title
-                                  html.H3(
-                                      children=html.Strong(
-                                          'Percentage of Households in Core Housing Need by Priority Population, 2021'),
-                                      id='visualization5'),
-                                  # Description
-                                  html.Div([
-                                      html.H6(
-                                          'The following chart compares the rates of Core Housing Need across populations that are at high risk of experiencing housing need. The "Community (all HH)" bar represents the rate of Core Housing Need for all households in the selected community to act as a point of reference. The population with the greatest rate of Core Housing Need is highlighted in dark blue. When there is no bar for a priority population, it means that either there are no households in Core Housing Need within that priority population, or that there are too few households to report.')
-                                  ], className='muni-reg-text-lgeo'),
-
-                                  # Graphs
-
-                                  html.Div(children=[
-
-                                      dcc.Graph(
-                                          id='graph5',
-                                          figure=fig,
-                                          config=config,
-                                      )
-                                  ],
-                                      className='pg2-plot-lgeo'
-                                  ),
-                              ], className='pg2-table-plot-box-lgeo'),
-
-                              # Percentage of Households in Core Housing Need by Priority Population and Income Category, 2021
-
-                              html.Div([
-                                  # Title
-                                  html.H3(children=html.Strong(
-                                      'Percentage of Households in Core Housing Need by Priority Population and Income Category, 2021'),
-                                      id='visualization6'),
-                                  # Description
-                                  html.Div([
-                                      html.H6(
-                                          'The following chart looks at those households in Core Housing Need for each priority population and shows their relative distribution by household income category. When there is no bar for a priority population, it means that either there are no households in Core Housing Need within that priority population, or that there are too few households to report.')
-                                  ], className='muni-reg-text-lgeo'),
-
-                                  # Graphs
-
-                                  html.Div(children=[
-
-                                      dcc.Graph(
-                                          id='graph6',
-                                          figure=fig,
-                                          config=config,
-                                      )
-
-                                  ],
-                                      className='pg2-plot-lgeo'
-                                  ),
-
-                              ], className='pg2-table-plot-box-lgeo'),
-
-                              # Raw data download button
-
-                              html.Div([
-                                  html.Button("Download This Community", id="ov7-download-csv"),
-                                  dcc.Download(id="ov7-download-text")
-                              ],
-                                  className='region-button-lgeo'
-                              ),
-
-                              # LGEO
-
-                              html.Div([
-                                  'This dashboard was created in collaboration with ',
-                                  html.A('Licker Geospatial', href='https://www.lgeo.co/', target="_blank"),
-                                  ' using Plotly.'
-                              ], className='lgeo-credit-text'),
-
-                          ], className='dashboard-pg2-lgeo'
-                      ),
-                  ], className='background-pg2-lgeo'
-                  )
-
-style_data_conditional = [
-    {
-        'if': {'row_index': 0},
-        'backgroundColor': '#b0e6fc',
-        'color': '#000000'
-    },
-    {
-        'if': {'row_index': 1},
-        'backgroundColor': '#74d3f9',
-        'color': '#000000'
-    },
-    {
-        'if': {'row_index': 2},
-        'backgroundColor': '#b0e6fc',
-        'color': '#000000'
-    },
-    {
-        'if': {'row_index': 3},
-        'backgroundColor': '#74d3f9',
-        'color': '#000000'
-    },
-    {
-        'if': {'row_index': 4},
-        'backgroundColor': '#b0e6fc',
-        'color': '#000000'
-    },
-    {
-        'if': {'row_index': 5},
-        'backgroundColor': '#39c0f7',
-        'color': '#000000'
-    }
-]
-
-style_header_conditional = [
-    {
-        'if': {'header_index': 0},
-        'backgroundColor': '#002145',
-        'color': '#FFFFFF'
-    },
-    {
-        'if': {'header_index': 1},
-        'backgroundColor': '#39C0F7',
-        'color': '#000000',
-        # 'width': '60px',
-        # 'minWidth': '60%',
-    },
-    {
-        'if': {'header_index': 2},
-        'backgroundColor': '#39C0F7',
-        'color': '#000000'
-
-    }
-]
+layout = layout(2021)
 
 
 # Plot/table generators and callbacks
@@ -409,8 +73,8 @@ style_header_conditional = [
 # Income Categories and Affordable Shelter Costs, 2021
 
 # Table generator
-def table_amhi_shelter_cost(geo, IsComparison):
-    joined_df_filtered = joined_df.query('Geography == ' + f'"{geo}"')
+def table_amhi_shelter_cost(geo: str, is_comparison: bool):
+    joined_df_filtered = joined_df_current.query('Geography == ' + f'"{geo}"')
 
     portion_of_total_hh = []
     for x in x_base:
@@ -433,7 +97,7 @@ def table_amhi_shelter_cost(geo, IsComparison):
 
     median_rent = '${:0,.0f}'.format(float(joined_df_geo_index.at[geo, 'Rent AMHI']))
 
-    if IsComparison != True:
+    if not is_comparison:
         table = pd.DataFrame(
             {'Income Category': income_ct, '% of Total HHs': portion_of_total_hh, 'Annual HH Income': amhi_list,
              'Affordable Shelter Cost (2020 CAD$)': shelter_list})
@@ -447,23 +111,119 @@ def table_amhi_shelter_cost(geo, IsComparison):
     return table, median_income, median_rent
 
 
+def table_amhi_shelter_cost_years(geo: str, year: int):
+    joined_df_filtered = joined_df_year[year].query('Geography == ' + f'"{geo}"')
+
+    portion_of_total_hh = []
+    for x in x_base:
+        portion_of_total_hh.append(
+            round(joined_df_filtered[f'Percent of Total HH that are in {x}'].tolist()[0] * 100, 2))
+
+    amhi_list = []
+    for a in amhi_range:
+        amhi_list.append(joined_df_filtered[a].tolist()[0])
+
+    shelter_range = ['20% or under of AMHI.1', '21% to 50% of AMHI.1', '51% to 80% of AMHI.1', '81% to 120% of AMHI.1',
+                     '121% and more of AMHI.1']
+    shelter_list = []
+    for s in shelter_range:
+        shelter_list.append(joined_df_filtered[s].tolist()[0])
+
+    joined_df_geo_index = joined_df_filtered.set_index('Geography')
+
+    median_income = '${:0,.0f}'.format(float(joined_df_geo_index.at[geo, 'Median income of household ($)']))
+
+    median_rent = '${:0,.0f}'.format(float(joined_df_geo_index.at[geo, 'Rent AMHI']))
+
+    table = pd.DataFrame(
+        {'Income Category': income_ct, '% of Total HHs ': portion_of_total_hh, 'Annual HH Income ': amhi_list,
+         'Affordable Shelter Cost ': shelter_list})
+    table['% of Total HHs '] = table['% of Total HHs '].astype(str) + '%'
+
+    return table, median_income, median_rent
+
+
 # Callback logic for the table update
 
 @callback(
-    Output('datatable-interactivity', 'columns'),
-    Output('datatable-interactivity', 'data'),
-    Output('datatable-interactivity', 'style_data_conditional'),
-    Output('datatable-interactivity', 'style_cell_conditional'),
-    Output('datatable-interactivity', 'style_header_conditional'),
+    Output('income-category-affordability-table', 'columns'),
+    Output('income-category-affordability-table', 'data'),
+    Output('income-category-affordability-table', 'style_data_conditional'),
+    Output('income-category-affordability-table', 'style_cell_conditional'),
+    Output('income-category-affordability-table', 'style_header_conditional'),
     Input('main-area', 'data'),
     Input('comparison-area', 'data'),
     Input('year-comparison', 'data'),
-    Input('datatable-interactivity', 'selected_columns'),
+    Input('income-category-affordability-table', 'selected_columns'),
     Input('area-scale-store', 'data'),
 )
-def update_table1(geo, geo_c, compare_previous, selected_columns, scale):
+def update_table1(geo, geo_c, year_comparison: str, selected_columns, scale):
+    if year_comparison:
+        # Area Scaling up/down when user clicks area scale button on page 1
+        geo = area_scale_primary_only(geo, scale)
+        # Generating main table
+        table, median_income, median_rent = table_amhi_shelter_cost(geo, is_comparison=False)
+
+        # Generating comparison table
+        _, compared_year = year_comparison.split("-")
+        table_c, median_income_c, median_rent_c = table_amhi_shelter_cost_years(geo, int(compared_year))
+
+        # Merging main and comparison table
+        table_j = table.merge(table_c, how='left', on='Income Category')
+
+        # Generating Callback output
+
+        col_list = []
+
+        median_row = ['Area Median Household Income', "", median_income, median_rent]
+        median_row_c = ["", median_income_c, median_rent_c]
+
+        for i, j in zip(list(table.columns), median_row):
+            if i == 'Income Category':
+                col_list.append({"name": ["Area", i, j], "id": i})
+            else:
+                col_list.append({"name": [geo, i, j], "id": i})
+
+        for i, j in zip(list(table_c.columns[1:]), median_row_c):
+            col_list.append({"name": [f"{compared_year} data", i, j], "id": i})
+
+        style_cell_conditional = [
+                                     {
+                                         'if': {'column_id': c},
+                                         'font_size': comparison_font_size,
+                                         'backgroundColor': columns_color_fill[1]
+                                     } for c in table.columns[1:]
+                                 ] + [
+                                     {
+                                         'if': {'column_id': c},
+                                         'font_size': comparison_font_size,
+                                         'backgroundColor': columns_color_fill[2]
+                                     } for c in table_c.columns[1:]
+                                 ] + [
+                                     {
+                                         'if': {'column_id': table.columns[0]},
+                                         'font_size': comparison_font_size,
+                                         'backgroundColor': columns_color_fill[0]
+                                     }
+                                 ] + [
+                                     {
+                                         'if': {'column_id': 'Affordable Shelter Cost (2020 CAD$)'},
+                                         'maxWidth': "120px",
+
+                                     }
+                                 ] + [
+                                     {
+                                         'if': {'column_id': 'Income Category'},
+                                         'maxWidth': "100px",
+                                         'width': '28%'
+
+                                     }
+                                 ]
+
+        return col_list, table_j.to_dict(
+            'records'), style_data_conditional, style_cell_conditional, style_header_conditional
     # Single area mode
-    if geo == geo_c or geo_c is None or (geo is None and geo_c is not None):
+    elif geo == geo_c or geo_c is None or (geo is None and geo_c is not None):
 
         # When no area is selected
         if geo is None and geo_c is not None:
@@ -475,7 +235,7 @@ def update_table1(geo, geo_c, compare_previous, selected_columns, scale):
         geo = area_scale_primary_only(geo, scale)
 
         # Generating table
-        table, median_income, median_rent = table_amhi_shelter_cost(geo, IsComparison=False)
+        table, median_income, median_rent = table_amhi_shelter_cost(geo, is_comparison=False)
 
         # Generating callback output to update table
         col_list = []
@@ -512,7 +272,7 @@ def update_table1(geo, geo_c, compare_previous, selected_columns, scale):
                                      }
                                  ]
         return col_list, table.to_dict(
-            'record'), style_data_conditional, style_cell_conditional, style_header_conditional
+            'records'), style_data_conditional, style_cell_conditional, style_header_conditional
 
     # Comparison mode    
     else:
@@ -524,15 +284,15 @@ def update_table1(geo, geo_c, compare_previous, selected_columns, scale):
         # Main Table
 
         # Generating main table
-        table, median_income, median_rent = table_amhi_shelter_cost(geo, IsComparison=False)
+        table, median_income, median_rent = table_amhi_shelter_cost(geo, is_comparison=False)
 
         # Comparison Table
 
-        if geo_c == None:
+        if geo_c is None:
             geo_c = geo
 
         # Generating comparison table
-        table_c, median_income_c, median_rent_c = table_amhi_shelter_cost(geo_c, IsComparison=True)
+        table_c, median_income_c, median_rent_c = table_amhi_shelter_cost(geo_c, is_comparison=True)
 
         # Merging main and comparison table
         table_j = table.merge(table_c, how='left', on='Income Category')
@@ -587,15 +347,14 @@ def update_table1(geo, geo_c, compare_previous, selected_columns, scale):
                                  ]
 
         return col_list, table_j.to_dict(
-            'record'), style_data_conditional, style_cell_conditional, style_header_conditional
+            'records'), style_data_conditional, style_cell_conditional, style_header_conditional
 
 
 # Percentage of Households in Core Housing Need, by Income Category, 2021
 
-
 # Plot dataframe generator
 def plot_df_core_housing_need_by_income(geo, IsComparison):
-    joined_df_filtered = joined_df.query('Geography == ' + f'"{geo}"')
+    joined_df_filtered = joined_df_current.query('Geography == ' + f'"{geo}"')
 
     x_list = []
 
@@ -631,7 +390,7 @@ def plot_df_core_housing_need_by_income(geo, IsComparison):
     Input('main-area', 'data'),
     Input('comparison-area', 'data'),
     Input('area-scale-store', 'data'),
-    Input('datatable-interactivity', 'selected_columns'),
+    Input('income-category-affordability-table', 'selected_columns'),
 )
 def update_geo_figure(geo, geo_c, scale, refresh):
     # Single area mode
@@ -775,7 +534,7 @@ def update_geo_figure(geo, geo_c, scale, refresh):
 
 # Plot dataframe generator
 def plot_df_core_housing_need_by_amhi(geo, IsComparison):
-    joined_df_filtered = joined_df.query('Geography == ' + f'"{geo}"')
+    joined_df_filtered = joined_df_current.query('Geography == ' + f'"{geo}"')
 
     x_list = []
 
@@ -820,7 +579,7 @@ def plot_df_core_housing_need_by_amhi(geo, IsComparison):
     Input('main-area', 'data'),
     Input('comparison-area', 'data'),
     Input('area-scale-store', 'data'),
-    Input('datatable-interactivity', 'selected_columns'),
+    Input('income-category-affordability-table', 'selected_columns'),
 )
 def update_geo_figure2(geo, geo_c, scale, refresh):
     # Single area mode
@@ -966,11 +725,10 @@ def update_geo_figure2(geo, geo_c, scale, refresh):
 
 # Table generator
 def table_core_affordable_housing_deficit(geo, IsComparison):
-    joined_df_filtered = joined_df.query('Geography == ' + f'"{geo}"')
+    joined_df_filtered = joined_df_current.query('Geography == ' + f'"{geo}"')
 
     table2 = pd.DataFrame({'Income Category': income_ct})
 
-    h_hold_value = []
     hh_p_num_list = [1, 2, 3, 4, '5 or more']
     income_lv_list = ['20% or under', '21% to 50%', '51% to 80%', '81% to 120%', '121% or more']
 
@@ -984,11 +742,15 @@ def table_core_affordable_housing_deficit(geo, IsComparison):
             h2 = f'{str(h)} persons'
         for i in income_lv_list:
             if i == '20% or under':
-                column = f'Total - Private households by presence of at least one or of the combined activity limitations (Q11a, Q11b, Q11c or Q11f or combined)-{h2}-Households with income {i} of area median household income (AMHI)-Households in core housing need'
+                column = (f'Total - Private households by presence of at least one or of the combined activity '
+                          f'limitations (Q11a, Q11b, Q11c or Q11f or combined)-{h2}-Households with income {i} of '
+                          f'area median household income (AMHI)-Households in core housing need')
                 h_hold_value.append(joined_df_filtered[column].tolist()[0])
 
             else:
-                column = f'Total - Private households by presence of at least one or of the combined activity limitations (Q11a, Q11b, Q11c or Q11f or combined)-{h2}-Households with income {i} of AMHI-Households in core housing need'
+                column = (f'Total - Private households by presence of at least one or of the combined activity '
+                          f'limitations (Q11a, Q11b, Q11c or Q11f or combined)-{h2}-Households with income {i} of '
+                          f'AMHI-Households in core housing need')
                 h_hold_value.append(joined_df_filtered[column].tolist()[0])
 
         if IsComparison != True:
@@ -1107,7 +869,7 @@ def update_table2(geo, geo_c, selected_columns, scale):
                              )})
 
         return col_list, table2.to_dict(
-            'record'), style_data_conditional, style_cell_conditional, style_header_conditional
+            'records'), style_data_conditional, style_cell_conditional, style_header_conditional
 
 
     # Comparison mode
@@ -1239,7 +1001,7 @@ hh_categories = list(hh_category_dict.values())
 # Plot dataframe generator
 
 def plot_df_core_housing_need_by_priority_population(geo):
-    joined_df_filtered = joined_df.query('Geography == ' + f'"{geo}"')
+    joined_df_filtered = joined_df_current.query('Geography == ' + f'"{geo}"')
 
     percent_hh = [joined_df_filtered[c].tolist()[0] for c in hh_columns]
 
@@ -1276,7 +1038,7 @@ def color_dict_core_housing_need_by_priority_population(plot_df):
     Input('main-area', 'data'),
     Input('comparison-area', 'data'),
     Input('area-scale-store', 'data'),
-    Input('datatable-interactivity', 'selected_columns'),
+    Input('income-category-affordability-table', 'selected_columns'),
 )
 def update_geo_figure5(geo, geo_c, scale, refresh):
     # Single area mode
@@ -1480,7 +1242,7 @@ income_lv_list = ['20% or under', '21% to 50%', '51% to 80%', '81% to 120%', '12
 # Plot dataframe generator
 
 def plot_df_core_housing_need_by_priority_population_income(geo):
-    joined_df_filtered = joined_df.query('Geography == ' + f'"{geo}"')
+    joined_df_filtered = joined_df_current.query('Geography == ' + f'"{geo}"')
 
     income_col = []
     percent_col = []
@@ -1513,7 +1275,7 @@ def plot_df_core_housing_need_by_priority_population_income(geo):
     Input('main-area', 'data'),
     Input('comparison-area', 'data'),
     Input('area-scale-store', 'data'),
-    Input('datatable-interactivity', 'selected_columns'),
+    Input('income-category-affordability-table', 'selected_columns'),
 )
 def update_geo_figure6(geo, geo_c, scale, refresh):
     # Overried income category values
@@ -1675,8 +1437,8 @@ def func_ov7(n_clicks, geo, geo_c):
         geo = default_value
 
     if "ov7-download-csv" == ctx.triggered_id:
-        joined_df_geo = joined_df.query("Geography == " + f"'{geo}'")
-        joined_df_geo_c = joined_df.query("Geography == " + f"'{geo_c}'")
+        joined_df_geo = joined_df_current.query("Geography == " + f"'{geo}'")
+        joined_df_geo_c = joined_df_current.query("Geography == " + f"'{geo_c}'")
         joined_df_download = pd.concat([joined_df_geo, joined_df_geo_c])
         joined_df_download = joined_df_download.drop(columns=['pk_x', 'pk_y'])
 

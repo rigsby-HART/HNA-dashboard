@@ -3,6 +3,7 @@ import dash
 from dash import html, dcc
 from dash.dependencies import Input, Output
 
+
 # Connect to main app_file.py file
 from app_file import app
 from helpers.table_helper import storage_variables

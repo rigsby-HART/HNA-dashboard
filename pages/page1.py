@@ -9,17 +9,17 @@ import geopandas as gpd
 import plotly.graph_objects as go
 from dash import dcc, html, Input, Output, ctx, callback, State
 
-from helpers.create_engine import engine_2021, joined_df, mapped_geo_code
+from helpers.create_engine import engine_current, mapped_geo_code
 from helpers.table_helper import storage_variables
 
 warnings.filterwarnings("ignore")
 
 # Importing Geo Code Information
 
-df_geo_list = pd.read_sql_table('geocodes', engine_2021.connect())
-df_region_list = pd.read_sql_table('regioncodes', engine_2021.connect())
+df_geo_list = pd.read_sql_table('geocodes', engine_current.connect())
+df_region_list = pd.read_sql_table('regioncodes', engine_current.connect())
 df_region_list.columns = df_geo_list.columns
-df_province_list = pd.read_sql_table('provincecodes', engine_2021.connect())
+df_province_list = pd.read_sql_table('provincecodes', engine_current.connect())
 df_province_list.columns = df_geo_list.columns
 
 # Importing Province Map
@@ -29,7 +29,7 @@ gdf_p_code_added = gdf_p_code_added.set_index('Geo_Code')
 
 # Importing subregions which don't have data
 
-not_avail = pd.read_sql_table('not_available_csd', engine_2021.connect())
+not_avail = pd.read_sql_table('not_available_csd', engine_current.connect())
 not_avail['CSDUID'] = not_avail['CSDUID'].astype(str)
 
 # Configuration for plot icons
@@ -122,7 +122,10 @@ layout = html.Div(children=
                                               html.Strong('Select Comparison Census Geography (Optional)'),
                                               dcc.Dropdown(order['Geography'].unique(), id='comparison-geo-dropdown'),
                                           ],
-                                          className='dropdown-lgeo'
+                                          className='dropdown-lgeo',
+                                          style={
+                                              "visibility": "visible"
+                                          }
                                       ),
                                   ],
                                   className='dropdown-box-lgeo'
@@ -150,9 +153,10 @@ layout = html.Div(children=
                                   ], className='region-button-box-lgeo'
                                   ),
                                   html.Div(children=[
-                                      html.Button('View 2016 Comparison',
-                                                  title="Bring up a comparison between 2021 and 2016",
-                                                  id='to-province-1', n_clicks=0, className='region-button-lgeo'),
+                                      html.Button('Toggle 2016 Comparison',
+                                                  title="Toggle a comparison between 2021 and 2016",
+                                                  id='year-comparison-button', n_clicks=0,
+                                                  className='region-button-lgeo'),
                                   ], className='region-button-box-lgeo'
                                   )
 
@@ -196,7 +200,6 @@ layout = html.Div(children=
     Output('area-scale-store', 'data'),
     Input('primary-geo-dropdown', 'value'),
     Input('comparison-geo-dropdown', 'value'),
-    # Input('primary-geo-dropdown-parent', 'n_clicks'),
     Input('comparison-geo-dropdown-parent', 'n_clicks'),
     Input('to-geography-1', 'n_clicks'),
     Input('to-region-1', 'n_clicks'),
@@ -494,3 +497,19 @@ def update_map(clickData, reset_map, select_region, comparison_region, *args):
         fig_m = province_map(select_region, True)
 
         return fig_m, select_region, comparison_region
+
+
+@callback(
+    Output('year-comparison', 'data'),
+    Output("comparison-geo-dropdown-parent", "style"),
+    State('year-comparison', 'data'),
+    Input("year-comparison-button", "n_clicks"),
+)
+def toggle_year_comparison(year_comparison, _):
+    if ctx.triggered_id == "year-comparison-button":
+        if year_comparison is not None:
+            year_comparison = None
+        else:
+            year_comparison = "2021-2016"
+        return year_comparison, {"visibility": "hidden" if year_comparison else "visible"}
+    return year_comparison, {"visibility": "hidden" if year_comparison else "visible"}

@@ -11,7 +11,8 @@ import warnings
 from dash.dash_table.Format import Format, Scheme, Group
 from plotly.subplots import make_subplots
 from dash import dcc, dash_table, html, Input, Output, ctx, callback
-from helpers.create_engine import engine_2021
+from helpers.style_helper import style_data_conditional, style_header_conditional
+from helpers.create_engine import engine_current
 from helpers.table_helper import area_scale_comparison, area_scale_primary_only, storage_variables
 
 warnings.filterwarnings("ignore")
@@ -19,17 +20,17 @@ warnings.filterwarnings("ignore")
 
 # Importing Geo Code Information
 
-mapped_geo_code = pd.read_sql_table('geocodes_integrated', engine_2021.connect())
-df_geo_list = pd.read_sql_table('geocodes', engine_2021.connect())
-df_region_list = pd.read_sql_table('regioncodes', engine_2021.connect())
+mapped_geo_code = pd.read_sql_table('geocodes_integrated', engine_current.connect())
+df_geo_list = pd.read_sql_table('geocodes', engine_current.connect())
+df_region_list = pd.read_sql_table('regioncodes', engine_current.connect())
 df_region_list.columns = df_geo_list.columns
-df_province_list = pd.read_sql_table('provincecodes', engine_2021.connect())
+df_province_list = pd.read_sql_table('provincecodes', engine_current.connect())
 df_province_list.columns = df_geo_list.columns
 
 # Importing Projection Data
 
-updated_csd = pd.read_sql_table('csd_hh_projections', engine_2021.connect())  # CSD level projections
-updated_cd = pd.read_sql_table('cd_hh_projections', engine_2021.connect())  # CD level projections
+updated_csd = pd.read_sql_table('csd_hh_projections', engine_current.connect())  # CSD level projections
+updated_cd = pd.read_sql_table('cd_hh_projections', engine_current.connect())  # CD level projections
 
 # Configuration for plot icons
 
@@ -516,51 +517,6 @@ layout = html.Div(children=
 
 # Preset row colors for tables
 
-style_data_conditional = [
-    {
-        'if': {'row_index': 0},
-        'backgroundColor': '#b0e6fc',
-        'color': '#000000'
-    },
-    {
-        'if': {'row_index': 1},
-        'backgroundColor': '#74d3f9',
-        'color': '#000000'
-    },
-    {
-        'if': {'row_index': 2},
-        'backgroundColor': '#b0e6fc',
-        'color': '#000000'
-    },
-    {
-        'if': {'row_index': 3},
-        'backgroundColor': '#74d3f9',
-        'color': '#000000'
-    },
-    {
-        'if': {'row_index': 4},
-        'backgroundColor': '#b0e6fc',
-        'color': '#000000'
-    },
-    {
-        'if': {'row_index': 5},
-        'backgroundColor': '#39c0f7',
-        'color': '#000000'
-    },
-]
-
-style_header_conditional = [
-    {
-        'if': {'header_index': 0},
-        'backgroundColor': '#002145',
-        'color': '#FFFFFF'
-    },
-    {
-        'if': {'header_index': 1},
-        'backgroundColor': '#39C0F7',
-        'color': '#000000'
-    },
-]
 
 width_num = 1000
 

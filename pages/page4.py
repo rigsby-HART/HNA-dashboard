@@ -1,28 +1,26 @@
 # Importing Libraries
-import pdb
 
-import dash
 import pandas as pd
 import numpy as np
 import plotly.express as px
 import plotly.graph_objects as go
-import math as math
 import warnings
 from dash import dcc, dash_table, html, Input, Output, ctx, callback
 from dash.dash_table.Format import Format, Scheme, Group
 from plotly.subplots import make_subplots
-from helpers.create_engine import engine_2021
+from helpers.create_engine import engine_current
+from helpers.style_helper import style_data_conditional, style_header_conditional
 from helpers.table_helper import area_scale_comparison, area_scale_primary_only, storage_variables
 
 warnings.filterwarnings("ignore")
 
 # Importing indigenous data
 
-df_ind = pd.read_sql_table('indigenous', engine_2021.connect())
+df_ind = pd.read_sql_table('indigenous', engine_current.connect())
 
 # Importing income data
 
-df_income = pd.read_sql_table('income', engine_2021.connect())
+df_income = pd.read_sql_table('income', engine_current.connect())
 
 # Preprocessing - Preparing main dataset and categories being used for plots
 
@@ -32,7 +30,7 @@ joined_df = income_category.merge(df_ind, how='left', on='Geography')
 
 # Importing Geo Code Information
 
-mapped_geo_code = pd.read_sql_table('geocodes_integrated', engine_2021.connect())
+mapped_geo_code = pd.read_sql_table('geocodes_integrated', engine_current.connect())
 
 # Configuration for plot icons
 
@@ -294,58 +292,6 @@ layout = html.Div(children=
                       ),
                   ], className='background-pg4-lgeo'
                   )
-
-style_data_conditional = [
-    {
-        'if': {'row_index': 0},
-        'backgroundColor': '#b0e6fc',
-        'color': '#000000'
-    },
-    {
-        'if': {'row_index': 1},
-        'backgroundColor': '#74d3f9',
-        'color': '#000000'
-    },
-    {
-        'if': {'row_index': 2},
-        'backgroundColor': '#b0e6fc',
-        'color': '#000000'
-    },
-    {
-        'if': {'row_index': 3},
-        'backgroundColor': '#74d3f9',
-        'color': '#000000'
-    },
-    {
-        'if': {'row_index': 4},
-        'backgroundColor': '#b0e6fc',
-        'color': '#000000'
-    },
-    {
-        'if': {'row_index': 5},
-        'backgroundColor': '#39c0f7',
-        'color': '#000000'
-    },
-]
-
-style_header_conditional = [
-    {
-        'if': {'header_index': 0},
-        'backgroundColor': '#002145',
-        'color': '#FFFFFF'
-    },
-    {
-        'if': {'header_index': 1},
-        'backgroundColor': '#39C0F7',
-        'color': '#000000'
-    },
-    {
-        'if': {'header_index': 2},
-        'backgroundColor': '#39C0F7',
-        'color': '#000000'
-
-    }
-]
 
 
 # Plot/table generators and callbacks

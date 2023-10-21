@@ -1,18 +1,46 @@
-# Engine will be created here.  It's shared throughout all of the processes, so it makess no sense to remake an engine for EACH page
+# Engine will be created here.  It's shared throughout all the processes, so it makess no sense to remake an
+# engine for EACH page
+
+# I like type hinting, makes the IDE a lot smarter: try Pycharm Community if you aren't using one
+from typing import Dict, List
+
 import pandas as pd
+import sqlalchemy.engine
 from sqlalchemy import create_engine
-engine_2021 = create_engine('sqlite:///sources//hart2021.db')
+import os
+
+from sources.previous_years.year_data import year_data
+
+# All years imported here, modify the years imported using the json listed below
+data_path = "sources/previous_years/"
+engine_list: Dict[int, sqlalchemy.engine.Engine] = {}
+for year, file_name in year_data:
+    file_path = os.path.join(data_path, file_name)
+    if os.path.isfile(file_path):
+        engine_list[year] = create_engine(f'sqlite:///sources//previous_years//{file_name}')
+
 # Importing income data
+engine_current = engine_list[2021] # Current Year
 
-df_income = pd.read_sql_table('income', engine_2021.connect())
-income_category = df_income.drop(['Geography'], axis=1)
+income_category = pd.read_sql_table('income', engine_current.connect())
+income_category = income_category.drop(['Geography'], axis=1)
 income_category = income_category.rename(columns={'Formatted Name': 'Geography'})
-# Importing partners data
 
-df_partners = pd.read_sql_table('partners', engine_2021.connect())
+df_partners = pd.read_sql_table('partners', engine_current.connect())
 
-joined_df = income_category.merge(df_partners, how='left', on='Geography')
+joined_df_current = income_category.merge(df_partners, how='left', on='Geography')
 
 # Geo code data
-mapped_geo_code = pd.read_sql_table('geocodes_integrated', engine_2021.connect())
+mapped_geo_code = pd.read_sql_table('geocodes_integrated', engine_current.connect())
 
+# Repeat the data processing for each year
+joined_df_year: Dict[int, pd.DataFrame] = {}
+
+for year in engine_list.keys():
+    income_category = pd.read_sql_table('income', engine_list[year].connect())
+    income_category = income_category.drop(['Geography'], axis=1)
+    income_category = income_category.rename(columns={'Formatted Name': 'Geography'})
+
+    df_partners = pd.read_sql_table('partners', engine_list[year].connect())
+
+    joined_df_year[year] = income_category.merge(df_partners, how='left', on='Geography')
