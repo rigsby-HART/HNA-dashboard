@@ -20,7 +20,8 @@ for year, file_name in year_data:
         engine_list[year] = create_engine(f'sqlite:///sources//previous_years//{file_name}')
 
 # Importing income data
-engine_current = engine_list[2021] # Current Year
+default_year = 2021
+engine_current = engine_list[default_year] # Current Year
 
 income_category = pd.read_sql_table('income', engine_current.connect())
 income_category = income_category.drop(['Geography'], axis=1)

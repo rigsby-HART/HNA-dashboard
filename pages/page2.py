@@ -4,11 +4,11 @@ import pandas as pd
 import plotly.graph_objects as go
 import math as math
 import warnings
-from dash import dcc, Input, Output, ctx, callback
+from dash import dcc, Input, Output, ctx, callback, State, html
 from dash.dash_table.Format import Format, Scheme, Group
 from plotly.subplots import make_subplots
 from helpers.style_helper import style_header_conditional, style_data_conditional
-from helpers.create_engine import joined_df_current, joined_df_year
+from helpers.create_engine import joined_df_current, joined_df_year, default_year
 from helpers.table_helper import area_scale_comparison, area_scale_primary_only
 from pages.page2_helpers.page2_main import layout
 
@@ -16,6 +16,7 @@ warnings.filterwarnings("ignore")
 
 # Preprocessing - Preparing main dataset and categories being used for plots
 
+# Base is what we actually label the groups as, columns is what the column the data lays in is called in the hart.db
 x_base = ['Very Low Income',
           'Low Income',
           'Moderate Income',
@@ -73,45 +74,7 @@ layout = layout(2021)
 # Income Categories and Affordable Shelter Costs, 2021
 
 # Table generator
-def table_amhi_shelter_cost(geo: str, is_comparison: bool):
-    joined_df_filtered = joined_df_current.query('Geography == ' + f'"{geo}"')
-
-    portion_of_total_hh = []
-    for x in x_base:
-        portion_of_total_hh.append(
-            round(joined_df_filtered[f'Percent of Total HH that are in {x}'].tolist()[0] * 100, 2))
-
-    amhi_list = []
-    for a in amhi_range:
-        amhi_list.append(joined_df_filtered[a].tolist()[0])
-
-    shelter_range = ['20% or under of AMHI.1', '21% to 50% of AMHI.1', '51% to 80% of AMHI.1', '81% to 120% of AMHI.1',
-                     '121% and more of AMHI.1']
-    shelter_list = []
-    for s in shelter_range:
-        shelter_list.append(joined_df_filtered[s].tolist()[0])
-
-    joined_df_geo_index = joined_df_filtered.set_index('Geography')
-
-    median_income = '${:0,.0f}'.format(float(joined_df_geo_index.at[geo, 'Median income of household ($)']))
-
-    median_rent = '${:0,.0f}'.format(float(joined_df_geo_index.at[geo, 'Rent AMHI']))
-
-    if not is_comparison:
-        table = pd.DataFrame(
-            {'Income Category': income_ct, '% of Total HHs': portion_of_total_hh, 'Annual HH Income': amhi_list,
-             'Affordable Shelter Cost (2020 CAD$)': shelter_list})
-        table['% of Total HHs'] = table['% of Total HHs'].astype(str) + '%'
-    else:
-        table = pd.DataFrame(
-            {'Income Category': income_ct, '% of Total HHs ': portion_of_total_hh, 'Annual HH Income ': amhi_list,
-             'Affordable Shelter Cost ': shelter_list})
-        table['% of Total HHs '] = table['% of Total HHs '].astype(str) + '%'
-
-    return table, median_income, median_rent
-
-
-def table_amhi_shelter_cost_years(geo: str, year: int):
+def table_amhi_shelter_cost(geo: str, is_second: bool, year: int = default_year):
     joined_df_filtered = joined_df_year[year].query('Geography == ' + f'"{geo}"')
 
     portion_of_total_hh = []
@@ -135,10 +98,16 @@ def table_amhi_shelter_cost_years(geo: str, year: int):
 
     median_rent = '${:0,.0f}'.format(float(joined_df_geo_index.at[geo, 'Rent AMHI']))
 
-    table = pd.DataFrame(
-        {'Income Category': income_ct, '% of Total HHs ': portion_of_total_hh, 'Annual HH Income ': amhi_list,
-         'Affordable Shelter Cost ': shelter_list})
-    table['% of Total HHs '] = table['% of Total HHs '].astype(str) + '%'
+    if not is_second:
+        table = pd.DataFrame(
+            {'Income Category': income_ct, '% of Total HHs': portion_of_total_hh, 'Annual HH Income': amhi_list,
+             'Affordable Shelter Cost (2020 CAD$)': shelter_list})
+        table['% of Total HHs'] = table['% of Total HHs'].astype(str) + '%'
+    else:
+        table = pd.DataFrame(
+            {'Income Category': income_ct, '% of Total HHs ': portion_of_total_hh, 'Annual HH Income ': amhi_list,
+             'Affordable Shelter Cost ': shelter_list})
+        table['% of Total HHs '] = table['% of Total HHs '].astype(str) + '%'
 
     return table, median_income, median_rent
 
@@ -158,72 +127,8 @@ def table_amhi_shelter_cost_years(geo: str, year: int):
     Input('area-scale-store', 'data'),
 )
 def update_table1(geo, geo_c, year_comparison: str, selected_columns, scale):
-    if year_comparison:
-        # Area Scaling up/down when user clicks area scale button on page 1
-        geo = area_scale_primary_only(geo, scale)
-        # Generating main table
-        table, median_income, median_rent = table_amhi_shelter_cost(geo, is_comparison=False)
-
-        # Generating comparison table
-        _, compared_year = year_comparison.split("-")
-        table_c, median_income_c, median_rent_c = table_amhi_shelter_cost_years(geo, int(compared_year))
-
-        # Merging main and comparison table
-        table_j = table.merge(table_c, how='left', on='Income Category')
-
-        # Generating Callback output
-
-        col_list = []
-
-        median_row = ['Area Median Household Income', "", median_income, median_rent]
-        median_row_c = ["", median_income_c, median_rent_c]
-
-        for i, j in zip(list(table.columns), median_row):
-            if i == 'Income Category':
-                col_list.append({"name": ["Area", i, j], "id": i})
-            else:
-                col_list.append({"name": [geo, i, j], "id": i})
-
-        for i, j in zip(list(table_c.columns[1:]), median_row_c):
-            col_list.append({"name": [f"{compared_year} data", i, j], "id": i})
-
-        style_cell_conditional = [
-                                     {
-                                         'if': {'column_id': c},
-                                         'font_size': comparison_font_size,
-                                         'backgroundColor': columns_color_fill[1]
-                                     } for c in table.columns[1:]
-                                 ] + [
-                                     {
-                                         'if': {'column_id': c},
-                                         'font_size': comparison_font_size,
-                                         'backgroundColor': columns_color_fill[2]
-                                     } for c in table_c.columns[1:]
-                                 ] + [
-                                     {
-                                         'if': {'column_id': table.columns[0]},
-                                         'font_size': comparison_font_size,
-                                         'backgroundColor': columns_color_fill[0]
-                                     }
-                                 ] + [
-                                     {
-                                         'if': {'column_id': 'Affordable Shelter Cost (2020 CAD$)'},
-                                         'maxWidth': "120px",
-
-                                     }
-                                 ] + [
-                                     {
-                                         'if': {'column_id': 'Income Category'},
-                                         'maxWidth': "100px",
-                                         'width': '28%'
-
-                                     }
-                                 ]
-
-        return col_list, table_j.to_dict(
-            'records'), style_data_conditional, style_cell_conditional, style_header_conditional
     # Single area mode
-    elif geo == geo_c or geo_c is None or (geo is None and geo_c is not None):
+    if not year_comparison and (geo == geo_c or geo_c is None or (geo is None and geo_c is not None)):
 
         # When no area is selected
         if geo is None and geo_c is not None:
@@ -235,7 +140,7 @@ def update_table1(geo, geo_c, year_comparison: str, selected_columns, scale):
         geo = area_scale_primary_only(geo, scale)
 
         # Generating table
-        table, median_income, median_rent = table_amhi_shelter_cost(geo, is_comparison=False)
+        table, median_income, median_rent = table_amhi_shelter_cost(geo, False)
 
         # Generating callback output to update table
         col_list = []
@@ -274,17 +179,22 @@ def update_table1(geo, geo_c, year_comparison: str, selected_columns, scale):
         return col_list, table.to_dict(
             'records'), style_data_conditional, style_cell_conditional, style_header_conditional
 
-    # Comparison mode    
+    # Comparison mode
     else:
-
+        if year_comparison:
+            geo = area_scale_primary_only(geo, scale)
+            _, compared_year = year_comparison.split("-")
         # Area Scaling up/down when user clicks area scale button on page 1
-
-        geo, geo_c = area_scale_comparison(geo, geo_c, scale)
+        else:
+            geo, geo_c = area_scale_comparison(geo, geo_c, scale)
 
         # Main Table
 
         # Generating main table
-        table, median_income, median_rent = table_amhi_shelter_cost(geo, is_comparison=False)
+        table, median_income, median_rent = (
+            table_amhi_shelter_cost(geo, False, int(compared_year)) if year_comparison else
+            table_amhi_shelter_cost(geo, False)
+        )
 
         # Comparison Table
 
@@ -292,7 +202,10 @@ def update_table1(geo, geo_c, year_comparison: str, selected_columns, scale):
             geo_c = geo
 
         # Generating comparison table
-        table_c, median_income_c, median_rent_c = table_amhi_shelter_cost(geo_c, is_comparison=True)
+        table_c, median_income_c, median_rent_c = (
+            table_amhi_shelter_cost(geo, True) if year_comparison else
+            table_amhi_shelter_cost(geo_c, True)
+        )
 
         # Merging main and comparison table
         table_j = table.merge(table_c, how='left', on='Income Category')
@@ -308,10 +221,10 @@ def update_table1(geo, geo_c, year_comparison: str, selected_columns, scale):
             if i == 'Income Category':
                 col_list.append({"name": ["Area", i, j], "id": i})
             else:
-                col_list.append({"name": [geo, i, j], "id": i})
+                col_list.append({"name": [geo + " " + compared_year if year_comparison else geo, i, j], "id": i})
 
         for i, j in zip(list(table_c.columns[1:]), median_row_c):
-            col_list.append({"name": [geo_c, i, j], "id": i})
+            col_list.append({"name": [geo + " " + str(default_year) if year_comparison else geo_c, i, j], "id": i})
 
         style_cell_conditional = [
                                      {
@@ -353,25 +266,26 @@ def update_table1(geo, geo_c, year_comparison: str, selected_columns, scale):
 # Percentage of Households in Core Housing Need, by Income Category, 2021
 
 # Plot dataframe generator
-def plot_df_core_housing_need_by_income(geo, IsComparison):
-    joined_df_filtered = joined_df_current.query('Geography == ' + f'"{geo}"')
+def plot_df_core_housing_need_by_income(geo: str, is_second: bool, year: int = default_year):
+    joined_df_filtered = joined_df_year[year].query('Geography == ' + f'"{geo}"')
 
     x_list = []
 
+    # Adds labels to first four groups
     i = 0
-    for b, c in zip(x_base, x_columns):
-        value = joined_df_filtered[c].tolist()[0]
+    for income_category, income_query_string in zip(x_base, x_columns):
+        value = str(joined_df_filtered[income_query_string].tolist()[0])
         # print(i, b,c, value, type(value))
         if i < 4:
-            if IsComparison != True:
-                x = b + '<br>' + " ($" + value + ")"
+            if is_second is False:
+                x = income_category + '<br>' + " ($" + value + ")"
                 # print(x)
             else:
                 x = " ($" + value + ") "
             x_list.append(x)
         else:
-            if IsComparison != True:
-                x = b + '<br>' + " (>$" + value + ")"
+            if is_second is False:
+                x = income_category + '<br>' + " (>$" + value + ")"
             else:
                 x = " (>$" + value + ") "
             x_list.append(x)
@@ -389,12 +303,13 @@ def plot_df_core_housing_need_by_income(geo, IsComparison):
     Output('graph', 'figure'),
     Input('main-area', 'data'),
     Input('comparison-area', 'data'),
+    Input('year-comparison', 'data'),
     Input('area-scale-store', 'data'),
     Input('income-category-affordability-table', 'selected_columns'),
 )
-def update_geo_figure(geo, geo_c, scale, refresh):
+def update_geo_figure(geo: str, geo_c: str, year_comparison: str, scale, refresh):
     # Single area mode
-    if geo == geo_c or geo_c == None or (geo == None and geo_c != None):
+    if not year_comparison and (geo == geo_c or geo_c == None or (geo == None and geo_c != None)):
 
         # When no area is selected
         if geo == None and geo_c != None:
@@ -406,7 +321,7 @@ def update_geo_figure(geo, geo_c, scale, refresh):
         geo = area_scale_primary_only(geo, scale)
 
         # Generating dataframe for plot
-        plot_df = plot_df_core_housing_need_by_income(geo, IsComparison=False)
+        plot_df = plot_df_core_housing_need_by_income(geo, is_second=False)
 
         # Generating plot
         fig = go.Figure()
@@ -450,18 +365,27 @@ def update_geo_figure(geo, geo_c, scale, refresh):
 
     # Comparison mode
     else:
-
+        if year_comparison:
+            geo = area_scale_primary_only(geo, scale)
+            original_year, compared_year = year_comparison.split("-")
         # Area Scaling up/down when user clicks area scale button on page 1
-
-        geo, geo_c = area_scale_comparison(geo, geo_c, scale)
+        else:
+            geo, geo_c = area_scale_comparison(geo, geo_c, scale)
 
         # Subplot setting for the comparison mode
-        fig = make_subplots(rows=1, cols=2, subplot_titles=(f"{geo}", f"{geo_c}"), shared_xaxes=True)
+        fig = make_subplots(rows=1, cols=2,
+                            subplot_titles=(
+                                f"{geo + ' ' + compared_year if year_comparison else geo}",
+                                f"{geo + ' ' + str(original_year) if year_comparison else geo_c}"),
+                            shared_xaxes=True)
 
         # Main Plot
 
         # Generating dataframe for main plot
-        plot_df = plot_df_core_housing_need_by_income(geo, IsComparison=False)
+        plot_df = (
+            plot_df_core_housing_need_by_income(geo, False, int(compared_year)) if year_comparison else
+            plot_df_core_housing_need_by_income(geo, is_second=False)
+        )
 
         # Generating main plot
         n = 0
@@ -483,7 +407,10 @@ def update_geo_figure(geo, geo_c, scale, refresh):
         # Comparison plot
 
         # Generating dataframe for comparison plot
-        plot_df_c = plot_df_core_housing_need_by_income(geo_c, IsComparison=True)
+        plot_df_c = (
+            plot_df_core_housing_need_by_income(geo, True) if year_comparison else
+            plot_df_core_housing_need_by_income(geo_c, True)
+        )
 
         # Generating comparison plot
         n = 0
@@ -503,7 +430,8 @@ def update_geo_figure(geo, geo_c, scale, refresh):
 
         # Plot layout settings
         fig.update_layout(
-            title='Percentage of Households in Core Housing Need, by Income Category, 2021',
+            title='Percentage of Households in Core Housing Need, by Income Category, '
+                  f'{compared_year + " vs " + original_year if year_comparison else original_year}',
             showlegend=False,
             width=900,
             legend=dict(font=dict(size=8)),
@@ -533,22 +461,22 @@ def update_geo_figure(geo, geo_c, scale, refresh):
 # Percentage of Households in Core Housing Need, by Income Category and HH Size, 2021
 
 # Plot dataframe generator
-def plot_df_core_housing_need_by_amhi(geo, IsComparison):
-    joined_df_filtered = joined_df_current.query('Geography == ' + f'"{geo}"')
+def plot_df_core_housing_need_by_amhi(geo: str, IsComparison: bool, year: int = default_year):
+    joined_df_filtered = joined_df_year[year].query('Geography == ' + f'"{geo}"')
 
     x_list = []
 
     i = 0
     for b, c in zip(x_base, x_columns):
-        value = joined_df_filtered[c].tolist()[0]
+        value = str(joined_df_filtered[c].tolist()[0])
         if i < 4:
-            if IsComparison != True:
+            if IsComparison is False:
                 x = b + '<br>' + " ($" + value + ")"
             else:
                 x = " ($" + value + ") "
             x_list.append(x)
         else:
-            if IsComparison != True:
+            if IsComparison is False:
                 x = b + '<br>' + " (>$" + value + ")"
             else:
                 x = " (>$" + value + ") "
@@ -578,13 +506,13 @@ def plot_df_core_housing_need_by_amhi(geo, IsComparison):
     Output('graph2', 'figure'),
     Input('main-area', 'data'),
     Input('comparison-area', 'data'),
+    Input('year-comparison', 'data'),
     Input('area-scale-store', 'data'),
     Input('income-category-affordability-table', 'selected_columns'),
 )
-def update_geo_figure2(geo, geo_c, scale, refresh):
+def update_geo_figure2(geo, geo_c, year_comparison: str, scale, refresh):
     # Single area mode
-
-    if geo == geo_c or geo_c == None or (geo == None and geo_c != None):
+    if not year_comparison and (geo == geo_c or geo_c == None or (geo == None and geo_c != None)):
 
         # When no area is selected
         if geo == None and geo_c != None:
@@ -612,7 +540,7 @@ def update_geo_figure2(geo, geo_c, scale, refresh):
                 hovertemplate='%{y}, ' + f'HH Size: {h} - ' + '%{x: .2%}<extra></extra>',
             ))
 
-        # Plot layout settings    
+        # Plot layout settings
         fig2.update_layout(
             legend_traceorder='normal',
             width=900,
@@ -642,17 +570,27 @@ def update_geo_figure2(geo, geo_c, scale, refresh):
 
     # Comparison mode
     else:
-
+        if year_comparison:
+            geo = area_scale_primary_only(geo, scale)
+            original_year, compared_year = year_comparison.split("-")
         # Area Scaling up/down when user clicks area scale button on page 1
-        geo, geo_c = area_scale_comparison(geo, geo_c, scale)
+        else:
+            geo, geo_c = area_scale_comparison(geo, geo_c, scale)
 
         # Subplot setting for the comparison mode
-        fig2 = make_subplots(rows=1, cols=2, subplot_titles=(f"{geo}", f"{geo_c}"), shared_xaxes=True)
+        fig2 = make_subplots(rows=1, cols=2,
+                             subplot_titles=(
+                                 f"{geo + ' ' + compared_year if year_comparison else geo}",
+                                 f"{geo + ' ' + original_year if year_comparison else geo_c}"),
+                             shared_xaxes=True)
 
         # Main Plot
 
         # Generating dataframe for main plot
-        plot_df = plot_df_core_housing_need_by_amhi(geo, False)
+        plot_df = (
+            plot_df_core_housing_need_by_amhi(geo, False, int(compared_year)) if year_comparison else
+            plot_df_core_housing_need_by_amhi(geo, False)
+        )
 
         # Generating main plot
         n = 0
@@ -674,7 +612,10 @@ def update_geo_figure2(geo, geo_c, scale, refresh):
         # Comparison plot
 
         # Generating dataframe for comparison plot
-        plot_df_c = plot_df_core_housing_need_by_amhi(geo_c, True)
+        plot_df_c = (
+            plot_df_core_housing_need_by_amhi(geo, True) if year_comparison else
+            plot_df_core_housing_need_by_amhi(geo_c, True)
+        )
 
         # Generating comparison plot
         n = 0
@@ -724,8 +665,8 @@ def update_geo_figure2(geo, geo_c, scale, refresh):
 # 2021 Affordable Housing Deficit
 
 # Table generator
-def table_core_affordable_housing_deficit(geo, IsComparison):
-    joined_df_filtered = joined_df_current.query('Geography == ' + f'"{geo}"')
+def table_core_affordable_housing_deficit(geo, is_second, year: int = default_year):
+    joined_df_filtered = joined_df_year[year].query('Geography == ' + f'"{geo}"')
 
     table2 = pd.DataFrame({'Income Category': income_ct})
 
@@ -753,7 +694,7 @@ def table_core_affordable_housing_deficit(geo, IsComparison):
                           f'AMHI-Households in core housing need')
                 h_hold_value.append(joined_df_filtered[column].tolist()[0])
 
-        if IsComparison != True:
+        if is_second is False:
             if h == 1:
                 table2[f'{h} Person HH'] = h_hold_value
             elif h == '5 or more':
@@ -796,7 +737,7 @@ def table_core_affordable_housing_deficit(geo, IsComparison):
     table2.loc[len(table2['Income Category']), :] = row_total_csd
     table2.loc[5, 'Income Category (Max. affordable shelter cost)'] = 'Total'
     # pdb.set_trace()
-    if IsComparison == True:
+    if is_second is True:
         table2 = table2.rename(columns={'Total': 'Total ', 'Income Category (Max. affordable shelter cost)':
             'Income Category (Max. affordable shelter cost) '})
 
@@ -813,13 +754,13 @@ def table_core_affordable_housing_deficit(geo, IsComparison):
     Output('datatable2-interactivity', 'style_header_conditional'),
     Input('main-area', 'data'),
     Input('comparison-area', 'data'),
+    Input('year-comparison', 'data'),
     Input('datatable2-interactivity', 'selected_columns'),
     Input('area-scale-store', 'data'),
 )
-def update_table2(geo, geo_c, selected_columns, scale):
+def update_table2(geo, geo_c, year_comparison: str, selected_columns, scale):
     # Single area mode
-
-    if geo == geo_c or geo_c == None or (geo == None and geo_c != None):
+    if not year_comparison and (geo == geo_c or geo_c == None or (geo == None and geo_c != None)):
 
         # When no area is selected
         if geo == None and geo_c != None:
@@ -875,28 +816,31 @@ def update_table2(geo, geo_c, selected_columns, scale):
     # Comparison mode
 
     else:
-
+        if year_comparison:
+            geo = area_scale_primary_only(geo, scale)
+            original_year, compared_year = year_comparison.split("-")
         # Area Scaling up/down when user clicks area scale button on page 1
-
-        geo, geo_c = area_scale_comparison(geo, geo_c, scale)
+        else:
+            geo, geo_c = area_scale_comparison(geo, geo_c, scale)
 
         # Main Table
 
         # Generating main table
 
-        table2 = table_core_affordable_housing_deficit(geo, False)
+        table2 = (
+            table_core_affordable_housing_deficit(geo, False, int(compared_year)) if year_comparison else
+            table_core_affordable_housing_deficit(geo, False)
+        )
         table2 = table2[['Income Category', 'Income Category (Max. affordable shelter cost)',
                          '1 Person HH', '2 Person HH', '3 Person HH',
                          '4 Person HH', '5+ Person HH', 'Total']]
 
-        # Comparison Table
-
-        if geo == None:
-            geo = default_value
-
         # Generating comparison table
 
-        table2_c = table_core_affordable_housing_deficit(geo_c, True)
+        table2_c = (
+            table_core_affordable_housing_deficit(geo, True) if year_comparison else
+            table_core_affordable_housing_deficit(geo_c, True)
+        )
         table2_c = table2_c[['Income Category', 'Income Category (Max. affordable shelter cost) ',
                              '1 Person HH ', '2 Person HH ', '3 Person HH ',
                              '4 Person HH ', '5+ Person HH ', 'Total ']]
@@ -914,7 +858,7 @@ def update_table2(geo, geo_c, selected_columns, scale):
             if i == 'Income Category (Max. affordable shelter cost)':
                 col_list.append({"name": ["Area", i], "id": i})
             else:
-                col_list.append({"name": [geo, i],
+                col_list.append({"name": [geo + " " + compared_year if year_comparison else geo, i],
                                  "id": i,
                                  "type": 'numeric',
                                  "format": Format(
@@ -927,7 +871,7 @@ def update_table2(geo, geo_c, selected_columns, scale):
             if i == 'Income Category (Max. affordable shelter cost) ':
                 col_list.append({"name": ["", i], "id": i})
             else:
-                col_list.append({"name": [geo_c, i],
+                col_list.append({"name": [geo + " " + original_year if year_comparison else geo_c, i],
                                  "id": i,
                                  "type": 'numeric',
                                  "format": Format(
@@ -1000,8 +944,8 @@ hh_categories = list(hh_category_dict.values())
 
 # Plot dataframe generator
 
-def plot_df_core_housing_need_by_priority_population(geo):
-    joined_df_filtered = joined_df_current.query('Geography == ' + f'"{geo}"')
+def plot_df_core_housing_need_by_priority_population(geo, year: int = default_year):
+    joined_df_filtered = joined_df_year[year].query('Geography == ' + f'"{geo}"')
 
     percent_hh = [joined_df_filtered[c].tolist()[0] for c in hh_columns]
 
@@ -1037,13 +981,12 @@ def color_dict_core_housing_need_by_priority_population(plot_df):
     Output('graph5', 'figure'),
     Input('main-area', 'data'),
     Input('comparison-area', 'data'),
+    Input('year-comparison', 'data'),
     Input('area-scale-store', 'data'),
     Input('income-category-affordability-table', 'selected_columns'),
 )
-def update_geo_figure5(geo, geo_c, scale, refresh):
-    # Single area mode
-
-    if geo == geo_c or geo_c == None or (geo == None and geo_c != None):
+def update_geo_figure5(geo, geo_c, year_comparison: str, scale, refresh):
+    if (geo == geo_c or geo_c == None or (geo == None and geo_c != None)) and not year_comparison:
 
         # When no area is selected
 
@@ -1104,14 +1047,17 @@ def update_geo_figure5(geo, geo_c, scale, refresh):
     # Comparison mode
 
     else:
-
+        if year_comparison:
+            _, compared_year = year_comparison.split("-")
+            geo = area_scale_primary_only(geo, scale)
         # Area Scaling up/down when user clicks area scale button on page 1
-
-        geo, geo_c = area_scale_comparison(geo, geo_c, scale)
+        else:
+            geo, geo_c = area_scale_comparison(geo, geo_c, scale)
 
         # Subplot setting for the comparison mode 
-        fig5 = make_subplots(rows=1, cols=2, subplot_titles=(f"{geo}", f"{geo_c}"), shared_yaxes=True,
-                             shared_xaxes=True)
+        fig5 = make_subplots(rows=1, cols=2, subplot_titles=(f"{geo}",
+                                                             f"{geo + ' ' + compared_year if year_comparison else geo_c}"),
+                             shared_yaxes=True, shared_xaxes=True)
 
         # Main Plot
 
@@ -1137,7 +1083,8 @@ def update_geo_figure5(geo, geo_c, scale, refresh):
 
         # Generating dataframe for comparison plot and color list
 
-        plot_df_c = plot_df_core_housing_need_by_priority_population(geo_c)
+        plot_df_c = plot_df_core_housing_need_by_priority_population(
+            geo_c if not year_comparison else geo, year=default_year if not year_comparison else int(compared_year))
         color_dict = color_dict_core_housing_need_by_priority_population(plot_df_c)
 
         # Generating comparison plot
@@ -1241,8 +1188,8 @@ income_lv_list = ['20% or under', '21% to 50%', '51% to 80%', '81% to 120%', '12
 
 # Plot dataframe generator
 
-def plot_df_core_housing_need_by_priority_population_income(geo):
-    joined_df_filtered = joined_df_current.query('Geography == ' + f'"{geo}"')
+def plot_df_core_housing_need_by_priority_population_income(geo, year=default_year):
+    joined_df_filtered = joined_df_year[year].query('Geography == ' + f'"{geo}"')
 
     income_col = []
     percent_col = []
@@ -1274,16 +1221,17 @@ def plot_df_core_housing_need_by_priority_population_income(geo):
     Output('graph6', 'figure'),
     Input('main-area', 'data'),
     Input('comparison-area', 'data'),
+    Input('year-comparison', 'data'),
     Input('area-scale-store', 'data'),
     Input('income-category-affordability-table', 'selected_columns'),
 )
-def update_geo_figure6(geo, geo_c, scale, refresh):
+def update_geo_figure6(geo, geo_c, year_comparison, scale, refresh):
     # Overried income category values
     income_category_override = ['Very Low', 'Low', 'Moderate', 'Median', 'High']
 
     # Single area mode
 
-    if geo == geo_c or geo_c == None or (geo == None and geo_c != None):
+    if not year_comparison and (geo == geo_c or geo_c == None or (geo == None and geo_c != None)):
         # When no area is selected
         if geo == None and geo_c != None:
             geo = geo_c
@@ -1340,14 +1288,18 @@ def update_geo_figure6(geo, geo_c, scale, refresh):
 
     # Comparison mode
     else:
-
+        if year_comparison:
+            _, compared_year = year_comparison.split("-")
+            geo = area_scale_primary_only(geo, scale)
         # Area Scaling up/down when user clicks area scale button on page 1
-
-        geo, geo_c = area_scale_comparison(geo, geo_c, scale)
+        else:
+            geo, geo_c = area_scale_comparison(geo, geo_c, scale)
 
         # Subplot setting for the comparison mode
-        fig6 = make_subplots(rows=1, cols=2, subplot_titles=(f"{geo}", f"{geo_c}"), shared_yaxes=True,
-                             shared_xaxes=True)
+        fig6 = make_subplots(rows=1, cols=2,
+                             subplot_titles=(f"{geo + ' ' + compared_year if year_comparison else geo_c}",
+                                             f"{geo} {default_year}"),
+                             shared_yaxes=True, shared_xaxes=True)
 
         # Main Plot
 
@@ -1373,7 +1325,9 @@ def update_geo_figure6(geo, geo_c, scale, refresh):
         # Comparison plot
 
         # Generating dataframe for comparison plot
-        plot_df_c = plot_df_core_housing_need_by_priority_population_income(geo_c)
+        plot_df_c = plot_df_core_housing_need_by_priority_population_income(geo if year_comparison else geo_c,
+                                                                            year=int(compared_year) if year_comparison
+                                                                            else default_year)
 
         # Generating comparison plot
 
@@ -1424,22 +1378,61 @@ def update_geo_figure6(geo, geo_c, scale, refresh):
 
 
 # Creating raw csv data file when user clicks Download Raw Data button
+@callback(
+    Output("visualization3", "children"),
+    Output("visualization", "children"),
+    Output("visualization2", "children"),
+    Output("visualization4", "children"),
+    Output("visualization5", "children"),
+    Output("visualization6", "children"),
+    Input('year-comparison', 'data'),
+)
+def change_title_labels(year_comparison):
+    if year_comparison:
+        original_year, compared_year = year_comparison.split("-")
+        return (
+            html.Strong(f'Income Categories and Affordable Shelter Costs, {compared_year} vs {original_year}'),
+            html.Strong(f'Percentage of Households in Core Housing Need, by Income Category, {compared_year} vs {original_year}'),
+            html.Strong(f'Percentage of Households in Core Housing Need, by Income Category and HH Size, {compared_year} vs {original_year}'),
+            html.Strong(f'{compared_year} vs {original_year} Affordable Housing Deficit'),
+            html.Strong(f'Percentage of Households in Core Housing Need by Priority Population, {compared_year} vs {original_year}'),
+            html.Strong(f'Percentage of Households in Core Housing Need by Priority Population and Income Category, {compared_year} vs {original_year}')
+        )
+    return (
+        html.Strong(f'Income Categories and Affordable Shelter Costs, {default_year}'),
+        html.Strong(f'Percentage of Households in Core Housing Need, by Income Category, {default_year}'),
+        html.Strong(f'Percentage of Households in Core Housing Need, by Income Category and HH Size, {default_year}'),
+        html.Strong(f'{default_year} Affordable Housing Deficit'),
+        html.Strong(f'Percentage of Households in Core Housing Need by Priority Population, {default_year}'),
+        html.Strong(f'Percentage of Households in Core Housing Need by Priority Population and Income Category, {default_year}')
+    )
+
 
 @callback(
     Output("ov7-download-text", "data"),
     Input("ov7-download-csv", "n_clicks"),
     Input('main-area', 'data'),
     Input('comparison-area', 'data'),
-    prevent_initial_call=True,
+    State('year-comparison', 'data'),
 )
-def func_ov7(n_clicks, geo, geo_c):
+def func_ov7(n_clicks, geo, geo_c, year_comparison):
     if geo == None:
         geo = default_value
 
     if "ov7-download-csv" == ctx.triggered_id:
-        joined_df_geo = joined_df_current.query("Geography == " + f"'{geo}'")
-        joined_df_geo_c = joined_df_current.query("Geography == " + f"'{geo_c}'")
-        joined_df_download = pd.concat([joined_df_geo, joined_df_geo_c])
-        joined_df_download = joined_df_download.drop(columns=['pk_x', 'pk_y'])
+        if year_comparison:
+            _, compared_year = year_comparison.split("-")
+            joined_df_geo = joined_df_current.query("Geography == " + f"'{geo}'")
+            joined_df_geo_c = joined_df_year[int(compared_year)].query("Geography == " + f"'{geo}'")
+            joined_df_download = pd.concat([joined_df_geo, joined_df_geo_c])
+            joined_df_download = joined_df_download.drop(columns=['pk_x', 'pk_y'])
+            return dcc.send_data_frame(joined_df_download.to_csv, "result.csv")
+        else:
+            joined_df_geo = joined_df_current.query("Geography == " + f"'{geo}'")
+            joined_df_geo_c = joined_df_current.query("Geography == " + f"'{geo_c}'")
+            joined_df_download = pd.concat([joined_df_geo, joined_df_geo_c])
+            joined_df_download = joined_df_download.drop(columns=['pk_x', 'pk_y'])
 
-        return dcc.send_data_frame(joined_df_download.to_csv, "result.csv")
+            return dcc.send_data_frame(joined_df_download.to_csv, "result.csv")
+
+

@@ -153,7 +153,7 @@ layout = html.Div(children=
                                   ], className='region-button-box-lgeo'
                                   ),
                                   html.Div(children=[
-                                      html.Button('Toggle 2016 Comparison',
+                                      html.Button('Compare 2021 vs 2016',
                                                   title="Toggle a comparison between 2021 and 2016",
                                                   id='year-comparison-button', n_clicks=0,
                                                   className='region-button-lgeo'),
@@ -493,7 +493,6 @@ def update_map(clickData, reset_map, select_region, comparison_region, *args):
     # default map (show provinces) before clicking anything on the map
 
     else:
-
         fig_m = province_map(select_region, True)
 
         return fig_m, select_region, comparison_region
@@ -504,12 +503,13 @@ def update_map(clickData, reset_map, select_region, comparison_region, *args):
     Output("comparison-geo-dropdown-parent", "style"),
     State('year-comparison', 'data'),
     Input("year-comparison-button", "n_clicks"),
+    Input('reset-map', 'n_clicks'),
 )
-def toggle_year_comparison(year_comparison, _):
+def toggle_year_comparison(year_comparison, *args):
     if ctx.triggered_id == "year-comparison-button":
         if year_comparison is not None:
             year_comparison = None
         else:
             year_comparison = "2021-2016"
         return year_comparison, {"visibility": "hidden" if year_comparison else "visible"}
-    return year_comparison, {"visibility": "hidden" if year_comparison else "visible"}
+    return None, {"visibility": "visible"}

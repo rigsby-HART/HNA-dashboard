@@ -13,6 +13,7 @@ config = {'displayModeBar': True, 'displaylogo': False,
           'modeBarButtonsToRemove': ['zoom', 'lasso2d', 'pan', 'select', 'zoomIn', 'zoomOut', 'autoScale',
                                      'resetScale']}
 
+
 # TODO: Make the table actually select by year
 def layout(year):
     return html.Div(children=
