@@ -1,7 +1,5 @@
 # Importing Libraries
-import pdb
 
-import dash
 import pandas as pd
 import numpy as np
 import plotly.express as px
@@ -10,22 +8,15 @@ import math as math
 import warnings
 from dash.dash_table.Format import Format, Scheme, Group
 from plotly.subplots import make_subplots
-from dash import dcc, dash_table, html, Input, Output, ctx, callback
+from dash import Input, Output, callback
+
 from helpers.style_helper import style_data_conditional, style_header_conditional
-from helpers.create_engine import engine_current
-from helpers.table_helper import area_scale_comparison, area_scale_primary_only, storage_variables
+from helpers.create_engine import engine_current, default_year, df_geo_list, df_region_list, df_province_list, \
+    mapped_geo_code, updated_csd_year
+from helpers.table_helper import area_scale_comparison, area_scale_primary_only
+from pages.page3_helpers.page3_main import layout
 
 warnings.filterwarnings("ignore")
-
-
-# Importing Geo Code Information
-
-mapped_geo_code = pd.read_sql_table('geocodes_integrated', engine_current.connect())
-df_geo_list = pd.read_sql_table('geocodes', engine_current.connect())
-df_region_list = pd.read_sql_table('regioncodes', engine_current.connect())
-df_region_list.columns = df_geo_list.columns
-df_province_list = pd.read_sql_table('provincecodes', engine_current.connect())
-df_province_list.columns = df_geo_list.columns
 
 # Importing Projection Data
 
@@ -66,452 +57,7 @@ table = pd.DataFrame({'Not Available in CD/Regional level. Please select CSD/Mun
 
 # Setting layout for dashboard
 
-layout = html.Div(children=
-                  # Fetching Area/Comparison Area/Clicked area scale info in local storage
-                  storage_variables()
-                  + [
-
-                      # Main Layout
-
-                      html.Div(
-                          children=[
-
-                              html.Div([
-
-                                  # 2031 Household Projections by Income Category
-
-                                  html.Div([
-                                      # Title
-                                      html.H3(children=html.Strong('2031 Household Projections by Income Category'),
-                                              className='subtitle-lgeo'),
-
-                                      # Table Description
-                                      html.Div([
-                                          html.H6(
-                                              'The following table shows the total number of households in 2021, for each household income category, as well as the projected gain (positive) or loss (negative) of households over the period between 2021 and 2031 by applying the percentage change from 2006-2021, to 2021 households.')
-                                      ], className='muni-reg-text-lgeo'),
-
-                                      # Table
-
-                                      html.Div(children=[
-
-                                          dash_table.DataTable(
-                                              id='datatable5-interactivity',
-                                              columns=[
-                                                  {"name": i, "id": i, "deletable": False, "selectable": False} for i in
-                                                  table.columns
-                                              ],
-                                              data=table.to_dict('records'),
-                                              editable=True,
-                                              sort_action="native",
-                                              sort_mode="multi",
-                                              column_selectable=False,
-                                              row_selectable=False,
-                                              row_deletable=False,
-                                              selected_columns=[],
-                                              selected_rows=[],
-                                              page_action="native",
-                                              page_current=0,
-                                              page_size=10,
-                                              style_cell={'font-family': 'Bahnschrift'},
-                                              merge_duplicate_headers=True,
-                                              export_format="xlsx",
-                                              style_header={'text-align': 'middle', 'fontWeight': 'bold'}
-                                          ),
-                                      ], className='pg3-table-lgeo'
-                                      ),
-
-                                      html.Div(id='datatable5-interactivity-container'),
-
-                                      # Graph Description
-                                      html.Div([
-                                          html.H6(
-                                              'The following graph illustrates the above table, displaying the total number of households in 2021, for each income category, with the projected gain of households between 2021 and 2031 stacked on top, and the projected loss of household stacked underneath.')
-                                      ], className='muni-reg-text-lgeo'),
-
-                                      # Graph
-
-                                      html.Div(children=[
-
-                                          dcc.Graph(
-                                              id='graph9',
-                                              figure=fig,
-                                              config=config,
-                                          ),
-
-                                      ], className='pg3-plot-lgeo'
-                                      ),
-
-                                  ], className='pg3-table-plot-box-lgeo'),
-
-                                  # 2031 Household Projections by Household Size
-
-                                  html.Div([
-                                      # Title
-
-                                      html.H3(children=html.Strong('2031 Household Projections by Household Size'),
-                                              className='subtitle-lgeo'),
-
-                                      # Table Description
-
-                                      html.Div([
-                                          html.H6(
-                                              'The following table shows the total number of households in 2021, for each household size category, as well as the projected gain (positive) or loss (negative) of households over the period between 2021 and 2031 by applying the percentage change from 2006-2021, to 2021 households.')
-                                      ], className='muni-reg-text-lgeo'),
-
-                                      # Table
-
-                                      html.Div([
-                                          dash_table.DataTable(
-                                              id='datatable6-interactivity',
-                                              columns=[
-                                                  {"name": i, "id": i, "deletable": False, "selectable": False} for i in
-                                                  table.columns
-                                              ],
-                                              data=table.to_dict('records'),
-                                              editable=True,
-                                              sort_action="native",
-                                              sort_mode="multi",
-                                              column_selectable=False,
-                                              row_selectable=False,
-                                              row_deletable=False,
-                                              selected_columns=[],
-                                              selected_rows=[],
-                                              page_action="native",
-                                              page_current=0,
-                                              page_size=10,
-                                              style_cell={'font-family': 'Bahnschrift'},
-                                              merge_duplicate_headers=True,
-                                              export_format="xlsx",
-                                              style_header={'text-align': 'middle', 'fontWeight': 'bold'}
-                                          ),
-                                      ], className='pg3-table-lgeo'
-                                      ),
-
-                                      html.Div(id='datatable6-interactivity-container'),
-
-                                      # Graph Description
-
-                                      html.Div([
-                                          html.H6(
-                                              'The following graph illustrates the above table, displaying the total number of households in 2021, for each size of household, with the projected gain of households between 2021 and 2031 stacked on top, and the projected loss of household stacked underneath.')
-                                      ], className='muni-reg-text-lgeo'),
-
-                                      # Graph
-
-                                      html.Div(children=[
-                                          dcc.Graph(
-                                              id='graph10',
-                                              figure=fig,
-                                              config=config,
-                                          ),
-                                      ], className='pg3-plot-lgeo'
-                                      ),
-                                  ], className='pg3-table-plot-box-lgeo'),
-
-                                  # 2031 Projected Households by Household Size and Income Category
-
-                                  html.Div([
-                                      # Title
-
-                                      html.H3(children=html.Strong(
-                                          '2031 Projected Households by Household Size and Income Category'),
-                                          className='subtitle-lgeo'),
-
-                                      # Table Description
-
-                                      html.Div([
-                                          html.H6(
-                                              'The following table shows the projected total number of households in 2031 by household size and income category.')
-                                      ], className='muni-reg-text-lgeo'),
-
-                                      # Table
-
-                                      html.Div([
-                                          dash_table.DataTable(
-                                              id='datatable-h-interactivity',
-                                              columns=[
-                                                  {"name": i, "id": i, "deletable": False, "selectable": False} for i in
-                                                  table.columns
-                                              ],
-                                              data=table.to_dict('records'),
-                                              editable=True,
-                                              sort_action="native",
-                                              sort_mode="multi",
-                                              column_selectable=False,
-                                              row_selectable=False,
-                                              row_deletable=False,
-                                              selected_columns=[],
-                                              selected_rows=[],
-                                              page_action="native",
-                                              page_current=0,
-                                              page_size=10,
-                                              style_cell={'font-family': 'Bahnschrift'},
-                                              merge_duplicate_headers=True,
-                                              export_format="xlsx",
-                                              style_header={'text-align': 'middle', 'fontWeight': 'bold'}
-                                          ),
-                                      ], className='pg3-table-lgeo'
-                                      ),
-
-                                      html.Div(id='datatable-h-interactivity-container'),
-
-                                      # Graph Description
-
-                                      html.Div([
-                                          html.H6(
-                                              'The following graph illustrates the above table, displaying the projected total number of households in 2031 by household size and income category. Each bar is broken out by the projected number of households within each income category.')
-                                      ], className='muni-reg-text-lgeo'),
-
-                                      # Graph
-
-                                      html.Div(children=[
-
-                                          dcc.Graph(
-                                              id='graph-h',
-                                              figure=fig,
-                                              config=config,
-                                          )
-
-                                      ], className='pg3-plot-lgeo'
-                                      ),
-                                  ], className='pg3-table-plot-box-lgeo'),
-
-                                  # 2031 Projected Household Gain/Loss (2021 to 2031)
-
-                                  html.Div([
-
-                                      # Title
-
-                                      html.H3(children=html.Strong('2031 Projected Household Gain/Loss (2021 to 2031)'),
-                                              className='table-title'),
-
-                                      # Table Description
-
-                                      html.Div([
-                                          html.H6(
-                                              'The following table shows the projected gain or loss of households by household size and income. These values represent projections for the period between 2021 and 2031.')
-                                      ], className='muni-reg-text-lgeo'),
-
-                                      # Table
-
-                                      html.Div([
-                                          dash_table.DataTable(
-                                              id='datatable7-interactivity',
-                                              columns=[
-                                                  {"name": i, "id": i, "deletable": False, "selectable": False} for i in
-                                                  table.columns
-                                              ],
-                                              data=table.to_dict('records'),
-                                              editable=True,
-                                              sort_action="native",
-                                              sort_mode="multi",
-                                              column_selectable=False,
-                                              row_selectable=False,
-                                              row_deletable=False,
-                                              selected_columns=[],
-                                              selected_rows=[],
-                                              page_action="native",
-                                              page_current=0,
-                                              page_size=10,
-                                              style_cell={'font-family': 'Bahnschrift'},
-                                              merge_duplicate_headers=True,
-                                              export_format="xlsx",
-                                              style_header={'text-align': 'middle', 'fontWeight': 'bold'}
-                                          ),
-                                      ], className='pg3-table-lgeo'
-                                      ),
-
-                                      html.Div(id='datatable7-interactivity-container'),
-
-                                      # Graph Description
-
-                                      html.Div([
-                                          html.H6(
-                                              'The following graph illustrates the above table, displaying the projected gain or loss of households between 2021 and 2031 for each size of household. Each bar is broken out by the projected number of households within each income category. Projected loss of households are stacked underneath.')
-                                      ], className='muni-reg-text-lgeo'),
-
-                                      # Graph
-
-                                      html.Div(children=[
-
-                                          dcc.Graph(
-                                              id='graph11',
-                                              figure=fig,
-                                              config=config,
-                                          )
-                                      ], className='pg3-plot-lgeo'
-                                      ),
-                                  ], className='pg3-table-plot-box-lgeo'),
-
-                                  # Municipal vs Regional Growth Rates
-
-                                  html.Div([
-
-                                      # Title
-                                      html.H3(children=html.Strong('Municipal vs Regional Growth Rates'),
-                                              className='subtitle-lgeo'),
-
-                                      # Description
-                                      html.H6([
-                                          'Comparing a local community’s growth rates to the growth rate of the region allows for insight into if the community is matching regional patterns of change. There are numerous potential causes for discrepencies, which are further discussed in ',
-                                          html.A('the project methods.',
-                                                 href='https://hart.ubc.ca/wp-content/uploads/2023/06/HNA-Methodology-06-09-2023.pdf',
-                                                 target="_blank")])
-                                  ], className='muni-reg-text-lgeo'),
-
-                                  # 2031 Projected Municipal vs Regional Household Growth Rates by Income Category
-
-                                  html.Div([
-                                      # Title
-
-                                      html.H3(children=html.Strong(
-                                          '2031 Projected Municipal vs Regional Household Growth Rates by Income Category'),
-                                          className='subtitle-lgeo'),
-
-                                      # Table Description
-
-                                      html.Div([
-                                          html.H6(
-                                              'The following table illustrates the projected household growth rates between 2021 and 2031 in the community and surrounding region for each income category.')
-                                      ], className='muni-reg-text-lgeo'),
-
-                                      # Table
-
-                                      html.Div([
-
-                                          dash_table.DataTable(
-                                              id='datatable8-interactivity',
-                                              columns=[
-                                                  {"name": i, "id": i, "deletable": False, "selectable": False} for i in
-                                                  table.columns
-                                              ],
-                                              data=table.to_dict('records'),
-                                              editable=True,
-                                              sort_action="native",
-                                              sort_mode="multi",
-                                              column_selectable=False,
-                                              row_selectable=False,
-                                              row_deletable=False,
-                                              selected_columns=[],
-                                              selected_rows=[],
-                                              page_action="native",
-                                              page_current=0,
-                                              page_size=10,
-                                              style_cell={'font-family': 'Bahnschrift'},
-                                              merge_duplicate_headers=True,
-                                              export_format="xlsx",
-                                              style_header={'text-align': 'middle', 'fontWeight': 'bold'}
-                                          ),
-                                      ], className='pg3-table-lgeo'
-                                      ),
-
-                                      html.Div(id='datatable8-interactivity-container'),
-
-                                      # Graph Description
-
-                                      html.Div([
-                                          html.H6(
-                                              'The following graph illustrates the above table, displaying the projected household growth rates between 2021 and 2031 in the community and surrounding region for each income category.')
-                                      ], className='muni-reg-text-lgeo'),
-
-                                      # Graph
-
-                                      html.Div(children=[
-                                          dcc.Graph(
-                                              id='graph12',
-                                              figure=fig,
-                                              config=config,
-                                          )
-                                      ],
-                                          className='pg3-plot-lgeo'
-                                      ),
-
-                                  ], className='pg3-table-plot-box-lgeo'),
-
-                                  # Municipal vs Regional Growth Rates by Household Size
-
-                                  html.Div([
-                                      # Title
-
-                                      html.H3(
-                                          children=html.Strong('Municipal vs Regional Growth Rates by Household Size'),
-                                          className='subtitle-lgeo'),
-
-                                      # Table Description
-
-                                      html.Div([
-                                          html.H6(
-                                              'The following table illustrates the projected household growth rates between 2021 and 2031 in the community and surrounding region for each household size.')
-                                      ], className='muni-reg-text-lgeo'),
-
-                                      # Table
-
-                                      html.Div([
-                                          dash_table.DataTable(
-                                              id='datatable9-interactivity',
-                                              columns=[
-                                                  {"name": i, "id": i, "deletable": False, "selectable": False} for i in
-                                                  table.columns
-                                              ],
-                                              data=table.to_dict('records'),
-                                              editable=True,
-                                              sort_action="native",
-                                              sort_mode="multi",
-                                              column_selectable=False,
-                                              row_selectable=False,
-                                              row_deletable=False,
-                                              selected_columns=[],
-                                              selected_rows=[],
-                                              page_action="native",
-                                              page_current=0,
-                                              page_size=10,
-                                              style_cell={'font-family': 'Bahnschrift'},
-                                              merge_duplicate_headers=True,
-                                              export_format="xlsx",
-                                              style_header={'text-align': 'middle', 'fontWeight': 'bold'}
-                                          ),
-
-                                      ], className='pg3-table-lgeo'
-                                      ),
-
-                                      html.Div(id='datatable9-interactivity-container'),
-
-                                      # Graph Description
-
-                                      html.Div([
-                                          html.H6(
-                                              'The following graph illustrates the above table, displaying the projected household growth rates between 2021 and 2031 in the community and surrounding region for each income category.')
-                                      ], className='muni-reg-text-lgeo'),
-
-                                      # Graph
-
-                                      html.Div(children=[
-
-                                          dcc.Graph(
-                                              id='graph13',
-                                              figure=fig,
-                                              config=config,
-                                          )
-                                      ],
-                                          className='pg3-plot-lgeo'
-                                      ),
-                                  ], className='pg3-table-plot-box-lgeo'),
-
-                                  # LGEO
-
-                                  html.Div([
-                                      'This dashboard was created in collaboration with ',
-                                      html.A('Licker Geospatial', href='https://www.lgeo.co/', target="_blank"),
-                                      ' using Plotly.'
-                                  ], className='lgeo-credit-text'),
-
-                              ]),
-
-                          ], className='dashboard-pg3-lgeo'
-                      ),
-                  ], className='background-pg3-lgeo'
-                  )
+layout = layout(default_year)
 
 # Plot/table generators and callbacks
 
@@ -526,52 +72,53 @@ width_num = 1000
 
 # Plot DF/Table Generator
 
-def plot1_new_projection(geo, IsComparison):
+def plot1_new_projection(geo, is_comparison, year=default_year):
     geo_code_clicked = mapped_geo_code.loc[mapped_geo_code['Geography'] == geo, :]['Geo_Code'].tolist()[0]
-    updated_csd_filtered = updated_csd.query('Geo_Code ==' + f"{geo_code_clicked}")
+    updated_csd_filtered = updated_csd_year[year].query('Geo_Code ==' + f"{geo_code_clicked}")
 
-    updated_csd_filtered_2021_plot1 = updated_csd_filtered[[
+    updated_csd_filtered_current_plot1 = updated_csd_filtered[[
         'Total - Private households by household type including census family structure -   Households with income 20% or under of area median household income (AMHI) - Total - Household size',
         'Total - Private households by household type including census family structure -   Households with income 21% to 50% of AMHI - Total - Household size',
         'Total - Private households by household type including census family structure -   Households with income 51% to 80% of AMHI - Total - Household size',
         'Total - Private households by household type including census family structure -   Households with income 81% to 120% of AMHI - Total - Household size',
         'Total - Private households by household type including census family structure -   Households with income 121% or over of AMHI - Total - Household size'
     ]].T.reset_index().drop(columns=['index'])
-
-    updated_csd_filtered_2031_plot1 = updated_csd_filtered[[
-        '2031 Population Delta with income 20% or under of area median household income (AMHI)',
-        '2031 Population Delta with income 21% to 50% of AMHI',
-        '2031 Population Delta with income 51% to 80% of AMHI',
-        '2031 Population Delta with income 81% to 120% of AMHI',
-        '2031 Population Delta with income 121% or over of AMHI'
+    # This predicts 10 years into the future.  I will hardcode the assumption of year + 10
+    prediction_year = year + 10
+    updated_csd_filtered_future_plot1 = updated_csd_filtered[[
+        f'{prediction_year} Population Delta with income 20% or under of area median household income (AMHI)',
+        f'{prediction_year} Population Delta with income 21% to 50% of AMHI',
+        f'{prediction_year} Population Delta with income 51% to 80% of AMHI',
+        f'{prediction_year} Population Delta with income 81% to 120% of AMHI',
+        f'{prediction_year} Population Delta with income 121% or over of AMHI'
     ]].T.reset_index().drop(columns=['index'])
 
     income_category = ['Very Low Income', 'Low Income', 'Moderate Income', 'Median Income', 'High Income']
 
     table1 = pd.DataFrame({'Income Category': income_category,
-                           'Category': (['2021 Pop'] * len(income_category)),
-                           'Pop': updated_csd_filtered_2021_plot1.iloc[:, 0]})
+                           'Category': ([f'{year} pop'] * len(income_category)),
+                           'Pop': updated_csd_filtered_current_plot1.iloc[:, 0]})
     table1 = table1.replace([np.inf, -np.inf], 0)
     table1 = table1.fillna(0)
     table1_2021 = table1.copy()
 
-    table1['2031 Delta'] = np.round(updated_csd_filtered_2031_plot1.iloc[:, 0], 0)
+    table1[f'{prediction_year} Delta'] = np.round(updated_csd_filtered_future_plot1.iloc[:, 0], 0)
     table1 = table1.drop(columns=['Category'])
 
     plot_df = pd.concat([table1_2021,
                          pd.DataFrame({'Income Category': income_category,
-                                       'Category': (['2031 Delta'] * len(income_category)),
-                                       'Pop': np.round(updated_csd_filtered_2031_plot1.iloc[:, 0], 0)})])
+                                       'Category': ([f'{prediction_year} Delta'] * len(income_category)),
+                                       'Pop': np.round(updated_csd_filtered_future_plot1.iloc[:, 0], 0)})])
 
     table1['Total'] = table1.sum(axis=1)
     row_total_csd = table1.sum(axis=0)
     row_total_csd[0] = 'Total'
     table1.loc[len(table1['Income Category']), :] = row_total_csd
 
-    if IsComparison != True:
-        table1.columns = ['HH Income Category', '2021 HHs', 'Projected Gain/Loss of HHs by 2031', 'Total']
+    if is_comparison is False:
+        table1.columns = ['HH Income Category', f'{year} HHs', f'Projected Gain/Loss of HHs by {prediction_year}', 'Total']
     else:
-        table1.columns = ['HH Income Category', '2021 HHs ', 'Projected Gain/Loss of HHs by 2031 ', 'Total ']
+        table1.columns = ['HH Income Category', f'{year} HHs ', f'Projected Gain/Loss of HHs by {prediction_year} ', 'Total ']
 
     return plot_df, table1
 
@@ -587,13 +134,14 @@ def plot1_new_projection(geo, IsComparison):
     Output('graph9', 'figure'),
     Input('main-area', 'data'),
     Input('comparison-area', 'data'),
+    Input('year-comparison', 'data'),
     Input('area-scale-store', 'data'),
     Input('datatable5-interactivity', 'selected_columns'),
 )
-def update_geo_figure6(geo, geo_c, scale, selected_columns):
+def update_geo_figure6(geo, geo_c, year_comparison: str, scale, selected_columns):
     # Single area mode
 
-    if geo == geo_c or geo_c == None or (geo == None and geo_c != None):
+    if not year_comparison and (geo == geo_c or geo_c == None or (geo == None and geo_c != None)):
 
         # When no area is selected
         if geo == None and geo_c != None:
@@ -681,17 +229,28 @@ def update_geo_figure6(geo, geo_c, scale, selected_columns):
     else:
 
         # Area Scaling up/down when user clicks area scale button on page 1
-        geo, geo_c = area_scale_comparison(geo, geo_c, scale)
+        if year_comparison:
+            original_year, compared_year = year_comparison.split("-")
+            geo = area_scale_primary_only(geo, scale)
+        # Area Scaling up/down when user clicks area scale button on page 1
+        else:
+            geo, geo_c = area_scale_comparison(geo, geo_c, scale)
+            original_year, compared_year = default_year
 
         # Main Plot/Table
 
         # Generating main plot df/table
 
-        plot_df, table1 = plot1_new_projection(geo, False)
+        plot_df, table1 = (
+            plot1_new_projection(geo, False, int(compared_year)) if year_comparison else
+            plot1_new_projection(geo, False)
+        )
 
         # Generating main plot
 
-        fig_new_proj_1 = make_subplots(rows=1, cols=2, subplot_titles=(f"{geo}", f"{geo_c}"), shared_yaxes=True,
+        fig_new_proj_1 = make_subplots(rows=1, cols=2, subplot_titles=(
+            f"{geo + ' ' + compared_year if year_comparison else geo}",
+            f"{geo + ' ' + original_year if year_comparison else geo_c}"), shared_yaxes=True,
                                        shared_xaxes=True)
 
         for i, c in zip(plot_df['Category'].unique(), bar_colors):
@@ -708,12 +267,15 @@ def update_geo_figure6(geo, geo_c, scale, selected_columns):
 
         # Generating comparison plot df/table
 
-        plot_df_c, table1_c = plot1_new_projection(geo_c, True)
+        plot_df_c, table1_c = (
+            plot1_new_projection(geo, True, int(original_year)) if year_comparison else
+            plot1_new_projection(geo_c, True)
+        )
 
         # Generating comparison plot
 
         for i, c in zip(plot_df_c['Category'].unique(), bar_colors):
-            plot_df_frag = plot_df_c.loc[plot_df['Category'] == i, :]
+            plot_df_frag = plot_df_c.loc[plot_df_c['Category'] == i, :]
             fig_new_proj_1.add_trace(go.Bar(
                 x=plot_df_frag['Income Category'],
                 y=plot_df_frag['Pop'],
@@ -731,9 +293,12 @@ def update_geo_figure6(geo, geo_c, scale, selected_columns):
             modebar_activecolor=modebar_activecolor,
             barmode='relative',
             plot_bgcolor='#F8F9F9',
-            title=f'2031 Household Projections by Income Category',
+            title=f'{str(int(compared_year)+10) + " and " + str(int(original_year)+10) if year_comparison else str(default_year)}'
+                  f' Household Projections by Income Category',
             legend=dict(font=dict(size=9)),
-            legend_title="2021 households<br>and 2021-2031 change<br>")
+            legend_title=f"{compared_year} and {original_year} households<br>vs "
+                         "10 year projections<br>"if year_comparison else
+            "2021 households<br>and 2021-2031 change<br>")
         fig_new_proj_1.update_yaxes(
             range=[min(plot_df['Pop'].min(), plot_df_c['Pop'].min()) * 1.1,
                    max(plot_df.groupby('Income Category')['Pop'].sum().max(),
@@ -762,7 +327,7 @@ def update_geo_figure6(geo, geo_c, scale, selected_columns):
             if i == 'HH Income Category':
                 col_list.append({"name": ["Areas", i], "id": i})
             else:
-                col_list.append({"name": [geo, i],
+                col_list.append({"name": [geo + ' ' + compared_year if year_comparison else geo, i],
                                  "id": i,
                                  "type": 'numeric',
                                  "format": Format(
@@ -775,7 +340,7 @@ def update_geo_figure6(geo, geo_c, scale, selected_columns):
             if i == 'HH Income Category':
                 col_list.append({"name": ["Areas", i], "id": i})
             else:
-                col_list.append({"name": [geo_c, i],
+                col_list.append({"name": [geo + ' ' + original_year if year_comparison else geo_c, i],
                                  "id": i,
                                  "type": 'numeric',
                                  "format": Format(
@@ -837,7 +402,7 @@ def plot2_new_projection(geo, IsComparison):
     hh_category = ['1 Person', '2 Person', '3 Person', '4 Person', '5+ Person']
 
     table2 = pd.DataFrame({'HH Category': hh_category,
-                           'Category': (['2021 Pop'] * len(hh_category)),
+                           'Category': (['current pop'] * len(hh_category)),
                            'Pop': updated_csd_filtered_2021_plot2.iloc[:, 0]})
 
     table2 = table2.replace([np.inf, -np.inf], 0)
@@ -1738,14 +1303,14 @@ def projections_2031_pop_income(geo, IsComparison):
         delta.append(d)
 
     table = pd.DataFrame(
-        {'Income Category': i_l, '2021 Pop.': pop_2021, 'Muni. Growth (%)': gr_csd, 'Regional Growth (%)': gr_cd,
+        {'Income Category': i_l, 'current pop.': pop_2021, 'Muni. Growth (%)': gr_csd, 'Regional Growth (%)': gr_cd,
          'Delta(Muni. GR)': np.round(delta, 0)})
 
     table = table.replace([np.inf, -np.inf], 0)
     table = table.fillna(0)
 
-    table['Delta(Regional GR)'] = np.round(table['2021 Pop.'] * table['Regional Growth (%)'], 0)
-    table['2031 Pop.(Muni.)'] = np.round(table['2021 Pop.'] + (table['2021 Pop.'] * table['Muni. Growth (%)']), 0)
+    table['Delta(Regional GR)'] = np.round(table['current pop.'] * table['Regional Growth (%)'], 0)
+    table['2031 Pop.(Muni.)'] = np.round(table['current pop.'] + (table['current pop.'] * table['Muni. Growth (%)']), 0)
     table['2031 Pop.(Regional)'] = tr_cd
 
     table_for_plot = table[['Income Category', 'Muni. Growth (%)', 'Regional Growth (%)']]
@@ -1827,7 +1392,7 @@ def update_geo_figure8(geo, geo_c, scale, selected_columns):
                 'if': {'column_id': i},
                 'background_color': '#D2F3FF'
             } for i in selected_columns], \
-            style_cell_conditional_csd, fig_csd
+            style_cell_conditional_csd, style_header_conditional, fig_csd
 
     # Single area mode
 
@@ -2105,14 +1670,14 @@ def projections_2031_pop_hh(geo, IsComparison):
         delta.append(d)
 
     table = pd.DataFrame(
-        {'HH Category': h_l, '2021 Pop.': pop_2021, 'Muni. Growth (%)': gr_csd, 'Regional Growth (%)': gr_cd,
+        {'HH Category': h_l, 'current pop.': pop_2021, 'Muni. Growth (%)': gr_csd, 'Regional Growth (%)': gr_cd,
          'Delta(Muni. GR)': np.round(delta, 0)})
 
     table = table.replace([np.inf, -np.inf], 0)
     table = table.fillna(0)
 
-    table['Delta(Regional GR)'] = np.round(table['2021 Pop.'] * table['Regional Growth (%)'], 0)
-    table['2031 Pop.(Muni.)'] = np.round(table['2021 Pop.'] + (table['2021 Pop.'] * table['Muni. Growth (%)']), 0)
+    table['Delta(Regional GR)'] = np.round(table['current pop.'] * table['Regional Growth (%)'], 0)
+    table['2031 Pop.(Muni.)'] = np.round(table['current pop.'] + (table['current pop.'] * table['Muni. Growth (%)']), 0)
     table['2031 Pop.(Regional)'] = tr_cd
 
     table_for_plot = table[['HH Category', 'Muni. Growth (%)', 'Regional Growth (%)']]
@@ -2196,7 +1761,7 @@ def update_geo_figure9(geo, geo_c, scale, selected_columns):
                 'if': {'column_id': i},
                 'background_color': '#D2F3FF'
             } for i in selected_columns], \
-            style_cell_conditional_csd, fig_csd
+            style_cell_conditional_csd, style_header_conditional, fig_csd
 
     # Single area mode
 

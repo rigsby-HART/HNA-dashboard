@@ -31,12 +31,24 @@ df_partners = pd.read_sql_table('partners', engine_current.connect())
 
 joined_df_current = income_category.merge(df_partners, how='left', on='Geography')
 
-# Geo code data
+# Importing Projection Data
+
+updated_csd = pd.read_sql_table('csd_hh_projections', engine_current.connect())  # CSD level projections
+updated_cd = pd.read_sql_table('cd_hh_projections', engine_current.connect())  # CD level projections
+
+# Importing Geo Code Information
+
+df_geo_list = pd.read_sql_table('geocodes', engine_current.connect())
+df_region_list = pd.read_sql_table('regioncodes', engine_current.connect())
+df_province_list = pd.read_sql_table('provincecodes', engine_current.connect())
+df_region_list.columns = df_geo_list.columns
+df_province_list.columns = df_geo_list.columns
 mapped_geo_code = pd.read_sql_table('geocodes_integrated', engine_current.connect())
 
 # Repeat the data processing for each year
 joined_df_year: Dict[int, pd.DataFrame] = {}
-
+updated_csd_year: Dict[int, pd.DataFrame] = {}
+updated_cd_year: Dict[int, pd.DataFrame] = {}
 for year in engine_list.keys():
     income_category = pd.read_sql_table('income', engine_list[year].connect())
     income_category = income_category.drop(['Geography'], axis=1)
@@ -45,3 +57,5 @@ for year in engine_list.keys():
     df_partners = pd.read_sql_table('partners', engine_list[year].connect())
 
     joined_df_year[year] = income_category.merge(df_partners, how='left', on='Geography')
+    updated_csd_year[year] = pd.read_sql_table('csd_hh_projections', engine_list[year].connect())
+

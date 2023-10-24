@@ -66,7 +66,7 @@ columns = ['Percent HH with income 20% or under of AMHI in core housing need',
 
 # Setting layout for dashboard
 
-layout = layout(2021)
+layout = layout(default_year)
 
 
 # Plot/table generators and callbacks
@@ -187,6 +187,7 @@ def update_table1(geo, geo_c, year_comparison: str, selected_columns, scale):
         # Area Scaling up/down when user clicks area scale button on page 1
         else:
             geo, geo_c = area_scale_comparison(geo, geo_c, scale)
+            compared_year = default_year
 
         # Main Table
 
@@ -371,6 +372,7 @@ def update_geo_figure(geo: str, geo_c: str, year_comparison: str, scale, refresh
         # Area Scaling up/down when user clicks area scale button on page 1
         else:
             geo, geo_c = area_scale_comparison(geo, geo_c, scale)
+            original_year, compared_year = default_year
 
         # Subplot setting for the comparison mode
         fig = make_subplots(rows=1, cols=2,
@@ -431,7 +433,7 @@ def update_geo_figure(geo: str, geo_c: str, year_comparison: str, scale, refresh
         # Plot layout settings
         fig.update_layout(
             title='Percentage of Households in Core Housing Need, by Income Category, '
-                  f'{compared_year + " vs " + original_year if year_comparison else original_year}',
+                  f'{compared_year + " vs " + original_year if year_comparison else default_year}',
             showlegend=False,
             width=900,
             legend=dict(font=dict(size=8)),
@@ -576,6 +578,7 @@ def update_geo_figure2(geo, geo_c, year_comparison: str, scale, refresh):
         # Area Scaling up/down when user clicks area scale button on page 1
         else:
             geo, geo_c = area_scale_comparison(geo, geo_c, scale)
+            original_year, compared_year = default_year
 
         # Subplot setting for the comparison mode
         fig2 = make_subplots(rows=1, cols=2,
@@ -822,6 +825,7 @@ def update_table2(geo, geo_c, year_comparison: str, selected_columns, scale):
         # Area Scaling up/down when user clicks area scale button on page 1
         else:
             geo, geo_c = area_scale_comparison(geo, geo_c, scale)
+            original_year, compared_year = default_year
 
         # Main Table
 
@@ -1048,22 +1052,24 @@ def update_geo_figure5(geo, geo_c, year_comparison: str, scale, refresh):
 
     else:
         if year_comparison:
-            _, compared_year = year_comparison.split("-")
+            original_year, compared_year = year_comparison.split("-")
             geo = area_scale_primary_only(geo, scale)
         # Area Scaling up/down when user clicks area scale button on page 1
         else:
             geo, geo_c = area_scale_comparison(geo, geo_c, scale)
+            original_year, compared_year = default_year
 
         # Subplot setting for the comparison mode 
-        fig5 = make_subplots(rows=1, cols=2, subplot_titles=(f"{geo}",
-                                                             f"{geo + ' ' + compared_year if year_comparison else geo_c}"),
+        fig5 = make_subplots(rows=1, cols=2, subplot_titles=(f"{geo + ' ' + compared_year if year_comparison else geo}",
+                                                             f"{geo + ' ' + original_year if year_comparison else geo_c}"),
                              shared_yaxes=True, shared_xaxes=True)
 
         # Main Plot
 
         # Generating dataframe for main plot and color list
 
-        plot_df = plot_df_core_housing_need_by_priority_population(geo)
+        plot_df = plot_df_core_housing_need_by_priority_population(geo, int(compared_year) if year_comparison else
+                                                                   default_year)
         color_dict = color_dict_core_housing_need_by_priority_population(plot_df)
 
         # Generating main plot
@@ -1083,8 +1089,10 @@ def update_geo_figure5(geo, geo_c, year_comparison: str, scale, refresh):
 
         # Generating dataframe for comparison plot and color list
 
-        plot_df_c = plot_df_core_housing_need_by_priority_population(
-            geo_c if not year_comparison else geo, year=default_year if not year_comparison else int(compared_year))
+        plot_df_c = (
+            plot_df_core_housing_need_by_priority_population(geo, int(original_year)) if year_comparison else
+            plot_df_core_housing_need_by_priority_population(geo_c)
+        )
         color_dict = color_dict_core_housing_need_by_priority_population(plot_df_c)
 
         # Generating comparison plot
@@ -1289,22 +1297,27 @@ def update_geo_figure6(geo, geo_c, year_comparison, scale, refresh):
     # Comparison mode
     else:
         if year_comparison:
-            _, compared_year = year_comparison.split("-")
+            original_year, compared_year = year_comparison.split("-")
             geo = area_scale_primary_only(geo, scale)
         # Area Scaling up/down when user clicks area scale button on page 1
         else:
             geo, geo_c = area_scale_comparison(geo, geo_c, scale)
+            original_year, compared_year = default_year
 
         # Subplot setting for the comparison mode
         fig6 = make_subplots(rows=1, cols=2,
-                             subplot_titles=(f"{geo + ' ' + compared_year if year_comparison else geo_c}",
-                                             f"{geo} {default_year}"),
+                             subplot_titles=(f"{geo + ' ' + compared_year if year_comparison else geo}",
+                                             f"{geo + ' ' + original_year if year_comparison else geo_c}"),
                              shared_yaxes=True, shared_xaxes=True)
 
         # Main Plot
 
         # Generating dataframe for main plot
-        plot_df = plot_df_core_housing_need_by_priority_population_income(geo)
+        plot_df = (
+            plot_df_core_housing_need_by_priority_population_income(geo,
+                                                                    int(compared_year) if year_comparison else
+                                                                    int(default_year))
+        )
 
         # Generating main plot
 
@@ -1325,9 +1338,10 @@ def update_geo_figure6(geo, geo_c, year_comparison, scale, refresh):
         # Comparison plot
 
         # Generating dataframe for comparison plot
-        plot_df_c = plot_df_core_housing_need_by_priority_population_income(geo if year_comparison else geo_c,
-                                                                            year=int(compared_year) if year_comparison
-                                                                            else default_year)
+        plot_df_c = (
+            plot_df_core_housing_need_by_priority_population_income(geo, int(original_year)) if year_comparison else
+            plot_df_core_housing_need_by_priority_population_income(geo_c)
+        )
 
         # Generating comparison plot
 

@@ -8,21 +8,12 @@ import json
 import geopandas as gpd
 import plotly.graph_objects as go
 from dash import dcc, html, Input, Output, ctx, callback, State
-
-from helpers.create_engine import engine_current, mapped_geo_code
+# Importing Geo Code Information
+from helpers.create_engine import engine_current, mapped_geo_code, df_province_list, df_region_list
 from helpers.table_helper import storage_variables
 
 warnings.filterwarnings("ignore")
 
-# Importing Geo Code Information
-
-df_geo_list = pd.read_sql_table('geocodes', engine_current.connect())
-df_region_list = pd.read_sql_table('regioncodes', engine_current.connect())
-df_region_list.columns = df_geo_list.columns
-df_province_list = pd.read_sql_table('provincecodes', engine_current.connect())
-df_province_list.columns = df_geo_list.columns
-
-# Importing Province Map
 
 gdf_p_code_added = gpd.read_file('./sources/mapdata_simplified/province.shp')
 gdf_p_code_added = gdf_p_code_added.set_index('Geo_Code')
