@@ -183,11 +183,11 @@ def update_table1(geo, geo_c, year_comparison: str, selected_columns, scale):
     else:
         if year_comparison:
             geo = area_scale_primary_only(geo, scale)
-            _, compared_year = year_comparison.split("-")
+            original_year, compared_year = year_comparison.split("-")
         # Area Scaling up/down when user clicks area scale button on page 1
         else:
             geo, geo_c = area_scale_comparison(geo, geo_c, scale)
-            compared_year = default_year
+            original_year, compared_year = default_year, default_year
 
         # Main Table
 
@@ -225,7 +225,7 @@ def update_table1(geo, geo_c, year_comparison: str, selected_columns, scale):
                 col_list.append({"name": [geo + " " + compared_year if year_comparison else geo, i, j], "id": i})
 
         for i, j in zip(list(table_c.columns[1:]), median_row_c):
-            col_list.append({"name": [geo + " " + str(default_year) if year_comparison else geo_c, i, j], "id": i})
+            col_list.append({"name": [geo + " " + str(original_year) if year_comparison else geo_c, i, j], "id": i})
 
         style_cell_conditional = [
                                      {
@@ -322,7 +322,7 @@ def update_geo_figure(geo: str, geo_c: str, year_comparison: str, scale, refresh
         geo = area_scale_primary_only(geo, scale)
 
         # Generating dataframe for plot
-        plot_df = plot_df_core_housing_need_by_income(geo, is_second=False)
+        plot_df = plot_df_core_housing_need_by_income(geo, False)
 
         # Generating plot
         fig = go.Figure()
@@ -372,7 +372,7 @@ def update_geo_figure(geo: str, geo_c: str, year_comparison: str, scale, refresh
         # Area Scaling up/down when user clicks area scale button on page 1
         else:
             geo, geo_c = area_scale_comparison(geo, geo_c, scale)
-            original_year, compared_year = default_year
+            original_year, compared_year = default_year, default_year
 
         # Subplot setting for the comparison mode
         fig = make_subplots(rows=1, cols=2,
@@ -578,7 +578,7 @@ def update_geo_figure2(geo, geo_c, year_comparison: str, scale, refresh):
         # Area Scaling up/down when user clicks area scale button on page 1
         else:
             geo, geo_c = area_scale_comparison(geo, geo_c, scale)
-            original_year, compared_year = default_year
+            original_year, compared_year = default_year, default_year
 
         # Subplot setting for the comparison mode
         fig2 = make_subplots(rows=1, cols=2,
@@ -825,7 +825,7 @@ def update_table2(geo, geo_c, year_comparison: str, selected_columns, scale):
         # Area Scaling up/down when user clicks area scale button on page 1
         else:
             geo, geo_c = area_scale_comparison(geo, geo_c, scale)
-            original_year, compared_year = default_year
+            original_year, compared_year = default_year, default_year
 
         # Main Table
 
@@ -1057,7 +1057,7 @@ def update_geo_figure5(geo, geo_c, year_comparison: str, scale, refresh):
         # Area Scaling up/down when user clicks area scale button on page 1
         else:
             geo, geo_c = area_scale_comparison(geo, geo_c, scale)
-            original_year, compared_year = default_year
+            original_year, compared_year = default_year, default_year
 
         # Subplot setting for the comparison mode 
         fig5 = make_subplots(rows=1, cols=2, subplot_titles=(f"{geo + ' ' + compared_year if year_comparison else geo}",
@@ -1302,7 +1302,7 @@ def update_geo_figure6(geo, geo_c, year_comparison, scale, refresh):
         # Area Scaling up/down when user clicks area scale button on page 1
         else:
             geo, geo_c = area_scale_comparison(geo, geo_c, scale)
-            original_year, compared_year = default_year
+            original_year, compared_year = default_year, default_year
 
         # Subplot setting for the comparison mode
         fig6 = make_subplots(rows=1, cols=2,
@@ -1316,7 +1316,7 @@ def update_geo_figure6(geo, geo_c, year_comparison, scale, refresh):
         plot_df = (
             plot_df_core_housing_need_by_priority_population_income(geo,
                                                                     int(compared_year) if year_comparison else
-                                                                    int(default_year))
+                                                                    int(original_year))
         )
 
         # Generating main plot
@@ -1435,7 +1435,7 @@ def func_ov7(n_clicks, geo, geo_c, year_comparison):
 
     if "ov7-download-csv" == ctx.triggered_id:
         if year_comparison:
-            _, compared_year = year_comparison.split("-")
+            original_year, compared_year = year_comparison.split("-")
             joined_df_geo = joined_df_current.query("Geography == " + f"'{geo}'")
             joined_df_geo_c = joined_df_year[int(compared_year)].query("Geography == " + f"'{geo}'")
             joined_df_download = pd.concat([joined_df_geo, joined_df_geo_c])

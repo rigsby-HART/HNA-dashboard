@@ -33,8 +33,8 @@ joined_df_current = income_category.merge(df_partners, how='left', on='Geography
 
 # Importing Projection Data
 
-updated_csd = pd.read_sql_table('csd_hh_projections', engine_current.connect())  # CSD level projections
-updated_cd = pd.read_sql_table('cd_hh_projections', engine_current.connect())  # CD level projections
+updated_csd_current = pd.read_sql_table('csd_hh_projections', engine_current.connect())  # CSD level projections
+updated_cd_current = pd.read_sql_table('cd_hh_projections', engine_current.connect())  # CD level projections
 
 # Importing Geo Code Information
 
@@ -58,4 +58,5 @@ for year in engine_list.keys():
 
     joined_df_year[year] = income_category.merge(df_partners, how='left', on='Geography')
     updated_csd_year[year] = pd.read_sql_table('csd_hh_projections', engine_list[year].connect())
+    updated_cd_year[year] = pd.read_sql_table('cd_hh_projections', engine_list[year].connect())
 
