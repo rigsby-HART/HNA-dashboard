@@ -239,7 +239,7 @@ def update_geo_figure6(geo, geo_c, year_comparison: str, scale, selected_columns
 
         plot_df, table1 = (
             plot1_new_projection(geo, False, int(compared_year)) if year_comparison else
-            plot1_new_projection(geo, False)
+            plot1_new_projection(geo, False, int(original_year))
         )
 
         # Generating main plot

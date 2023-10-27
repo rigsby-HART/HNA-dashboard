@@ -2,41 +2,21 @@
 
 import pandas as pd
 import numpy as np
-import plotly.express as px
 import plotly.graph_objects as go
 import warnings
-from dash import dcc, dash_table, html, Input, Output, ctx, callback
+from dash import dcc, dash_table, html, Input, Output, ctx, callback, State
 from dash.dash_table.Format import Format, Scheme, Group
 from plotly.subplots import make_subplots
-from helpers.create_engine import engine_current
+from helpers.create_engine import income_indigenous_year, default_year
 from helpers.style_helper import style_data_conditional, style_header_conditional
 from helpers.table_helper import area_scale_comparison, area_scale_primary_only, storage_variables
 
+from pages.page4_helpers.page4_main import layout
+
 warnings.filterwarnings("ignore")
-
-# Importing indigenous data
-
-df_ind = pd.read_sql_table('indigenous', engine_current.connect())
-
-# Importing income data
-
-df_income = pd.read_sql_table('income', engine_current.connect())
 
 # Preprocessing - Preparing main dataset and categories being used for plots
 
-income_category = df_income.drop(['Geography'], axis=1)
-income_category = income_category.rename(columns={'Formatted Name': 'Geography'})
-joined_df = income_category.merge(df_ind, how='left', on='Geography')
-
-# Importing Geo Code Information
-
-mapped_geo_code = pd.read_sql_table('geocodes_integrated', engine_current.connect())
-
-# Configuration for plot icons
-
-config = {'displayModeBar': True, 'displaylogo': False,
-          'modeBarButtonsToRemove': ['zoom', 'lasso2d', 'pan', 'select', 'zoomIn', 'zoomOut', 'autoScale',
-                                     'resetScale']}
 
 # Color Lists
 
@@ -91,207 +71,9 @@ amhi_range = ['20% or under of AMHI', '21% to 50% of AMHI', '51% to 80% of AMHI'
 
 income_ct = [x + f" ({a})" for x, a in zip(x_base, amhi_range)]
 
-# Setting a default plot and table which renders before the dashboard is fully loaded
-
-fig = px.line(x=['Loading'], y=['Loading'])
-
-table = pd.DataFrame({'Loading': [0]})
-
 # Setting layout for dashboard
 
-layout = html.Div(children=
-                  # Fetching Area/Comparison Area/Clicked area scale info in local storage
-                  storage_variables()
-                  + [
-
-                      html.Div(
-                          children=[
-
-                              # Income Categories and Affordable Shelter Costs, 2021
-
-                              html.Div([
-                                  # Title
-                                  html.H3(children=html.Strong('Income Categories and Affordable Shelter Costs, 2021'),
-                                          id='visualization3'),
-                                  # Description
-                                  html.Div([
-                                      html.H6(
-                                          'The following table shows the range of Indigenous household incomes and affordable shelter costs for each income category, in 2020 dollar values, as well what percentage of the total number of Indigenous households that fall within each category.')
-                                  ], className='muni-reg-text-lgeo'),
-
-                                  # Table
-
-                                  html.Div([
-                                      dash_table.DataTable(
-                                          id='datatable-interactivity_ind',
-                                          columns=[
-                                              {"name": i, "id": i, "deletable": False, "selectable": False} for i in
-                                              table.columns
-                                          ],
-                                          data=table.to_dict('records'),
-                                          editable=True,
-                                          sort_action="native",
-                                          sort_mode="multi",
-                                          column_selectable=False,
-                                          row_selectable=False,
-                                          row_deletable=False,
-                                          selected_columns=[],
-                                          selected_rows=[],
-                                          page_action="native",
-                                          page_current=0,
-                                          page_size=10,
-                                          merge_duplicate_headers=True,
-                                          export_format="xlsx",
-                                          style_cell={'font-family': 'Bahnschrift',
-                                                      'height': 'auto',
-                                                      'whiteSpace': 'normal',
-                                                      'overflow': 'hidden',
-                                                      'textOverflow': 'ellipsis'},
-                                          style_header={'textAlign': 'right', 'fontWeight': 'bold'},
-                                          style_data={'whiteSpace': 'normal', 'overflow': 'hidden',
-                                                      'textOverflow': 'ellipsis'}
-                                      ),
-                                      html.Div(id='datatable-interactivity-container_ind')
-                                  ], className='pg4-table-lgeo'
-
-                                  ),
-
-                              ], className='pg4-table-plot-box-lgeo'),
-
-                              # Percentage of Households in Core Housing Need, by Income Category, 2021
-
-                              html.Div([
-                                  # Title
-                                  html.H3(children=html.Strong(
-                                      'Percentage of Indigenous Households in Core Housing Need, by Income Category, 2021'),
-                                          id='visualization'),
-
-                                  # Description
-                                  html.Div([
-                                      html.H6(
-                                          'Income categories are determined by their relationship with each geography’s Area Median Household Income (AMHI). The following graph shows the range of Indigenous household incomes and affordable shelter costs for each income category, in 2020 dollar values, as well what percentage of the total number of Indigenous households falls within each category.')
-                                  ], className='muni-reg-text-lgeo'),
-
-                                  # Graph
-
-                                  html.Div(children=[
-
-                                      dcc.Graph(
-                                          id='graph_ind',
-                                          figure=fig,
-                                          config=config,
-                                      )
-                                  ],
-                                      className='pg4-plot-lgeo'
-
-                                  ),
-
-                              ], className='pg4-table-plot-box-lgeo'),
-
-                              # Percentage of Households in Core Housing Need, by Income Category and HH Size, 2021
-
-                              html.Div([
-                                  # Title
-                                  html.H3(children=html.Strong(
-                                      'Percentage of Indigenous Households in Core Housing Need, by Income Category and HH Size, 2021'),
-                                          id='visualization2'),
-
-                                  # Description
-                                  html.Div([
-                                      html.H6(
-                                          'The following graph looks at those Indigenous households in Core Housing Need and shows their relative distribution by household size (i.e. the number of individuals in a given household) for each household income category. Where there are no reported households in Core Housing Need, there are too few households to report while protecting privacy.')
-                                  ], className='muni-reg-text-lgeo'),
-
-                                  # Graph
-
-                                  html.Div(children=[
-
-                                      dcc.Graph(
-                                          id='graph2_ind',
-                                          figure=fig,
-                                          config=config,
-                                      )
-                                  ],
-                                      className='pg4-plot-lgeo'
-                                  ),
-
-                              ], className='pg4-table-plot-box-lgeo'),
-
-                              # 2021 Affordable Housing Deficit
-
-                              html.Div([
-                                  # Title
-                                  html.H3(
-                                      children=html.Strong('2021 Affordable Housing Deficit for Indigenous Households'),
-                                      id='visualization4'),
-                                  # Description
-                                  html.Div([
-                                      html.H6(
-                                          'The following table shows the total number of Indigenous households in Core Housing Need by household size and income category, which may be considered as the existing deficit of housing options in the community. Where there are zero households to report, it means there are too few to report while protecting privacy.')
-                                  ], className='muni-reg-text-lgeo'),
-
-                                  # Table
-
-                                  html.Div(children=[
-
-                                      html.Div([
-                                          dash_table.DataTable(
-                                              id='datatable2-interactivity_ind',
-                                              columns=[
-                                                  {"name": i, "id": i, "deletable": False, "selectable": False} for i in
-                                                  table.columns
-                                              ],
-                                              data=table.to_dict('records'),
-                                              editable=True,
-                                              sort_action="native",
-                                              sort_mode="multi",
-                                              column_selectable=False,
-                                              row_selectable=False,
-                                              row_deletable=False,
-                                              selected_columns=[],
-                                              selected_rows=[],
-                                              page_action="native",
-                                              page_current=0,
-                                              page_size=10,
-                                              merge_duplicate_headers=True,
-                                              style_data={'whiteSpace': 'normal', 'overflow': 'hidden',
-                                                          'textOverflow': 'ellipsis'},
-                                              style_cell={'font-family': 'Bahnschrift',
-                                                          'height': 'auto',
-                                                          'whiteSpace': 'normal',
-                                                          'overflow': 'hidden',
-                                                          'textOverflow': 'ellipsis'},
-                                              style_header={'text-align': 'middle', 'fontWeight': 'bold'},
-                                              export_format="xlsx"
-                                          ),
-                                          html.Div(id='datatable2-interactivity-container_ind')
-                                      ], className='pg4-table-lgeo'
-                                      ),
-                                  ]
-                                  ),
-                              ], className='pg4-table-plot-box-lgeo'),
-
-                              # Raw data download button
-
-                              html.Div([
-                                  html.Button("Download This Community", id="ov7-download-csv_ind"),
-                                  dcc.Download(id="ov7-download-text_ind")
-                              ],
-                                  className='region-button-lgeo'
-                              ),
-
-                              # LGEO
-
-                              html.Div([
-                                  'This dashboard was created in collaboration with ',
-                                  html.A('Licker Geospatial', href='https://www.lgeo.co/', target="_blank"),
-                                  ' using Plotly.'
-                              ], className='lgeo-credit-text'),
-
-                          ], className='dashboard-pg4-lgeo'
-                      ),
-                  ], className='background-pg4-lgeo'
-                  )
+layout = layout(default_year)
 
 
 # Plot/table generators and callbacks
@@ -300,15 +82,13 @@ layout = html.Div(children=
 
 # Table generator
 
-def table_amhi_shelter_cost_ind(geo, IsComparison):
-    joined_df_filtered = joined_df.query('Geography == ' + f'"{geo}"')
+def table_amhi_shelter_cost_ind(geo, IsComparison, year:int=default_year):
+    joined_df_filtered = income_indigenous_year[year].query('Geography == ' + f'"{geo}"')
 
     portion_of_total_hh = []
 
     for x in x_base_echn:
-        portion_of_total_hh.append(joined_df_filtered[
-                                       f'Aboriginal household status-Total - Private households by tenure including presence of mortgage payments and subsidized housing-Households with income {x}'].tolist()[
-                                       0])
+        portion_of_total_hh.append(joined_df_filtered[f'Aboriginal household status-Total - Private households by tenure including presence of mortgage payments and subsidized housing-Households with income {x}'].tolist()[0])
 
     sum_portion_of_total_hh = sum(portion_of_total_hh)
 
@@ -355,12 +135,13 @@ def table_amhi_shelter_cost_ind(geo, IsComparison):
     Output('datatable-interactivity_ind', 'style_header_conditional'),
     Input('main-area', 'data'),
     Input('comparison-area', 'data'),
+    Input('year-comparison', 'data'),
     Input('datatable-interactivity_ind', 'selected_columns'),
     Input('area-scale-store', 'data'),
 )
-def update_table1(geo, geo_c, selected_columns, scale):
+def update_table1(geo, geo_c, year_comparison, selected_columns, scale):
     # Single area mode
-    if geo == geo_c or geo_c == None or (geo == None and geo_c != None):
+    if not year_comparison and (geo == geo_c or geo_c == None or (geo == None and geo_c != None)):
 
         # When no area is selected
         if geo == None and geo_c != None:
@@ -413,15 +194,22 @@ def update_table1(geo, geo_c, selected_columns, scale):
 
     # Comparison mode    
     else:
-
         # Area Scaling up/down when user clicks area scale button on page 1
-
-        geo, geo_c = area_scale_comparison(geo, geo_c, scale)
+        if year_comparison:
+            original_year, compared_year = year_comparison.split("-")
+            geo = area_scale_primary_only(geo, scale)
+        # Area Scaling up/down when user clicks area scale button on page 1
+        else:
+            geo, geo_c = area_scale_comparison(geo, geo_c, scale)
+            original_year, compared_year = default_year, default_year
 
         # Main Table
 
         # Generating main table
-        table, median_income, median_rent = table_amhi_shelter_cost_ind(geo, IsComparison=False)
+        table, median_income, median_rent = (
+            table_amhi_shelter_cost_ind(geo, False, int(compared_year)) if year_comparison else
+            table_amhi_shelter_cost_ind(geo, False)
+        )
 
         # Comparison Table
 
@@ -429,7 +217,10 @@ def update_table1(geo, geo_c, selected_columns, scale):
             geo_c = geo
 
         # Generating comparison table
-        table_c, median_income_c, median_rent_c = table_amhi_shelter_cost_ind(geo_c, IsComparison=True)
+        table_c, median_income_c, median_rent_c = (
+            table_amhi_shelter_cost_ind(geo, True, int(original_year)) if year_comparison else
+            table_amhi_shelter_cost_ind(geo_c, True)
+        )
 
         # Merging main and comparison table
         table_j = table.merge(table_c, how='left', on='Income Category')
@@ -444,10 +235,10 @@ def update_table1(geo, geo_c, selected_columns, scale):
             if i == 'Income Category':
                 col_list.append({"name": ["Area (Indigenous HH)", i, j], "id": i})
             else:
-                col_list.append({"name": [geo, i, j], "id": i})
+                col_list.append({"name": [f"{geo} {compared_year}" if year_comparison else geo, i, j], "id": i})
 
         for i, j in zip(list(table_c.columns[1:]), median_row_c):
-            col_list.append({"name": [geo_c, i, j], "id": i})
+            col_list.append({"name": [f"{geo} {original_year}" if year_comparison else geo_c, i, j], "id": i})
 
         # for i in table.columns:
         #     if i == 'Income Category':
@@ -503,8 +294,8 @@ chn_columns = [column_format + c for c in x_base_chn]
 
 
 # Plot dataframe generator
-def plot_df_core_housing_need_by_income(geo, IsComparison):
-    joined_df_filtered = joined_df.query('Geography == ' + f'"{geo}"')
+def plot_df_core_housing_need_by_income(geo, IsComparison, year:int=default_year):
+    joined_df_filtered = income_indigenous_year[default_year].query('Geography == ' + f'"{geo}"')
 
     x_list = []
 
@@ -547,12 +338,13 @@ def plot_df_core_housing_need_by_income(geo, IsComparison):
     Output('graph_ind', 'figure'),
     Input('main-area', 'data'),
     Input('comparison-area', 'data'),
+    Input('year-comparison', 'data'),
     Input('area-scale-store', 'data'),
     Input('datatable-interactivity_ind', 'selected_columns'),
 )
-def update_geo_figure(geo, geo_c, scale, refresh):
+def update_geo_figure(geo, geo_c, year_comparison, scale, refresh):
     # Single area mode
-    if geo == geo_c or geo_c == None or (geo == None and geo_c != None):
+    if not year_comparison or (geo == geo_c or geo_c == None or (geo == None and geo_c != None)):
 
         # When no area is selected
         if geo == None and geo_c != None:
@@ -610,11 +402,19 @@ def update_geo_figure(geo, geo_c, scale, refresh):
     else:
 
         # Area Scaling up/down when user clicks area scale button on page 1
-
-        geo, geo_c = area_scale_comparison(geo, geo_c, scale)
+        if year_comparison:
+            original_year, compared_year = year_comparison.split("-")
+            geo = area_scale_primary_only(geo, scale)
+        # Area Scaling up/down when user clicks area scale button on page 1
+        else:
+            geo, geo_c = area_scale_comparison(geo, geo_c, scale)
+            original_year, compared_year = default_year, default_year
 
         # Subplot setting for the comparison mode
-        fig = make_subplots(rows=1, cols=2, subplot_titles=(f"{geo}", f"{geo_c}"), shared_xaxes=True)
+        fig = make_subplots(rows=1, cols=2, subplot_titles=(
+            f"{geo} {compared_year}" if year_comparison else geo,
+            f"{geo} {original_year}" if year_comparison else geo_c),
+                            shared_xaxes=True)
 
         # Main Plot
 
@@ -693,7 +493,7 @@ def update_geo_figure(geo, geo_c, scale, refresh):
 
 # plot df, table generator
 def plot_df_core_housing_need_by_amhi(geo, IsComparison):
-    joined_df_filtered = joined_df.query('Geography == ' + f'"{geo}"')
+    joined_df_filtered = income_indigenous_year[default_year].query('Geography == ' + f'"{geo}"')
 
     x_list = []
     x_list_plot = []
@@ -800,10 +600,11 @@ def plot_df_core_housing_need_by_amhi(geo, IsComparison):
     Output('datatable2-interactivity_ind', 'style_header_conditional'),
     Input('main-area', 'data'),
     Input('comparison-area', 'data'),
+    Input('year-comparison', 'data'),
     Input('area-scale-store', 'data'),
     Input('datatable-interactivity_ind', 'selected_columns'),
 )
-def update_geo_figure34(geo, geo_c, scale, refresh):
+def update_geo_figure34(geo, geo_c, year_comparison, scale, refresh):
     # Single area mode
 
     if geo == geo_c or geo_c == None or (geo == None and geo_c != None):
@@ -899,10 +700,18 @@ def update_geo_figure34(geo, geo_c, scale, refresh):
     else:
 
         # Area Scaling up/down when user clicks area scale button on page 1
-        geo, geo_c = area_scale_comparison(geo, geo_c, scale)
+        if year_comparison:
+            original_year, compared_year = year_comparison.split("-")
+            geo = area_scale_primary_only(geo, scale)
+        # Area Scaling up/down when user clicks area scale button on page 1
+        else:
+            geo, geo_c = area_scale_comparison(geo, geo_c, scale)
+            original_year, compared_year = default_year, default_year
 
         # Subplot setting for the comparison mode
-        fig2 = make_subplots(rows=1, cols=2, subplot_titles=(f"{geo}", f"{geo_c}"), shared_xaxes=True)
+        fig2 = make_subplots(rows=1, cols=2, subplot_titles=(
+            f"{geo} {compared_year}" if year_comparison else geo,
+            f"{geo} {original_year}" if year_comparison else geo_c),  shared_xaxes=True)
 
         # Main Plot
 
@@ -1053,15 +862,16 @@ def update_geo_figure34(geo, geo_c, scale, refresh):
     Input("ov7-download-csv_ind", "n_clicks"),
     Input('main-area', 'data'),
     Input('comparison-area', 'data'),
+    State('year-comparison', 'data'),
     prevent_initial_call=True,
 )
-def func_ov7(n_clicks, geo, geo_c):
+def func_ov7(n_clicks, geo, geo_c, year_comparison):
     if geo == None:
         geo = default_value
 
     if "ov7-download-csv_ind" == ctx.triggered_id:
-        joined_df_geo = joined_df.query("Geography == " + f"'{geo}'")
-        joined_df_geo_c = joined_df.query("Geography == " + f"'{geo_c}'")
+        joined_df_geo = income_indigenous_year[default_year].query("Geography == " + f"'{geo}'")
+        joined_df_geo_c = income_indigenous_year[default_year].query("Geography == " + f"'{geo_c}'")
         joined_df_download_ind = pd.concat([joined_df_geo, joined_df_geo_c])
         joined_df_download_ind = joined_df_download_ind.drop(columns=['pk_x', 'pk_y'])
 

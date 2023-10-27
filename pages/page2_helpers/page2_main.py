@@ -1,11 +1,11 @@
 from dash import html, dash_table, dcc
 from plotly import express as px
 
-from helpers.create_engine import joined_df_current
+from helpers.create_engine import income_partners_year, default_year
 from helpers.table_helper import storage_variables
 
 # Generate tables needed for default page
-joined_df_filtered = joined_df_current.query('Geography == "Fraser Valley (CD, BC)"')
+joined_df_filtered = income_partners_year[default_year].query('Geography == "Fraser Valley (CD, BC)"')
 table = joined_df_filtered[['Rent 20% of AMHI', 'Rent 50% of AMHI']]
 table2 = joined_df_filtered[['Rent 20% of AMHI', 'Rent 50% of AMHI']]
 fig = px.line(x=['Not Available'], y=['Not Available'])

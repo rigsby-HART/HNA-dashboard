@@ -21,15 +21,8 @@ for year, file_name in year_data:
 
 # Importing income data
 default_year = 2021
+# This stuff should be the same every year (unless places change which I cannot think of a good idea to fix it)
 engine_current = engine_list[default_year] # Current Year
-
-income_category = pd.read_sql_table('income', engine_current.connect())
-income_category = income_category.drop(['Geography'], axis=1)
-income_category = income_category.rename(columns={'Formatted Name': 'Geography'})
-
-df_partners = pd.read_sql_table('partners', engine_current.connect())
-
-joined_df_current = income_category.merge(df_partners, how='left', on='Geography')
 
 # Importing Projection Data
 
@@ -46,7 +39,8 @@ df_province_list.columns = df_geo_list.columns
 mapped_geo_code = pd.read_sql_table('geocodes_integrated', engine_current.connect())
 
 # Repeat the data processing for each year
-joined_df_year: Dict[int, pd.DataFrame] = {}
+income_partners_year: Dict[int, pd.DataFrame] = {}
+income_indigenous_year: Dict[int, pd.DataFrame] = {}
 updated_csd_year: Dict[int, pd.DataFrame] = {}
 updated_cd_year: Dict[int, pd.DataFrame] = {}
 for year in engine_list.keys():
@@ -55,8 +49,10 @@ for year in engine_list.keys():
     income_category = income_category.rename(columns={'Formatted Name': 'Geography'})
 
     df_partners = pd.read_sql_table('partners', engine_list[year].connect())
+    df_ind = pd.read_sql_table('indigenous', engine_list[year].connect())
 
-    joined_df_year[year] = income_category.merge(df_partners, how='left', on='Geography')
+    income_partners_year[year] = income_category.merge(df_partners, how='left', on='Geography')
+    income_indigenous_year[year] = income_category.merge(df_ind, how='left', on='Geography')
     updated_csd_year[year] = pd.read_sql_table('csd_hh_projections', engine_list[year].connect())
     updated_cd_year[year] = pd.read_sql_table('cd_hh_projections', engine_list[year].connect())
 
