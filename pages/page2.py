@@ -1391,18 +1391,18 @@ def update_geo_figure6(geo, geo_c, year_comparison, scale, refresh):
         return fig6
 
 
-# Creating raw csv data file when user clicks Download Raw Data button
 @callback(
-    Output("visualization3", "children"),
-    Output("visualization", "children"),
-    Output("visualization2", "children"),
-    Output("visualization4", "children"),
-    Output("visualization5", "children"),
-    Output("visualization6", "children"),
+    Output("income-categories-title-page2", "children"),
+    Output("percent-HH-CHN-title-page2", "children"),
+    Output("percent-IC-HH-CHN-title-page2", "children"),
+    Output("housing-deficit-page2", "children"),
+    Output("pct-pp-hh-chn-page2", "children"),
+    Output("pct-pp-ic-chn-page2", "children"),
     Input('year-comparison', 'data'),
 )
 def change_title_labels(year_comparison):
     # change based off of url
+    print("page2 change labels")
     if year_comparison:
         original_year, compared_year = year_comparison.split("-")
         return (
@@ -1422,7 +1422,22 @@ def change_title_labels(year_comparison):
         html.Strong(f'Percentage of Households in Core Housing Need by Priority Population and Income Category, {default_year}')
     )
 
-
+# @callback(
+#     Output("income-categories-title-page2", "children"),
+#     Input('year-comparison', 'data'),
+# )
+# def change_description_labels(year_comparison):
+#     # change based off of url
+#     print("page2 change descriptions")
+#     if year_comparison:
+#         original_year, compared_year = year_comparison.split("-")
+#         return (
+#             html.Strong(f'Income Categories and Affordable Shelter Costs, {compared_year} vs {original_year}')
+#         )
+#     return (
+#         html.Strong(f'Income Categories and Affordable Shelter Costs, {default_year}')
+#     )
+# Creating raw csv data file when user clicks Download Raw Data button
 @callback(
     Output("ov7-download-text", "data"),
     Input("ov7-download-csv", "n_clicks"),

@@ -295,13 +295,13 @@ chn_columns = [column_format + c for c in x_base_chn]
 
 # Plot dataframe generator
 def plot_df_core_housing_need_by_income(geo, IsComparison, year:int=default_year):
-    joined_df_filtered = income_indigenous_year[default_year].query('Geography == ' + f'"{geo}"')
+    joined_df_filtered = income_indigenous_year[year].query('Geography == ' + f'"{geo}"')
 
     x_list = []
 
     i = 0
     for b, c in zip(x_base, x_columns):
-        value = joined_df_filtered[c].tolist()[0]
+        value = str(joined_df_filtered[c].tolist()[0])
         if i < 4:
             if IsComparison != True:
                 x = b + '<br>' + " ($" + value + ")"
@@ -344,7 +344,7 @@ def plot_df_core_housing_need_by_income(geo, IsComparison, year:int=default_year
 )
 def update_geo_figure(geo, geo_c, year_comparison, scale, refresh):
     # Single area mode
-    if not year_comparison or (geo == geo_c or geo_c == None or (geo == None and geo_c != None)):
+    if not year_comparison and (geo == geo_c or geo_c == None or (geo == None and geo_c != None)):
 
         # When no area is selected
         if geo == None and geo_c != None:
@@ -419,7 +419,10 @@ def update_geo_figure(geo, geo_c, year_comparison, scale, refresh):
         # Main Plot
 
         # Generating dataframe for main plot
-        plot_df = plot_df_core_housing_need_by_income(geo, IsComparison=False)
+        plot_df = (
+            plot_df_core_housing_need_by_income(geo, False, int(compared_year)) if year_comparison else
+            plot_df_core_housing_need_by_income(geo, False)
+        )
 
         # Generating main plot
         n = 0
@@ -441,7 +444,10 @@ def update_geo_figure(geo, geo_c, year_comparison, scale, refresh):
         # Comparison plot
 
         # Generating dataframe for comparison plot
-        plot_df_c = plot_df_core_housing_need_by_income(geo_c, IsComparison=True)
+        plot_df_c = (
+            plot_df_core_housing_need_by_income(geo, True, int(original_year)) if year_comparison else
+            plot_df_core_housing_need_by_income(geo_c, True)
+        )
 
         # Generating comparison plot
         n = 0
@@ -492,8 +498,8 @@ def update_geo_figure(geo, geo_c, year_comparison, scale, refresh):
 # and 2021 Affordable Housing Deficit for Indigenous Households (table)
 
 # plot df, table generator
-def plot_df_core_housing_need_by_amhi(geo, IsComparison):
-    joined_df_filtered = income_indigenous_year[default_year].query('Geography == ' + f'"{geo}"')
+def plot_df_core_housing_need_by_amhi(geo, IsComparison, year:int=default_year):
+    joined_df_filtered = income_indigenous_year[year].query('Geography == ' + f'"{geo}"')
 
     x_list = []
     x_list_plot = []
@@ -607,7 +613,7 @@ def plot_df_core_housing_need_by_amhi(geo, IsComparison):
 def update_geo_figure34(geo, geo_c, year_comparison, scale, refresh):
     # Single area mode
 
-    if geo == geo_c or geo_c == None or (geo == None and geo_c != None):
+    if not year_comparison and (geo == geo_c or geo_c == None or (geo == None and geo_c != None)):
 
         # When no area is selected
         if geo == None and geo_c != None:
@@ -716,7 +722,10 @@ def update_geo_figure34(geo, geo_c, year_comparison, scale, refresh):
         # Main Plot
 
         # Generating dataframe for main plot
-        plot_df, table2 = plot_df_core_housing_need_by_amhi(geo, False)
+        plot_df, table2 = (
+            plot_df_core_housing_need_by_amhi(geo, False, int(compared_year)) if year_comparison else
+            plot_df_core_housing_need_by_amhi(geo, False)
+        )
 
         # Generating main plot
         n = 0
@@ -738,7 +747,10 @@ def update_geo_figure34(geo, geo_c, year_comparison, scale, refresh):
         # Comparison plot
 
         # Generating dataframe for comparison plot
-        plot_df_c, table2_c = plot_df_core_housing_need_by_amhi(geo_c, True)
+        plot_df_c, table2_c = (
+            plot_df_core_housing_need_by_amhi(geo, True, int(original_year)) if year_comparison else
+            plot_df_core_housing_need_by_amhi(geo_c, True)
+        )
 
         # Generating comparison plot
         n = 0
@@ -795,7 +807,7 @@ def update_geo_figure34(geo, geo_c, year_comparison, scale, refresh):
             if i == 'Income Category (Max. affordable shelter cost)':
                 col_list.append({"name": ["Area (Indigenous HH)", i], "id": i})
             else:
-                col_list.append({"name": [geo, i],
+                col_list.append({"name": [f"{geo} {compared_year}" if year_comparison else geo, i],
                                  "id": i,
                                  "type": 'numeric',
                                  "format": Format(
@@ -808,7 +820,7 @@ def update_geo_figure34(geo, geo_c, year_comparison, scale, refresh):
             if i == 'Income Category (Max. affordable shelter cost) ':
                 col_list.append({"name": ["", i], "id": i})
             else:
-                col_list.append({"name": [geo_c, i],
+                col_list.append({"name": [f"{geo} {original_year}" if year_comparison else geo_c, i],
                                  "id": i,
                                  "type": 'numeric',
                                  "format": Format(
@@ -870,9 +882,46 @@ def func_ov7(n_clicks, geo, geo_c, year_comparison):
         geo = default_value
 
     if "ov7-download-csv_ind" == ctx.triggered_id:
-        joined_df_geo = income_indigenous_year[default_year].query("Geography == " + f"'{geo}'")
-        joined_df_geo_c = income_indigenous_year[default_year].query("Geography == " + f"'{geo_c}'")
-        joined_df_download_ind = pd.concat([joined_df_geo, joined_df_geo_c])
-        joined_df_download_ind = joined_df_download_ind.drop(columns=['pk_x', 'pk_y'])
+        if year_comparison:
+            original_year, compared_year = year_comparison.split("-")
+            joined_df_geo = income_indigenous_year[int(original_year)].query("Geography == " + f"'{geo}'")
+            joined_df_geo_c = income_indigenous_year[int(compared_year)].query("Geography == " + f"'{geo}'")
+            joined_df_download = pd.concat([joined_df_geo, joined_df_geo_c])
+            joined_df_download = joined_df_download.drop(columns=['pk_x', 'pk_y'])
 
-        return dcc.send_data_frame(joined_df_download_ind.to_csv, "result.csv")
+            return dcc.send_data_frame(joined_df_download.to_csv, "result.csv")
+        else:
+            joined_df_geo = income_indigenous_year[default_year].query("Geography == " + f"'{geo}'")
+            joined_df_geo_c = income_indigenous_year[default_year].query("Geography == " + f"'{geo_c}'")
+            joined_df_download_ind = pd.concat([joined_df_geo, joined_df_geo_c])
+            joined_df_download_ind = joined_df_download_ind.drop(columns=['pk_x', 'pk_y'])
+
+            return dcc.send_data_frame(joined_df_download_ind.to_csv, "result.csv")
+
+@callback(
+    Output("Income-Category-Indigenous-Title-page4", "children"),
+    Output("CHN-IC-page4", "children"),
+    Output("CHN-IC-HH-page4", "children"),
+    Output("Deficit-page4", "children"),
+    Input('year-comparison', 'data'),
+)
+def change_title_labels(year_comparison):
+    # change based off of url
+    print("page4 change labels")
+    year = default_year
+    if year_comparison:
+        original_year, compared_year = year_comparison.split("-")
+
+        return (
+            html.Strong(f'Income Categories and Affordable Shelter Costs, {compared_year} vs {year}'),
+            html.Strong(f'Percentage of Indigenous Households in Core Housing Need, by Income Category, {compared_year} vs {year}'),
+            html.Strong(f'Percentage of Indigenous Households in Core Housing Need, by Income Category and HH Size, {compared_year} vs {year}'),
+            html.Strong(f'{compared_year} vs {year} Affordable Housing Deficit for Indigenous Households'),
+        )
+    prediction_year = default_year + 10
+    return (
+        html.Strong(f'Income Categories and Affordable Shelter Costs, {year}'),
+        html.Strong(f'Percentage of Indigenous Households in Core Housing Need, by Income Category, {year}'),
+        html.Strong(f'Percentage of Indigenous Households in Core Housing Need, by Income Category and HH Size, {year}'),
+        html.Strong(f'{year} Affordable Housing Deficit for Indigenous Households'),
+    )

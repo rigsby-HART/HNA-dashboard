@@ -19,6 +19,8 @@ config = {'displayModeBar': True, 'displaylogo': False,
 
 
 def layout(year=default_year):
+    prediction_year = year + 10
+    year_minus_15 = year - 15
     return html.Div(children=
                     # Fetching Area/Comparison Area/Clicked area scale info in local storage
                     storage_variables()
@@ -35,14 +37,22 @@ def layout(year=default_year):
 
                                     html.Div([
                                         # Title
-                                        html.H3(children=html.Strong('2031 Household Projections by Income Category'),
-                                                className='subtitle-lgeo'),
+                                        html.H3(children=html.Strong(
+                                            f'{prediction_year} Household Projections by Income Category'),
+                                            className='subtitle-lgeo',
+                                            id="HH-IC-page3"),
 
                                         # Table Description
                                         html.Div([
                                             html.H6(
-                                                'The following table shows the total number of households in 2021, for each household income category, as well as the projected gain (positive) or loss (negative) of households over the period between 2021 and 2031 by applying the percentage change from 2006-2021, to 2021 households.')
-                                        ], className='muni-reg-text-lgeo'),
+                                                f'The following table shows the total number of households in {year}, '
+                                                f'for each household income category, as well as the projected gain ('
+                                                f'positive) or loss (negative) of households over the period between '
+                                                f'{year} and {prediction_year} by applying the percentage change from '
+                                                f'{year_minus_15}-{year}, to {year} households.')
+                                        ], className='muni-reg-text-lgeo',
+                                            id="HH-IC-description-page3"
+                                        ),
 
                                         # Table
 
@@ -80,8 +90,15 @@ def layout(year=default_year):
                                         # Graph Description
                                         html.Div([
                                             html.H6(
-                                                'The following graph illustrates the above table, displaying the total number of households in 2021, for each income category, with the projected gain of households between 2021 and 2031 stacked on top, and the projected loss of household stacked underneath.')
-                                        ], className='muni-reg-text-lgeo'),
+                                                f'The following graph illustrates the above table, displaying the '
+                                                f'total number of households in {year}, for each income category, '
+                                                f'with the projected gain of households between {year} and '
+                                                f'{prediction_year} stacked on top, and the projected loss of '
+                                                f'household stacked underneath.')
+                                            ],
+                                            className='muni-reg-text-lgeo',
+                                            id="HH-IC-graph-description-page3"
+                                        ),
 
                                         # Graph
 
@@ -103,15 +120,23 @@ def layout(year=default_year):
                                     html.Div([
                                         # Title
 
-                                        html.H3(children=html.Strong('2031 Household Projections by Household Size'),
-                                                className='subtitle-lgeo'),
+                                        html.H3(children=html.Strong(
+                                            f'{prediction_year} Household Projections by Household Size'),
+                                            className='subtitle-lgeo',
+                                            id="HH-size-page3"),
 
                                         # Table Description
 
                                         html.Div([
                                             html.H6(
-                                                'The following table shows the total number of households in 2021, for each household size category, as well as the projected gain (positive) or loss (negative) of households over the period between 2021 and 2031 by applying the percentage change from 2006-2021, to 2021 households.')
-                                        ], className='muni-reg-text-lgeo'),
+                                                f'The following table shows the total number of households in {year}, '
+                                                f'for each household size category, as well as the projected gain ('
+                                                f'positive) or loss (negative) of households over the period between '
+                                                f'{year} and {prediction_year} by applying the percentage change from '
+                                                f'{year_minus_15}-{year}, to {year} households.')
+                                            ],
+                                            id="HH-size-description-page3",
+                                            className='muni-reg-text-lgeo'),
 
                                         # Table
 
@@ -149,8 +174,14 @@ def layout(year=default_year):
 
                                         html.Div([
                                             html.H6(
-                                                'The following graph illustrates the above table, displaying the total number of households in 2021, for each size of household, with the projected gain of households between 2021 and 2031 stacked on top, and the projected loss of household stacked underneath.')
-                                        ], className='muni-reg-text-lgeo'),
+                                                f'The following graph illustrates the above table, displaying the '
+                                                f'total number of households in {year}, for each size of household, '
+                                                f'with the projected gain of households between {year} and '
+                                                f'{prediction_year} stacked on top, and the projected loss of '
+                                                f'household stacked underneath.')
+                                            ],
+                                            id="HH-size-graph-description-page3",
+                                            className='muni-reg-text-lgeo'),
 
                                         # Graph
 
@@ -170,15 +201,19 @@ def layout(year=default_year):
                                         # Title
 
                                         html.H3(children=html.Strong(
-                                            '2031 Projected Households by Household Size and Income Category'),
-                                            className='subtitle-lgeo'),
+                                            f'{prediction_year} Projected Households by Household Size and Income Category'),
+                                            className='subtitle-lgeo',
+                                            id="HH-size-IC-page3"),
 
                                         # Table Description
 
                                         html.Div([
                                             html.H6(
-                                                'The following table shows the projected total number of households in 2031 by household size and income category.')
-                                        ], className='muni-reg-text-lgeo'),
+                                                f'The following table shows the projected total number of households in'
+                                                f' {prediction_year} by household size and income category.')
+                                        ],
+                                            id="HH-size-IC-description-page3",
+                                            className='muni-reg-text-lgeo'),
 
                                         # Table
 
@@ -216,8 +251,15 @@ def layout(year=default_year):
 
                                         html.Div([
                                             html.H6(
-                                                'The following graph illustrates the above table, displaying the projected total number of households in 2031 by household size and income category. Each bar is broken out by the projected number of households within each income category.')
-                                        ], className='muni-reg-text-lgeo'),
+                                                f'The following graph illustrates the above table, displaying the '
+                                                f'projected total number of households in {prediction_year} by '
+                                                f'household size and income category. Each bar is broken out by the '
+                                                f'projected number of households within each income category.'
+                                            )
+                                        ],
+                                            id="HH-size-IC-graph-description-page3",
+                                            className='muni-reg-text-lgeo'
+                                        ),
 
                                         # Graph
 
@@ -240,15 +282,22 @@ def layout(year=default_year):
                                         # Title
 
                                         html.H3(
-                                            children=html.Strong('2031 Projected Household Gain/Loss (2021 to 2031)'),
+                                            children=html.Strong(
+                                                f'{prediction_year} Projected Household Gain/Loss ({year} to {prediction_year})'),
+                                            id="HH-gain-page3",
                                             className='table-title'),
 
                                         # Table Description
 
                                         html.Div([
                                             html.H6(
-                                                'The following table shows the projected gain or loss of households by household size and income. These values represent projections for the period between 2021 and 2031.')
-                                        ], className='muni-reg-text-lgeo'),
+                                                f'The following table shows the projected gain or loss of households '
+                                                f'by household size and income. These values represent projections '
+                                                f'for the period between {year} and {prediction_year}.')
+                                            ],
+                                            id="HH-gain-description-page3",
+                                            className='muni-reg-text-lgeo'
+                                        ),
 
                                         # Table
 
@@ -286,8 +335,14 @@ def layout(year=default_year):
 
                                         html.Div([
                                             html.H6(
-                                                'The following graph illustrates the above table, displaying the projected gain or loss of households between 2021 and 2031 for each size of household. Each bar is broken out by the projected number of households within each income category. Projected loss of households are stacked underneath.')
-                                        ], className='muni-reg-text-lgeo'),
+                                                f'The following graph illustrates the above table, displaying the '
+                                                f'projected gain or loss of households between {year} and '
+                                                f'{prediction_year} for each size of household. Each bar is broken '
+                                                f'out by the projected number of households within each income '
+                                                f'category. Projected loss of households are stacked underneath.')
+                                            ],
+                                            id="HH-gain-graph-description-page3",
+                                            className='muni-reg-text-lgeo'),
 
                                         # Graph
 
@@ -324,15 +379,20 @@ def layout(year=default_year):
                                         # Title
 
                                         html.H3(children=html.Strong(
-                                            '2031 Projected Municipal vs Regional Household Growth Rates by Income Category'),
+                                            f'{prediction_year} Projected Municipal vs Regional Household Growth Rates by Income Category'),
+                                            id="growth-IC-page3",
                                             className='subtitle-lgeo'),
 
                                         # Table Description
 
                                         html.Div([
                                             html.H6(
-                                                'The following table illustrates the projected household growth rates between 2021 and 2031 in the community and surrounding region for each income category.')
-                                        ], className='muni-reg-text-lgeo'),
+                                                f'The following table illustrates the projected household growth '
+                                                f'rates between {year} and {prediction_year} in the community and '
+                                                f'surrounding region for each income category.')
+                                            ],
+                                            id="growth-IC-description-page3",
+                                            className='muni-reg-text-lgeo'),
 
                                         # Table
 
@@ -371,8 +431,13 @@ def layout(year=default_year):
 
                                         html.Div([
                                             html.H6(
-                                                'The following graph illustrates the above table, displaying the projected household growth rates between 2021 and 2031 in the community and surrounding region for each income category.')
-                                        ], className='muni-reg-text-lgeo'),
+                                                f'The following graph illustrates the above table, displaying the '
+                                                f'projected household growth rates between {year} and '
+                                                f'{prediction_year} in the community and surrounding region for each '
+                                                f'income category.')
+                                            ],
+                                            id="growth-IC-description2-page3",
+                                            className='muni-reg-text-lgeo'),
 
                                         # Graph
 
@@ -402,8 +467,13 @@ def layout(year=default_year):
 
                                         html.Div([
                                             html.H6(
-                                                'The following table illustrates the projected household growth rates between 2021 and 2031 in the community and surrounding region for each household size.')
-                                        ], className='muni-reg-text-lgeo'),
+                                                f'The following table illustrates the projected household growth '
+                                                f'rates between {year} and {prediction_year} in the community and '
+                                                f'surrounding region for each household size.')
+                                        ],
+                                            id="growth-IC-description3-page3",
+                                            className='muni-reg-text-lgeo'
+                                        ),
 
                                         # Table
 
@@ -442,8 +512,13 @@ def layout(year=default_year):
 
                                         html.Div([
                                             html.H6(
-                                                'The following graph illustrates the above table, displaying the projected household growth rates between 2021 and 2031 in the community and surrounding region for each income category.')
-                                        ], className='muni-reg-text-lgeo'),
+                                                f'The following graph illustrates the above table, displaying the '
+                                                f'projected household growth rates between {year} and '
+                                                f'{prediction_year} in the community and surrounding region for each '
+                                                f'income category.')
+                                        ],
+                                            id="growth-IC-description4-page3",
+                                            className='muni-reg-text-lgeo'),
 
                                         # Graph
 

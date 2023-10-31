@@ -15,7 +15,7 @@ config = {'displayModeBar': True, 'displaylogo': False,
 
 
 # TODO: Make the table actually select by year
-def layout(year):
+def layout(year:int=default_year):
     return html.Div(children=
                     # Fetching Area/Comparison Area/Clicked area scale info in local storage
                     storage_variables()
@@ -31,7 +31,7 @@ def layout(year):
                                     # Title
                                     html.H3(
                                         children=html.Strong(f'Income Categories and Affordable Shelter Costs, {year}'),
-                                        id='visualization3'),
+                                        id='income-categories-title-page2'),
                                     # Description
                                     html.Div([
                                         html.H6(
@@ -91,7 +91,7 @@ def layout(year):
                                     # Title
                                     html.H3(children=html.Strong(
                                         f'Percentage of Households in Core Housing Need, by Income Category, {year}'),
-                                        id='visualization'),
+                                        id='percent-HH-CHN-title-page2'),
                                     # Description
                                     html.Div([
                                         html.H6(
@@ -120,7 +120,7 @@ def layout(year):
                                     # Title
                                     html.H3(children=html.Strong(
                                         f'Percentage of Households in Core Housing Need, by Income Category and HH Size, {year}'),
-                                        id='visualization2'),
+                                        id='percent-IC-HH-CHN-title-page2'),
                                     # Description
                                     html.Div([
                                         html.H6(
@@ -147,7 +147,7 @@ def layout(year):
                                 html.Div([
                                     # Title
                                     html.H3(children=html.Strong(f'{year} Affordable Housing Deficit'),
-                                            id='visualization4'),
+                                            id='housing-deficit-page2'),
                                     # Description
                                     html.Div([
                                         html.H6(
@@ -203,7 +203,7 @@ def layout(year):
                                     html.H3(
                                         children=html.Strong(
                                             f'Percentage of Households in Core Housing Need by Priority Population, {year}'),
-                                        id='visualization5'),
+                                        id='pct-pp-hh-chn-page2'),
                                     # Description
                                     html.Div([
                                         html.H6(
@@ -230,7 +230,7 @@ def layout(year):
                                     # Title
                                     html.H3(children=html.Strong(
                                         f'Percentage of Households in Core Housing Need by Priority Population and Income Category, {year}'),
-                                        id='visualization6'),
+                                        id='pct-pp-ic-chn-page2'),
                                     # Description
                                     html.Div([
                                         html.H6(

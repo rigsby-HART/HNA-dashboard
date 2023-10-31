@@ -6,9 +6,13 @@ import plotly.express as px
 import plotly.graph_objects as go
 import math as math
 import warnings
+# Callbacks are ran without needing to be explicitly called
+# DO NOT REMOVE
+import pages.page3_helpers.comparison_callbacks
+
 from dash.dash_table.Format import Format, Scheme, Group
 from plotly.subplots import make_subplots
-from dash import Input, Output, callback
+from dash import Input, Output, callback, html
 
 from helpers.style_helper import style_data_conditional, style_header_conditional
 from helpers.create_engine import engine_current, default_year, df_geo_list, df_region_list, df_province_list, \
@@ -2086,3 +2090,4 @@ def update_geo_figure9(geo, geo_c, year_comparison, scale, selected_columns):
 
         return col_list, table1_j.to_dict(
             'record'), style_data_conditional, style_cell_conditional, style_header_conditional, fig_pgr
+
