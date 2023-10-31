@@ -5,7 +5,7 @@ venv
 *.ipynb
 *.csv
 geo_db_uploader.py
-db_uploader.py
+data_analysis/db_uploader.py
 app_backup.py
 app_backup_230116.py
 app_backup_230117.py
