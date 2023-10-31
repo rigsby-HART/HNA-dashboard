@@ -903,9 +903,13 @@ def func_ov7(n_clicks, geo, geo_c, year_comparison):
     Output("CHN-IC-page4", "children"),
     Output("CHN-IC-HH-page4", "children"),
     Output("Deficit-page4", "children"),
+    Input('main-area', 'data'),
+    Input('comparison-area', 'data'),
     Input('year-comparison', 'data'),
+    Input('area-scale-store', 'data'),
+    Input('datatable-interactivity_ind', 'selected_columns'),
 )
-def change_title_labels(year_comparison):
+def change_title_labels(geo, geo_c, year_comparison, scale, refresh):
     # change based off of url
     print("page4 change labels")
     year = default_year

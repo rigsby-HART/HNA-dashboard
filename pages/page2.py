@@ -1398,9 +1398,13 @@ def update_geo_figure6(geo, geo_c, year_comparison, scale, refresh):
     Output("housing-deficit-page2", "children"),
     Output("pct-pp-hh-chn-page2", "children"),
     Output("pct-pp-ic-chn-page2", "children"),
+    Input('main-area', 'data'),
+    Input('comparison-area', 'data'),
     Input('year-comparison', 'data'),
+    Input('area-scale-store', 'data'),
+    Input('income-category-affordability-table', 'selected_columns'),
 )
-def change_title_labels(year_comparison):
+def change_title_labels(geo, geo_c, year_comparison, scale, refresh):
     # change based off of url
     print("page2 change labels")
     if year_comparison:

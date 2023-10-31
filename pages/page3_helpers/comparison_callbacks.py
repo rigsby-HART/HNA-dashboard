@@ -9,9 +9,13 @@ from helpers.create_engine import default_year
     Output("HH-size-IC-page3", "children"),
     Output("HH-gain-page3", "children"),
     Output("growth-IC-page3", "children"),
+    Input('main-area', 'data'),
+    Input('comparison-area', 'data'),
     Input('year-comparison', 'data'),
+    Input('area-scale-store', 'data'),
+    Input('datatable8-interactivity', 'selected_columns'),
 )
-def change_title_labels(year_comparison):
+def change_title_labels(geo, geo_c, year_comparison, scale, refresh):
     # change based off of url
     print("page3 change labels")
     year = default_year
@@ -45,9 +49,13 @@ def change_title_labels(year_comparison):
     Output("HH-size-IC-graph-description-page3", "children"),
     Output("HH-gain-description-page3", "children"),
     Output("HH-gain-graph-description-page3", "children"),
+    Input('main-area', 'data'),
+    Input('comparison-area', 'data'),
     Input('year-comparison', 'data'),
+    Input('area-scale-store', 'data'),
+    Input('datatable8-interactivity', 'selected_columns'),
 )
-def change_description_labels(year_comparison):
+def change_description_labels(geo, geo_c, year_comparison, scale, refresh):
     # change based off of url
     print("page3 change descriptions")
     if year_comparison:
