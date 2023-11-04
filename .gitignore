@@ -4,7 +4,6 @@
 *.ipynb
 *.csv
 geo_db_uploader.py
-data_analysis/db_uploader.py
 app_backup.py
 app_backup_230116.py
 app_backup_230117.py
@@ -33,7 +32,6 @@ test-hart-Copy1-checkpoint.ipynb
 app_wip_230111.py
 preset1_hart_backup.css
 preset1_hart_backup_0131.css
-geo_db_uploader.py
 .~test-hart.ipynb
 test.html
 test2.html
