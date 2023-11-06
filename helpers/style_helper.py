@@ -45,6 +45,5 @@ style_header_conditional = [
         'if': {'header_index': 2},
         'backgroundColor': '#39C0F7',
         'color': '#000000'
-
     }
 ]
