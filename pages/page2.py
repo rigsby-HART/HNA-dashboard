@@ -330,6 +330,8 @@ def update_geo_figure(geo: str, geo_c: str, year_comparison: str, scale, refresh
         elif geo == None and geo_c == None:
             geo = default_value
 
+        if errorRegionFigure(geo, default_year):
+            return errorRegionFigure(geo, default_year)
         # Area Scaling up/down when user clicks area scale button on page 1
         geo = area_scale_primary_only(geo, scale)
 
@@ -396,6 +398,12 @@ def update_geo_figure(geo: str, geo_c: str, year_comparison: str, scale, refresh
         # Main Plot
 
         # Generating dataframe for main plot
+        if year_comparison:
+            if errorRegionFigure(geo, int(compared_year)):
+                return errorRegionFigure(geo, int(compared_year))
+        else:
+            if errorRegionFigure(geo, default_year):
+                return errorRegionFigure(geo, default_year)
         plot_df = (
             plot_df_core_housing_need_by_income(geo, False, int(compared_year)) if year_comparison else
             plot_df_core_housing_need_by_income(geo, is_second=False)
@@ -421,6 +429,12 @@ def update_geo_figure(geo: str, geo_c: str, year_comparison: str, scale, refresh
         # Comparison plot
 
         # Generating dataframe for comparison plot
+        if year_comparison:
+            if errorRegionFigure(geo, default_year):
+                return errorRegionFigure(geo, default_year)
+        else:
+            if errorRegionFigure(geo_c, default_year):
+                return errorRegionFigure(geo_c, default_year)
         plot_df_c = (
             plot_df_core_housing_need_by_income(geo, True) if year_comparison else
             plot_df_core_housing_need_by_income(geo_c, True)
@@ -535,6 +549,8 @@ def update_geo_figure2(geo, geo_c, year_comparison: str, scale, refresh):
             geo = default_value
 
         # Area Scaling up/down when user clicks area scale button on page 1
+        if errorRegionFigure(geo, default_year):
+            return errorRegionFigure(geo, default_year)
         geo = area_scale_primary_only(geo, scale)
 
         # Generating dataframe for plot
@@ -601,6 +617,12 @@ def update_geo_figure2(geo, geo_c, year_comparison: str, scale, refresh):
 
         # Main Plot
 
+        if year_comparison:
+            if errorRegionFigure(geo, int(compared_year)):
+                return errorRegionFigure(geo, int(compared_year))
+        else:
+            if errorRegionFigure(geo, default_year):
+                return errorRegionFigure(geo, default_year)
         # Generating dataframe for main plot
         plot_df = (
             plot_df_core_housing_need_by_amhi(geo, False, int(compared_year)) if year_comparison else
@@ -626,6 +648,12 @@ def update_geo_figure2(geo, geo_c, year_comparison: str, scale, refresh):
 
         # Comparison plot
 
+        if year_comparison:
+            if errorRegionFigure(geo, default_year):
+                return errorRegionFigure(geo, default_year)
+        else:
+            if errorRegionFigure(geo_c, default_year):
+                return errorRegionFigure(geo_c, default_year)
         # Generating dataframe for comparison plot
         plot_df_c = (
             plot_df_core_housing_need_by_amhi(geo, True) if year_comparison else
@@ -1033,6 +1061,8 @@ def update_geo_figure5(geo, geo_c, year_comparison: str, scale, refresh):
 
         # Area Scaling up/down when user clicks area scale button on page 1
 
+        if errorRegionFigure(geo, default_year):
+            return errorRegionFigure(geo, default_year)
         geo = area_scale_primary_only(geo, scale)
 
         # Generating dataframe for plot and color lists
@@ -1101,6 +1131,12 @@ def update_geo_figure5(geo, geo_c, year_comparison: str, scale, refresh):
 
         # Generating dataframe for main plot and color list
 
+        if year_comparison:
+            if errorRegionFigure(geo, int(compared_year)):
+                return errorRegionFigure(geo, int(compared_year))
+        else:
+            if errorRegionFigure(geo, default_year):
+                return errorRegionFigure(geo, default_year)
         plot_df = plot_df_core_housing_need_by_priority_population(geo, int(compared_year) if year_comparison else
                                                                    default_year)
         color_dict = color_dict_core_housing_need_by_priority_population(plot_df)
@@ -1122,6 +1158,12 @@ def update_geo_figure5(geo, geo_c, year_comparison: str, scale, refresh):
 
         # Generating dataframe for comparison plot and color list
 
+        if year_comparison:
+            if errorRegionFigure(geo, default_year):
+                return errorRegionFigure(geo, default_year)
+        else:
+            if errorRegionFigure(geo_c, default_year):
+                return errorRegionFigure(geo_c, default_year)
         plot_df_c = (
             plot_df_core_housing_need_by_priority_population(geo, int(original_year)) if year_comparison else
             plot_df_core_housing_need_by_priority_population(geo_c)
@@ -1283,6 +1325,8 @@ def update_geo_figure6(geo, geo_c, year_comparison, scale, refresh):
         geo = area_scale_primary_only(geo, scale)
 
         # Generating dataframe for plot
+        if errorRegionFigure(geo, default_year):
+            return errorRegionFigure(geo, default_year)
         plot_df = plot_df_core_housing_need_by_priority_population_income(geo)
 
         # Generating plot
@@ -1344,7 +1388,12 @@ def update_geo_figure6(geo, geo_c, year_comparison, scale, refresh):
                              shared_yaxes=True, shared_xaxes=True)
 
         # Main Plot
-
+        if year_comparison:
+            if errorRegionFigure(geo, int(compared_year)):
+                return errorRegionFigure(geo, int(compared_year))
+        else:
+            if errorRegionFigure(geo, default_year):
+                return errorRegionFigure(geo, default_year)
         # Generating dataframe for main plot
         plot_df = (
             plot_df_core_housing_need_by_priority_population_income(geo,
@@ -1371,6 +1420,12 @@ def update_geo_figure6(geo, geo_c, year_comparison, scale, refresh):
         # Comparison plot
 
         # Generating dataframe for comparison plot
+        if year_comparison:
+            if errorRegionFigure(geo, default_year):
+                return errorRegionFigure(geo, default_year)
+        else:
+            if errorRegionFigure(geo_c, default_year):
+                return errorRegionFigure(geo_c, default_year)
         plot_df_c = (
             plot_df_core_housing_need_by_priority_population_income(geo, int(original_year)) if year_comparison else
             plot_df_core_housing_need_by_priority_population_income(geo_c)
@@ -1458,22 +1513,7 @@ def change_title_labels(geo, geo_c, year_comparison, scale, refresh):
         html.Strong(f'Percentage of Households in Core Housing Need by Priority Population and Income Category, {default_year}')
     )
 
-# @callback(
-#     Output("income-categories-title-page2", "children"),
-#     Input('year-comparison', 'data'),
-# )
-# def change_description_labels(year_comparison):
-#     # change based off of url
-#     print("page2 change descriptions")
-#     if year_comparison:
-#         original_year, compared_year = year_comparison.split("-")
-#         return (
-#             html.Strong(f'Income Categories and Affordable Shelter Costs, {compared_year} vs {original_year}')
-#         )
-#     return (
-#         html.Strong(f'Income Categories and Affordable Shelter Costs, {default_year}')
-#     )
-# Creating raw csv data file when user clicks Download Raw Data button
+
 @callback(
     Output("ov7-download-text", "data"),
     Input("ov7-download-csv", "n_clicks"),

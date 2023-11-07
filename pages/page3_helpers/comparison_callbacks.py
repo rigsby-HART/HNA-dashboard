@@ -16,7 +16,6 @@ from helpers.create_engine import default_year
 )
 def change_title_labels(geo, geo_c, year_comparison, scale):
     # change based off of url
-    print("page3 change labels")
     year = default_year
     if year_comparison:
         original_year, compared_year = year_comparison.split("-")
