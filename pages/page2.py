@@ -9,7 +9,7 @@ from dash.dash_table.Format import Format, Scheme, Group
 from plotly.subplots import make_subplots
 from helpers.style_helper import style_header_conditional, style_data_conditional
 from helpers.create_engine import income_partners_year, default_year
-from helpers.table_helper import area_scale_comparison, area_scale_primary_only
+from helpers.table_helper import area_scale_comparison, area_scale_primary_only, errorRegionTable, errorRegionFigure
 from pages.page2_helpers.page2_main import layout
 
 warnings.filterwarnings("ignore")
@@ -140,6 +140,8 @@ def update_table1(geo, geo_c, year_comparison: str, selected_columns, scale):
         geo = area_scale_primary_only(geo, scale)
 
         # Generating table
+        if errorRegionTable(geo, default_year):
+            return errorRegionTable(geo, default_year)
         table, median_income, median_rent = table_amhi_shelter_cost(geo, False)
 
         # Generating callback output to update table
@@ -192,22 +194,32 @@ def update_table1(geo, geo_c, year_comparison: str, selected_columns, scale):
         # Main Table
 
         # Generating main table
+        if year_comparison:
+            if errorRegionTable(geo, default_year):
+                return errorRegionTable(geo, int(compared_year))
+        else:
+            if errorRegionTable(geo, default_year):
+                return errorRegionTable(geo, default_year)
         table, median_income, median_rent = (
             table_amhi_shelter_cost(geo, False, int(compared_year)) if year_comparison else
             table_amhi_shelter_cost(geo, False)
         )
-
         # Comparison Table
 
         if geo_c is None:
             geo_c = geo
 
         # Generating comparison table
+        if year_comparison:
+            if errorRegionTable(geo, default_year):
+                return errorRegionTable(geo, default_year)
+        else:
+            if errorRegionTable(geo_c, default_year):
+                return errorRegionTable(geo_c, default_year)
         table_c, median_income_c, median_rent_c = (
             table_amhi_shelter_cost(geo, True) if year_comparison else
             table_amhi_shelter_cost(geo_c, True)
         )
-
         # Merging main and comparison table
         table_j = table.merge(table_c, how='left', on='Income Category')
 
@@ -775,7 +787,14 @@ def update_table2(geo, geo_c, year_comparison: str, selected_columns, scale):
         geo = area_scale_primary_only(geo, scale)
 
         # Generating table
-        table2 = table_core_affordable_housing_deficit(geo, False)
+        try:
+            table2 = table_core_affordable_housing_deficit(geo, False)
+        except:
+            # No data for the selected region
+            no_data = f"No Data for {geo}, please try CD/Provincial level"
+            table = pd.DataFrame({no_data: [""]})
+            return [{"name": no_data, "id": no_data}], table.to_dict("records"), [], [], style_header_conditional
+
         table2 = table2[['Income Category (Max. affordable shelter cost)', '1 Person HH', '2 Person HH',
                          '3 Person HH', '4 Person HH', '5+ Person HH', 'Total']]
 
@@ -831,20 +850,33 @@ def update_table2(geo, geo_c, year_comparison: str, selected_columns, scale):
 
         # Generating main table
 
+        if year_comparison:
+            if errorRegionTable(geo, int(compared_year)):
+                return errorRegionTable(geo, default_year)
+        else:
+            if errorRegionTable(geo, default_year):
+                return errorRegionTable(geo, default_year)
         table2 = (
             table_core_affordable_housing_deficit(geo, False, int(compared_year)) if year_comparison else
             table_core_affordable_housing_deficit(geo, False)
         )
+
         table2 = table2[['Income Category', 'Income Category (Max. affordable shelter cost)',
                          '1 Person HH', '2 Person HH', '3 Person HH',
                          '4 Person HH', '5+ Person HH', 'Total']]
 
         # Generating comparison table
-
+        if year_comparison:
+            if errorRegionTable(geo, default_year):
+                return errorRegionTable(geo, default_year)
+        else:
+            if errorRegionTable(geo_c, default_year):
+                return errorRegionTable(geo_c, default_year)
         table2_c = (
             table_core_affordable_housing_deficit(geo, True) if year_comparison else
             table_core_affordable_housing_deficit(geo_c, True)
         )
+
         table2_c = table2_c[['Income Category', 'Income Category (Max. affordable shelter cost) ',
                              '1 Person HH ', '2 Person HH ', '3 Person HH ',
                              '4 Person HH ', '5+ Person HH ', 'Total ']]
@@ -1004,7 +1036,8 @@ def update_geo_figure5(geo, geo_c, year_comparison: str, scale, refresh):
         geo = area_scale_primary_only(geo, scale)
 
         # Generating dataframe for plot and color lists
-
+        # if errorRegionFigure(geo, default_year):
+        #     return errorRegionFigure(geo, default_year)
         plot_df = plot_df_core_housing_need_by_priority_population(geo)
         color_dict = color_dict_core_housing_need_by_priority_population(plot_df)
 
@@ -1398,10 +1431,10 @@ def update_geo_figure6(geo, geo_c, year_comparison, scale, refresh):
     Output("housing-deficit-page2", "children"),
     Output("pct-pp-hh-chn-page2", "children"),
     Output("pct-pp-ic-chn-page2", "children"),
-    Input('main-area', 'data'),
-    Input('comparison-area', 'data'),
+    State('main-area', 'data'),
+    State('comparison-area', 'data'),
     Input('year-comparison', 'data'),
-    Input('area-scale-store', 'data'),
+    State('area-scale-store', 'data'),
     Input('income-category-affordability-table', 'selected_columns'),
 )
 def change_title_labels(geo, geo_c, year_comparison, scale, refresh):

@@ -17,7 +17,7 @@ from dash import Input, Output, callback, html
 from helpers.style_helper import style_data_conditional, style_header_conditional
 from helpers.create_engine import engine_current, default_year, df_geo_list, df_region_list, df_province_list, \
     mapped_geo_code, updated_csd_year, updated_csd_current, updated_cd_current, updated_cd_year
-from helpers.table_helper import area_scale_comparison, area_scale_primary_only
+from helpers.table_helper import area_scale_comparison, area_scale_primary_only, errorRegionTablePopulation
 from pages.page3_helpers.page3_main import layout
 
 warnings.filterwarnings("ignore")
@@ -153,6 +153,8 @@ def update_geo_figure6(geo, geo_c, year_comparison: str, scale, selected_columns
         geo = area_scale_primary_only(geo, scale)
 
         # Generating plot dataframe/table
+        if errorRegionTablePopulation(geo, default_year):
+            return errorRegionTablePopulation(geo, default_year)
         plot_df, table1 = plot1_new_projection(geo, False)
 
         # Generating plot
@@ -241,9 +243,15 @@ def update_geo_figure6(geo, geo_c, year_comparison: str, scale, selected_columns
 
         # Generating main plot df/table
 
+        if year_comparison:
+            if errorRegionTablePopulation(geo, int(compared_year)):
+                return errorRegionTablePopulation(geo, int(compared_year))
+        else:
+            if errorRegionTablePopulation(geo, default_year):
+                return errorRegionTablePopulation(geo, default_year)
         plot_df, table1 = (
             plot1_new_projection(geo, False, int(compared_year)) if year_comparison else
-            plot1_new_projection(geo, False, int(original_year))
+            plot1_new_projection(geo, False)
         )
 
         # Generating main plot
@@ -266,6 +274,13 @@ def update_geo_figure6(geo, geo_c, year_comparison: str, scale, selected_columns
         # Comparison Plot/Table
 
         # Generating comparison plot df/table
+
+        if year_comparison:
+            if errorRegionTablePopulation(geo, default_year):
+                return errorRegionTablePopulation(geo, default_year)
+        else:
+            if errorRegionTablePopulation(geo_c, default_year):
+                return errorRegionTablePopulation(geo_c, default_year)
 
         plot_df_c, table1_c = (
             plot1_new_projection(geo, True, int(original_year)) if year_comparison else
@@ -467,6 +482,8 @@ def update_geo_figure7(geo, geo_c, year_comparison, scale, selected_columns):
         geo = area_scale_primary_only(geo, scale)
 
         # Generating plot dataframe/table
+        if errorRegionTablePopulation(geo, default_year):
+            return errorRegionTablePopulation(geo, default_year)
         plot_df, table1 = plot2_new_projection(geo, False)
 
         # Generating plot
@@ -782,7 +799,8 @@ def update_geo_figure_h(geo, geo_c, year_comparison, scale, selected_columns):
         geo = area_scale_primary_only(geo, scale)
 
         # Generating plot dataframe/table
-
+        if errorRegionTablePopulation(geo, default_year):
+            return errorRegionTablePopulation(geo, default_year)
         table1, table1_csd_plot = projections_future_hh_size(geo, False)
 
         # Generating plot
@@ -1091,6 +1109,8 @@ def update_geo_figure8(geo, geo_c, year_comparison, scale, selected_columns):
         geo = area_scale_primary_only(geo, scale)
 
         # Generating plot dataframe/table
+        if errorRegionTablePopulation(geo, default_year):
+            return errorRegionTablePopulation(geo, default_year)
         table1, table1_csd_plot = projections_future_deltas(geo, False)
 
         # Generating plot
