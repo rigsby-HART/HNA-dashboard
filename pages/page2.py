@@ -330,12 +330,12 @@ def update_geo_figure(geo: str, geo_c: str, year_comparison: str, scale, refresh
         elif geo == None and geo_c == None:
             geo = default_value
 
-        if errorRegionFigure(geo, default_year):
-            return errorRegionFigure(geo, default_year)
         # Area Scaling up/down when user clicks area scale button on page 1
         geo = area_scale_primary_only(geo, scale)
 
         # Generating dataframe for plot
+        if errorRegionFigure(geo, default_year):
+            return errorRegionFigure(geo, default_year)
         plot_df = plot_df_core_housing_need_by_income(geo, False)
 
         # Generating plot
@@ -549,11 +549,11 @@ def update_geo_figure2(geo, geo_c, year_comparison: str, scale, refresh):
             geo = default_value
 
         # Area Scaling up/down when user clicks area scale button on page 1
-        if errorRegionFigure(geo, default_year):
-            return errorRegionFigure(geo, default_year)
         geo = area_scale_primary_only(geo, scale)
 
         # Generating dataframe for plot
+        if errorRegionFigure(geo, default_year):
+            return errorRegionFigure(geo, default_year)
         plot_df = plot_df_core_housing_need_by_amhi(geo, False)
 
         # Generating plot
@@ -1061,13 +1061,11 @@ def update_geo_figure5(geo, geo_c, year_comparison: str, scale, refresh):
 
         # Area Scaling up/down when user clicks area scale button on page 1
 
-        if errorRegionFigure(geo, default_year):
-            return errorRegionFigure(geo, default_year)
         geo = area_scale_primary_only(geo, scale)
 
         # Generating dataframe for plot and color lists
-        # if errorRegionFigure(geo, default_year):
-        #     return errorRegionFigure(geo, default_year)
+        if errorRegionFigure(geo, default_year):
+            return errorRegionFigure(geo, default_year)
         plot_df = plot_df_core_housing_need_by_priority_population(geo)
         color_dict = color_dict_core_housing_need_by_priority_population(plot_df)
 
