@@ -11,3 +11,4 @@
 /ubuntu/
 /cache/
 /data_analysis/*.db
+/data_analysis/renter_owner/*.db

@@ -144,7 +144,7 @@ def table_amhi_shelter_cost(geo: str, is_second: bool, year: int = default_year)
     State('url', 'search'),
     cache_args_to_ignore=[3]
 )
-@cache.memoize()
+# @cache.memoize()
 def update_table1(geo, geo_c, year_comparison: str, selected_columns, scale, lang_query):
     # Single area mode
     language = get_language(lang_query)
@@ -351,7 +351,7 @@ def plot_df_core_housing_need_by_income(geo: str, is_rental: bool, language, yea
     State('url', 'search'),
     cache_args_to_ignore=[4]
 )
-@cache.memoize()
+# @cache.memoize()
 def update_geo_figure(geo: str, geo_c: str, year_comparison: str, scale, refresh, lang_query):
     # Use regex to extract the value of the 'lang' parameter
     language = get_language(lang_query)
@@ -653,7 +653,7 @@ def plot_df_core_housing_need_by_amhi(geo: str, IsComparison: bool, language: st
     State('url', 'search'),
     cache_args_to_ignore=[4]
 )
-@cache.memoize()
+# @cache.memoize()
 def update_geo_figure2(geo, geo_c, year_comparison: str, scale, refresh, lang_query):
     # Single area mode
     language = get_language(lang_query)
@@ -908,7 +908,7 @@ def table_core_affordable_housing_deficit(geo, is_second, year: int = default_ye
     State('url', 'search'),
     cache_args_to_ignore=[3]
 )
-@cache.memoize()
+# @cache.memoize()
 def update_table2(geo, geo_c, year_comparison: str, selected_columns, scale, lang_query):
     # Single area mode
     language = get_language(lang_query)
@@ -1126,7 +1126,7 @@ def update_table2(geo, geo_c, year_comparison: str, selected_columns, scale, lan
     State('year-comparison', 'data'),
     cache_args_to_ignore=[0]
 )
-@cache.memoize()
+# @cache.memoize()
 def func_ov7(n_clicks, geo, geo_c, year_comparison):
     if geo == None:
         geo = default_value
