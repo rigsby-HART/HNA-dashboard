@@ -1,8 +1,10 @@
+import math
+
 import pandas as pd
 import plotly.express as px
 
 from dash import dcc
-from helpers.create_engine import mapped_geo_code, income_partners_year, updated_csd_year
+from helpers.create_engine import mapped_geo_code, income_partners_year, updated_csd_year, income_indigenous_year
 from helpers.style_helper import style_header_conditional
 
 
@@ -55,18 +57,37 @@ def errorRegionTable(geo: str, year: int):
     return None
 
 
-def errorRegionTablePopulation(geo:str, year:int):
+def errorRegionTablePopulation(geo: str, year: int, no_cd=False):
     geo_code_clicked = mapped_geo_code.loc[mapped_geo_code['Geography'] == geo, 'Geo_Code'].tolist()[0]
     updated_csd_filtered = updated_csd_year[year].query('Geo_Code ==' + f"{geo_code_clicked}")
-    hh_size = updated_csd_filtered['Total - Private households by household type including census family structure -   Households with income 20% or under of area median household income (AMHI) - Total - Household size'].empty
+    hh_size = updated_csd_filtered[
+        'Total - Private households by household type including census family structure -   Households with income 20% or under of area median household income (AMHI) - Total - Household size'].empty
     if hh_size:
-        fig = px.line(x=[f"No Data for {geo}, please try CD/Provincial level"],
-                      y=[''])
         # No data for the selected region
-        no_data = f"No Data for {geo}, please try CD/Provincial level"
+        if no_cd:
+            fig = px.line(x=[f"No Data for {geo}, please try another CSD"],
+                          y=[''])
+            no_data = f"No Data for {geo}, please try another CSD"
+        else:
+            fig = px.line(x=[f"No Data for {geo}, please try CD/Provincial level"],
+                          y=[''])
+            no_data = f"No Data for {geo}, please try CD/Provincial level"
         table = pd.DataFrame({no_data: [""]})
         return [{"name": no_data, "id": no_data}], table.to_dict("records"), [], [], style_header_conditional, fig
     return False
+
+
+def errorIndigenousTable(geo: str, year: int):
+    joined_df_filtered = income_indigenous_year[year].query('Geography == ' + f'"{geo}"')
+    query = joined_df_filtered[(f'Aboriginal household status-Total - Private households by tenure including presence '
+                                f'of mortgage payments and subsidized housing-Households with income 21% to 50% of '
+                                f'AMHI-Households examined for core housing need')]
+    if query.empty or query.item() is None or math.isnan(query.item()):
+        no_data = f"No Data for {geo}, please try CD/Provincial level"
+        table = pd.DataFrame({no_data: [""]})
+        return [{"name": no_data, "id": no_data}], table.to_dict("records"), [], [], style_header_conditional
+
+
 def errorRegionFigure(geo: str, year: int):
     row = income_partners_year[year].query('Geography == ' + f'"{geo}"')
     row_exists, _ = row.shape
@@ -79,3 +100,14 @@ def errorRegionFigure(geo: str, year: int):
                       y=[''])
         return fig
     return None
+
+
+def errorIndigenousFigure(geo: str, year: int):
+    joined_df_filtered = income_indigenous_year[year].query('Geography == ' + f'"{geo}"')
+    query = joined_df_filtered[(f'Aboriginal household status-Total - Private households by tenure including presence '
+                                f'of mortgage payments and subsidized housing-Households with income 21% to 50% of '
+                                f'AMHI-Households examined for core housing need')]
+    if query.empty or query.item() is None or math.isnan(query.item()):
+        fig = px.line(x=[f"No Data for {geo}, please try CD/Provincial level"],
+                      y=[''])
+        return fig

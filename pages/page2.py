@@ -1439,7 +1439,6 @@ def update_geo_figure6(geo, geo_c, year_comparison, scale, refresh):
 )
 def change_title_labels(geo, geo_c, year_comparison, scale, refresh):
     # change based off of url
-    print("page2 change labels")
     if year_comparison:
         original_year, compared_year = year_comparison.split("-")
         return (

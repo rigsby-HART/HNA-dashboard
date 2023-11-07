@@ -55,7 +55,6 @@ def change_title_labels(geo, geo_c, year_comparison, scale):
 )
 def change_description_labels(geo, geo_c, year_comparison, scale):
     # change based off of url
-    print("page3 change descriptions")
     if year_comparison:
         original_year, compared_year = year_comparison.split("-")
         prediction_year = int(original_year) + 10
@@ -164,7 +163,6 @@ def change_description_labels(geo, geo_c, year_comparison, scale):
 )
 def change_description_labels_2(year_comparison):
     # change based off of url
-    print("page3 change descriptions")
     if year_comparison:
         original_year, compared_year = year_comparison.split("-")
         prediction_year = int(original_year) + 10
