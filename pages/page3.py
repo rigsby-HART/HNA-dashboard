@@ -7,8 +7,7 @@ import plotly.graph_objects as go
 import math as math
 import warnings
 # Callbacks are ran without needing to be explicitly called
-# DO NOT REMOVE
-import pages.page3_helpers.comparison_callbacks
+# DO NOT REMOVEs
 
 from dash.dash_table.Format import Format, Scheme, Group
 from plotly.subplots import make_subplots
