@@ -45,7 +45,12 @@ def storage_variables():
 
 
 def errorRegionTable(geo: str, year: int):
-    geo, row = queryTable(geo, year, income_partners_year)
+    try:
+        geo, row = queryTable(geo, year, income_partners_year)
+    except:
+        no_data = f"No Data for {geo}, in the {year} dataset"
+        table = pd.DataFrame({no_data: [""]})
+        return [{"name": no_data, "id": no_data}], table.to_dict("records"), [], [], style_header_conditional
     row_exists, _ = row.shape
     if row_exists == 0:  # Most likely because the 2016 vs 2021 datasets differ
         no_data = f"No Data for {geo}, in the {year} dataset"
@@ -80,7 +85,13 @@ def errorRegionTablePopulation(geo: str, year: int, no_cd=False):
 
 
 def errorIndigenousTable(geo: str, year: int):
-    geo, joined_df_filtered = queryTable(geo, year, income_indigenous_year)
+    try:
+        geo, joined_df_filtered = queryTable(geo, year, income_indigenous_year)
+    except:
+        no_data = f"No Data for {geo}, please try CD/Provincial level"
+        table = pd.DataFrame({no_data: [""]})
+        return [{"name": no_data, "id": no_data}], table.to_dict("records"), [], [], style_header_conditional
+
     query = joined_df_filtered[(f'Aboriginal household status-Total - Private households by tenure including presence '
                                 f'of mortgage payments and subsidized housing-Households with income 21% to 50% of '
                                 f'AMHI-Households examined for core housing need')]
@@ -89,9 +100,13 @@ def errorIndigenousTable(geo: str, year: int):
         table = pd.DataFrame({no_data: [""]})
         return [{"name": no_data, "id": no_data}], table.to_dict("records"), [], [], style_header_conditional
 
-
 def errorRegionFigure(geo: str, year: int):
-    geo, row = queryTable(geo, year, income_partners_year)
+    try:
+        geo, row = queryTable(geo, year, income_partners_year)
+    except:
+        fig = px.line(x=[f"No Data for {geo} in the {year} dataset"],
+                      y=[''])
+        return fig
     row_exists, _ = row.shape
     if row_exists == 0:  # Most likely because the 2016 vs 2021 datasets differ
         fig = px.line(x=[f"No Data for {geo} in the {year} dataset"],
@@ -101,11 +116,16 @@ def errorRegionFigure(geo: str, year: int):
         fig = px.line(x=[f"No Data for {geo}, please try CD/Provincial level"],
                       y=[''])
         return fig
-    return None
+
 
 
 def errorIndigenousFigure(geo: str, year: int):
-    geo, joined_df_filtered = queryTable(geo, year, income_indigenous_year)
+    try:
+        geo, joined_df_filtered = queryTable(geo, year, income_indigenous_year)
+    except:
+        fig = px.line(x=[f"No Data for {geo} in the {year} dataset"],
+                      y=[''])
+        return fig
     query = joined_df_filtered[(f'Aboriginal household status-Total - Private households by tenure including presence '
                                 f'of mortgage payments and subsidized housing-Households with income 21% to 50% of '
                                 f'AMHI-Households examined for core housing need')]
