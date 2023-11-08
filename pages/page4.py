@@ -10,7 +10,7 @@ from plotly.subplots import make_subplots
 from helpers.create_engine import income_indigenous_year, default_year
 from helpers.style_helper import style_data_conditional, style_header_conditional
 from helpers.table_helper import area_scale_comparison, area_scale_primary_only, storage_variables, \
-    errorIndigenousTable, errorIndigenousFigure
+    errorIndigenousTable, errorIndigenousFigure, queryTable
 
 from pages.page4_helpers.page4_main import layout
 
@@ -84,8 +84,8 @@ layout = layout(default_year)
 # Table generator
 
 def table_amhi_shelter_cost_ind(geo, IsComparison, year:int=default_year):
-    joined_df_filtered = income_indigenous_year[year].query('Geography == ' + f'"{geo}"')
-
+    # joined_df_filtered = income_indigenous_year[year].query('Geography == ' + f'"{geo}"')
+    geo, joined_df_filtered = queryTable(geo, year, income_indigenous_year)
     portion_of_total_hh = []
 
     for x in x_base_echn:
@@ -308,7 +308,7 @@ chn_columns = [column_format + c for c in x_base_chn]
 
 # Plot dataframe generator
 def plot_df_core_housing_need_by_income(geo, IsComparison, year:int=default_year):
-    joined_df_filtered = income_indigenous_year[year].query('Geography == ' + f'"{geo}"')
+    geo, joined_df_filtered = queryTable(geo, year, income_indigenous_year)
 
     x_list = []
 
@@ -526,7 +526,7 @@ def update_geo_figure(geo, geo_c, year_comparison, scale, refresh):
 
 # plot df, table generator
 def plot_df_core_housing_need_by_amhi(geo, IsComparison, year:int=default_year):
-    joined_df_filtered = income_indigenous_year[year].query('Geography == ' + f'"{geo}"')
+    geo, joined_df_filtered = queryTable(geo, year, income_indigenous_year)
 
     x_list = []
     x_list_plot = []
@@ -926,15 +926,15 @@ def func_ov7(n_clicks, geo, geo_c, year_comparison):
     if "ov7-download-csv_ind" == ctx.triggered_id:
         if year_comparison:
             original_year, compared_year = year_comparison.split("-")
-            joined_df_geo = income_indigenous_year[int(original_year)].query("Geography == " + f"'{geo}'")
-            joined_df_geo_c = income_indigenous_year[int(compared_year)].query("Geography == " + f"'{geo}'")
+            _, joined_df_geo = queryTable(geo, int(original_year), income_indigenous_year)
+            _, joined_df_geo_c = queryTable(geo, int(compared_year), income_indigenous_year)
             joined_df_download = pd.concat([joined_df_geo, joined_df_geo_c])
             joined_df_download = joined_df_download.drop(columns=['pk_x', 'pk_y'])
 
             return dcc.send_data_frame(joined_df_download.to_csv, "result.csv")
         else:
-            joined_df_geo = income_indigenous_year[default_year].query("Geography == " + f"'{geo}'")
-            joined_df_geo_c = income_indigenous_year[default_year].query("Geography == " + f"'{geo_c}'")
+            _, joined_df_geo = queryTable(geo, default_year, income_indigenous_year)
+            _, joined_df_geo_c = queryTable(geo, default_year, income_indigenous_year)
             joined_df_download_ind = pd.concat([joined_df_geo, joined_df_geo_c])
             joined_df_download_ind = joined_df_download_ind.drop(columns=['pk_x', 'pk_y'])
 

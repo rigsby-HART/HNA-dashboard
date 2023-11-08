@@ -3,8 +3,10 @@ import math
 import pandas as pd
 import plotly.express as px
 
+from typing import List, Dict
 from dash import dcc
-from helpers.create_engine import mapped_geo_code, income_partners_year, updated_csd_year, income_indigenous_year
+from helpers.create_engine import mapped_geo_code, income_partners_year, updated_csd_year, income_indigenous_year, \
+    default_year, df_geo_list, mapped_geo_code_year
 from helpers.style_helper import style_header_conditional
 
 
@@ -43,7 +45,7 @@ def storage_variables():
 
 
 def errorRegionTable(geo: str, year: int):
-    row = income_partners_year[year].query('Geography == ' + f'"{geo}"')
+    geo, row = queryTable(geo, year, income_partners_year)
     row_exists, _ = row.shape
     if row_exists == 0:  # Most likely because the 2016 vs 2021 datasets differ
         no_data = f"No Data for {geo}, in the {year} dataset"
@@ -78,7 +80,7 @@ def errorRegionTablePopulation(geo: str, year: int, no_cd=False):
 
 
 def errorIndigenousTable(geo: str, year: int):
-    joined_df_filtered = income_indigenous_year[year].query('Geography == ' + f'"{geo}"')
+    geo, joined_df_filtered = queryTable(geo, year, income_indigenous_year)
     query = joined_df_filtered[(f'Aboriginal household status-Total - Private households by tenure including presence '
                                 f'of mortgage payments and subsidized housing-Households with income 21% to 50% of '
                                 f'AMHI-Households examined for core housing need')]
@@ -89,7 +91,7 @@ def errorIndigenousTable(geo: str, year: int):
 
 
 def errorRegionFigure(geo: str, year: int):
-    row = income_partners_year[year].query('Geography == ' + f'"{geo}"')
+    geo, row = queryTable(geo, year, income_partners_year)
     row_exists, _ = row.shape
     if row_exists == 0:  # Most likely because the 2016 vs 2021 datasets differ
         fig = px.line(x=[f"No Data for {geo} in the {year} dataset"],
@@ -103,7 +105,7 @@ def errorRegionFigure(geo: str, year: int):
 
 
 def errorIndigenousFigure(geo: str, year: int):
-    joined_df_filtered = income_indigenous_year[year].query('Geography == ' + f'"{geo}"')
+    geo, joined_df_filtered = queryTable(geo, year, income_indigenous_year)
     query = joined_df_filtered[(f'Aboriginal household status-Total - Private households by tenure including presence '
                                 f'of mortgage payments and subsidized housing-Households with income 21% to 50% of '
                                 f'AMHI-Households examined for core housing need')]
@@ -111,3 +113,15 @@ def errorIndigenousFigure(geo: str, year: int):
         fig = px.line(x=[f"No Data for {geo}, please try CD/Provincial level"],
                       y=[''])
         return fig
+
+# Every year has varying names, so this converts between them
+def queryTable(geo: str, year: int, df_list, source_year=default_year):
+    if year == 2021:
+        return geo, df_list[year].query('Geography == ' + f'"{geo}"')
+    if year == 2016:
+        # Takes the name from 2021 (or whatever source year is), converts to geo code, then converts to year
+        geo_code = mapped_geo_code_year[source_year].query('Geography == ' + f'"{geo}"')["Geo_Code"].item()
+        geo_name = mapped_geo_code_year[year].query(f'Geo_Code == {geo_code}')["Geography"].item()
+        return geo_name, df_list[year].query('Geography == ' + f'"{geo_name}"')
+
+

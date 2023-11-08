@@ -43,6 +43,7 @@ income_partners_year: Dict[int, pd.DataFrame] = {}
 income_indigenous_year: Dict[int, pd.DataFrame] = {}
 updated_csd_year: Dict[int, pd.DataFrame] = {}
 updated_cd_year: Dict[int, pd.DataFrame] = {}
+mapped_geo_code_year: Dict[int, pd.DataFrame] = {}
 for year in engine_list.keys():
     income_category = pd.read_sql_table('income', engine_list[year].connect())
     income_category = income_category.drop(['Geography'], axis=1)
@@ -55,4 +56,5 @@ for year in engine_list.keys():
     income_indigenous_year[year] = income_category.merge(df_ind, how='left', on='Geography')
     updated_csd_year[year] = pd.read_sql_table('csd_hh_projections', engine_list[year].connect())
     updated_cd_year[year] = pd.read_sql_table('cd_hh_projections', engine_list[year].connect())
+    mapped_geo_code_year[year] = pd.read_sql_table('geocodes_integrated', engine_list[year].connect())
 
