@@ -2178,12 +2178,10 @@ def update_geo_figure9(geo, geo_c, year_comparison, scale, selected_columns):
     Output("HH-size-IC-page3", "children"),
     Output("HH-gain-page3", "children"),
     Output("growth-IC-page3", "children"),
-    State('main-area', 'data'),
-    State('comparison-area', 'data'),
     Input('year-comparison', 'data'),
-    State('area-scale-store', 'data'),
+    Input('datatable9-interactivity', 'selected_columns'),
 )
-def change_title_labels(geo, geo_c, year_comparison, scale):
+def change_title_labels(year_comparison, _):
     # change based off of url
     year = default_year
     if year_comparison:
@@ -2216,12 +2214,10 @@ def change_title_labels(geo, geo_c, year_comparison, scale):
     Output("HH-size-IC-graph-description-page3", "children"),
     Output("HH-gain-description-page3", "children"),
     Output("HH-gain-graph-description-page3", "children"),
-    State('main-area', 'data'),
-    State('comparison-area', 'data'),
     Input('year-comparison', 'data'),
-    State('area-scale-store', 'data'),
+    Input('datatable9-interactivity', 'selected_columns'),
 )
-def change_description_labels(geo, geo_c, year_comparison, scale):
+def change_description_labels(year_comparison, _):
     # change based off of url
     if year_comparison:
         original_year, compared_year = year_comparison.split("-")
@@ -2328,8 +2324,9 @@ def change_description_labels(geo, geo_c, year_comparison, scale):
     Output("growth-IC-description3-page3", "children"),
     Output("growth-IC-description4-page3", "children"),
     Input('year-comparison', 'data'),
+    Input('datatable9-interactivity', 'selected_columns'),
 )
-def change_description_labels_2(year_comparison):
+def change_description_labels_2(year_comparison, _):
     # change based off of url
     if year_comparison:
         original_year, compared_year = year_comparison.split("-")
