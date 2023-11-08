@@ -381,6 +381,13 @@ def update_map(clickData, reset_map, select_region, comparison_region, *args):
 
     selectedDropDown = (ctx.triggered_id == 'primary-geo-dropdown' or ctx.triggered_id == 'comparison-geo-dropdown')
 
+    # When Canada is selected in the textbox
+
+    if len(clicked_code) == 1 and selectedDropDown:
+        fig_m = province_map(default_value, True)
+
+        return fig_m, select_region, comparison_region
+
     # When users click 'View Province' button or select a province on dropbox menu
 
     if (len(clicked_code) == 2 and selectedDropDown) or "to-province-1" == ctx.triggered_id:
@@ -505,4 +512,5 @@ def toggle_year_comparison(year_comparison, *args):
         else:
             year_comparison = "2021-2016"
         return year_comparison, {"visibility": "hidden" if year_comparison else "visible"}
+    # return dash.no_update, dash.no_update
     return None, {"visibility": "visible"}

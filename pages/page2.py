@@ -1,4 +1,5 @@
 # Importing Libraries
+import copy
 
 import pandas as pd
 import plotly.graph_objects as go
@@ -1000,6 +1001,7 @@ hh_category_dict = {
     'Percent HH head over 85 in core housing need': 'HH head over 85',
     'Percent HH with physical act. limit. in core housing need': 'HH with physical activity limitation',
     'Percent HH with cognitive, mental, or addictions activity limitation in core housing need': 'HH with cognitive, mental,<br>or addictions activity limitation',
+    'Percent of Transgender HH in core housing': 'Transgender or Non-binary HH',
     'Percent HH in core housing need': 'Community (all HH)'
 }
 
@@ -1011,11 +1013,19 @@ hh_categories = list(hh_category_dict.values())
 
 def plot_df_core_housing_need_by_priority_population(geo, year: int = default_year):
     geo, joined_df_filtered = queryTable(geo, year, income_partners_year)
+    if year == 2016:
+        columns = list(hh_columns)
+        columns.remove('Percent of Transgender HH in core housing')
+        percent_hh = [joined_df_filtered[c].tolist()[0] for c in columns]
 
-    percent_hh = [joined_df_filtered[c].tolist()[0] for c in hh_columns]
+        categories = copy.deepcopy(hh_categories)
+        categories.remove('Transgender or Non-binary HH')
+        plot_df = pd.DataFrame({'HH_Category': categories, 'Percent_HH': percent_hh})
+    else:
+        percent_hh = [joined_df_filtered[c].tolist()[0] for c in hh_columns]
 
-    plot_df = pd.DataFrame({'HH_Category': hh_categories, 'Percent_HH': percent_hh})
-    plot_df['Percent_HH'] = plot_df['Percent_HH'].fillna(0)
+        plot_df = pd.DataFrame({'HH_Category': hh_categories, 'Percent_HH': percent_hh})
+        plot_df['Percent_HH'] = plot_df['Percent_HH'].fillna(0)
 
     return plot_df
 
@@ -1142,7 +1152,7 @@ def update_geo_figure5(geo, geo_c, year_comparison: str, scale, refresh):
 
         # Generating main plot
 
-        for i in hh_categories:
+        for i in plot_df["HH_Category"]:
             plot_df_frag = plot_df.loc[plot_df['HH_Category'] == i, :]
             fig5.add_trace(go.Bar(
                 y=plot_df_frag['HH_Category'],
@@ -1277,17 +1287,34 @@ def plot_df_core_housing_need_by_priority_population_income(geo, year=default_ye
     percent_col = []
     hh_cat_col = []
 
-    for c, c2, c3 in zip(columns2, columns3, columns4):
+    col2 = columns2
+    col3 = columns3
+    col4 = columns4
+
+    dict2 = hh_category_dict2
+    dict3 = hh_category_dict3
+    dict4 = hh_category_dict4
+    if year != 2016:
+        dict2 = copy.deepcopy(dict2)
+        dict3 = copy.deepcopy(dict3)
+        dict4 = copy.deepcopy(dict4)
+        dict2['Percent of Transgender HH in core housing'] = 'Transgender or Non-binary HH'
+        dict3['Percent of Transgender HH in core housing'] = 'Transgender or Non-binary HH'
+        dict4['Percent of Transgender HH in core housing'] = 'Transgender or Non-binary HH'
+        col2 = dict2.keys()
+        col3 = dict3.keys()
+        col4 = dict4.keys()
+    for c, c2, c3 in zip(col2, col3, col4):
         for i in income_lv_list:
             if i == '20% or under':
                 p_hh = joined_df_filtered[f'{c} with income {i} of the AMHI'].tolist()[0]
-                hh_cat_col.append(hh_category_dict2[c])
+                hh_cat_col.append(dict2[c])
             elif i == '21% to 50%':
                 p_hh = joined_df_filtered[f'{c2} with income {i} of AMHI'].tolist()[0]
-                hh_cat_col.append(hh_category_dict3[c2])
+                hh_cat_col.append(dict3[c2])
             else:
                 p_hh = joined_df_filtered[f'{c3} with income {i} of AMHI'].tolist()[0]
-                hh_cat_col.append(hh_category_dict4[c3])
+                hh_cat_col.append(dict4[c3])
 
             income_col.append(i)
             percent_col.append(p_hh)
