@@ -370,6 +370,8 @@ def update_map(clickData, reset_map, select_region, comparison_region, *args):
         select_region = default_value
     # Make the logic below zoom to the correct level even during comparison
     if ctx.triggered_id == "comparison-geo-dropdown" or ctx.triggered_id == "comparison-geo-dropdown-parent":
+        if comparison_region is None:
+            return dash.no_update, select_region, None
         region_in_focus = comparison_region
         clicked_code = mapped_geo_code.loc[mapped_geo_code['Geography'] == comparison_region, :]['Geo_Code'].tolist()[0]
     else:
