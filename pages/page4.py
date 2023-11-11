@@ -10,7 +10,7 @@ from plotly.subplots import make_subplots
 from helpers.create_engine import income_indigenous_year, default_year
 from helpers.style_helper import style_data_conditional, style_header_conditional
 from helpers.table_helper import area_scale_comparison, area_scale_primary_only, storage_variables, \
-    errorIndigenousTable, errorIndigenousFigure, queryTable
+    error_indigenous_table, error_indigenous_figure, query_table
 
 from pages.page4_helpers.page4_main import layout
 
@@ -85,7 +85,7 @@ layout = layout(default_year)
 
 def table_amhi_shelter_cost_ind(geo, IsComparison, year:int=default_year):
     # joined_df_filtered = income_indigenous_year[year].query('Geography == ' + f'"{geo}"')
-    geo, joined_df_filtered = queryTable(geo, year, income_indigenous_year)
+    geo, joined_df_filtered = query_table(geo, year, income_indigenous_year)
     portion_of_total_hh = []
 
     for x in x_base_echn:
@@ -154,8 +154,8 @@ def update_table1(geo, geo_c, year_comparison, selected_columns, scale):
         geo = area_scale_primary_only(geo, scale)
 
         # Generating table
-        if errorIndigenousTable(geo, default_year):
-            return errorIndigenousTable(geo, default_year)
+        if error_indigenous_table(geo, default_year):
+            return error_indigenous_table(geo, default_year)
         table, median_income, median_rent = table_amhi_shelter_cost_ind(geo, IsComparison=False)
 
         # Generating callback output to update table
@@ -208,11 +208,11 @@ def update_table1(geo, geo_c, year_comparison, selected_columns, scale):
 
         # Main Table
         if year_comparison:
-            if errorIndigenousTable(geo, int(compared_year)):
-                return errorIndigenousTable(geo, int(compared_year))
+            if error_indigenous_table(geo, int(compared_year)):
+                return error_indigenous_table(geo, int(compared_year))
         else:
-            if errorIndigenousTable(geo, default_year):
-                return errorIndigenousTable(geo, default_year)
+            if error_indigenous_table(geo, default_year):
+                return error_indigenous_table(geo, default_year)
         # Generating main table
         table, median_income, median_rent = (
             table_amhi_shelter_cost_ind(geo, False, int(compared_year)) if year_comparison else
@@ -224,11 +224,11 @@ def update_table1(geo, geo_c, year_comparison, selected_columns, scale):
         if geo_c == None:
             geo_c = geo
         if year_comparison:
-            if errorIndigenousTable(geo, default_year):
-                return errorIndigenousTable(geo, default_year)
+            if error_indigenous_table(geo, default_year):
+                return error_indigenous_table(geo, default_year)
         else:
-            if errorIndigenousTable(geo_c, default_year):
-                return errorIndigenousTable(geo_c, default_year)
+            if error_indigenous_table(geo_c, default_year):
+                return error_indigenous_table(geo_c, default_year)
         # Generating comparison table
         table_c, median_income_c, median_rent_c = (
             table_amhi_shelter_cost_ind(geo, True, int(original_year)) if year_comparison else
@@ -308,7 +308,7 @@ chn_columns = [column_format + c for c in x_base_chn]
 
 # Plot dataframe generator
 def plot_df_core_housing_need_by_income(geo, IsComparison, year:int=default_year):
-    geo, joined_df_filtered = queryTable(geo, year, income_indigenous_year)
+    geo, joined_df_filtered = query_table(geo, year, income_indigenous_year)
 
     x_list = []
 
@@ -369,8 +369,8 @@ def update_geo_figure(geo, geo_c, year_comparison, scale, refresh):
         geo = area_scale_primary_only(geo, scale)
 
         # Generating dataframe for plot
-        if errorIndigenousFigure(geo, default_year):
-            return errorIndigenousFigure(geo, default_year)
+        if error_indigenous_figure(geo, default_year):
+            return error_indigenous_figure(geo, default_year)
         plot_df = plot_df_core_housing_need_by_income(geo, IsComparison=False)
 
         # Generating plot
@@ -435,11 +435,11 @@ def update_geo_figure(geo, geo_c, year_comparison, scale, refresh):
 
         # Generating dataframe for main plot
         if year_comparison:
-            if errorIndigenousFigure(geo, int(compared_year)):
-                return errorIndigenousFigure(geo, int(compared_year))
+            if error_indigenous_figure(geo, int(compared_year)):
+                return error_indigenous_figure(geo, int(compared_year))
         else:
-            if errorIndigenousFigure(geo, default_year):
-                return errorIndigenousFigure(geo, default_year)
+            if error_indigenous_figure(geo, default_year):
+                return error_indigenous_figure(geo, default_year)
         plot_df = (
             plot_df_core_housing_need_by_income(geo, False, int(compared_year)) if year_comparison else
             plot_df_core_housing_need_by_income(geo, False)
@@ -466,11 +466,11 @@ def update_geo_figure(geo, geo_c, year_comparison, scale, refresh):
 
         # Generating dataframe for comparison plot
         if year_comparison:
-            if errorIndigenousFigure(geo, default_year):
-                return errorIndigenousFigure(geo, default_year)
+            if error_indigenous_figure(geo, default_year):
+                return error_indigenous_figure(geo, default_year)
         else:
-            if errorIndigenousFigure(geo_c, default_year):
-                return errorIndigenousFigure(geo_c, default_year)
+            if error_indigenous_figure(geo_c, default_year):
+                return error_indigenous_figure(geo_c, default_year)
         plot_df_c = (
             plot_df_core_housing_need_by_income(geo, True, int(original_year)) if year_comparison else
             plot_df_core_housing_need_by_income(geo_c, True)
@@ -526,7 +526,7 @@ def update_geo_figure(geo, geo_c, year_comparison, scale, refresh):
 
 # plot df, table generator
 def plot_df_core_housing_need_by_amhi(geo, IsComparison, year:int=default_year):
-    geo, joined_df_filtered = queryTable(geo, year, income_indigenous_year)
+    geo, joined_df_filtered = query_table(geo, year, income_indigenous_year)
 
     x_list = []
     x_list_plot = []
@@ -652,8 +652,8 @@ def update_geo_figure34(geo, geo_c, year_comparison, scale, refresh):
         geo = area_scale_primary_only(geo, scale)
 
         # Generating dataframe for plot
-        if errorIndigenousTable(geo, default_year):
-            return ([errorIndigenousFigure(geo, default_year)]+list(errorIndigenousTable(geo, default_year)))
+        if error_indigenous_table(geo, default_year):
+            return ([error_indigenous_figure(geo, default_year)] + list(error_indigenous_table(geo, default_year)))
         plot_df, table2 = plot_df_core_housing_need_by_amhi(geo, False)
         table2 = table2.drop('Income Category', axis=1)
         # Generating plot
@@ -752,12 +752,12 @@ def update_geo_figure34(geo, geo_c, year_comparison, scale, refresh):
 
         # Generating dataframe for main plot
         if year_comparison:
-            if errorIndigenousTable(geo, int(compared_year)):
-                return [errorIndigenousFigure(geo, int(compared_year))] + \
-                    list(errorIndigenousTable(geo, int(compared_year)))
+            if error_indigenous_table(geo, int(compared_year)):
+                return [error_indigenous_figure(geo, int(compared_year))] + \
+                    list(error_indigenous_table(geo, int(compared_year)))
         else:
-            if errorIndigenousTable(geo, default_year):
-                return [errorIndigenousFigure(geo, default_year)] + list(errorIndigenousTable(geo, default_year))
+            if error_indigenous_table(geo, default_year):
+                return [error_indigenous_figure(geo, default_year)] + list(error_indigenous_table(geo, default_year))
         plot_df, table2 = (
             plot_df_core_housing_need_by_amhi(geo, False, int(compared_year)) if year_comparison else
             plot_df_core_housing_need_by_amhi(geo, False)
@@ -784,11 +784,11 @@ def update_geo_figure34(geo, geo_c, year_comparison, scale, refresh):
 
         # Generating dataframe for comparison plot
         if year_comparison:
-            if errorIndigenousTable(geo, default_year):
-                return [errorIndigenousFigure(geo, default_year)] + list(errorIndigenousTable(geo, default_year))
+            if error_indigenous_table(geo, default_year):
+                return [error_indigenous_figure(geo, default_year)] + list(error_indigenous_table(geo, default_year))
         else:
-            if errorIndigenousTable(geo_c, default_year):
-                return [errorIndigenousFigure(geo_c, default_year)] + list(errorIndigenousTable(geo_c, default_year))
+            if error_indigenous_table(geo_c, default_year):
+                return [error_indigenous_figure(geo_c, default_year)] + list(error_indigenous_table(geo_c, default_year))
         plot_df_c, table2_c = (
             plot_df_core_housing_need_by_amhi(geo, True, int(original_year)) if year_comparison else
             plot_df_core_housing_need_by_amhi(geo_c, True)
@@ -926,15 +926,15 @@ def func_ov7(n_clicks, geo, geo_c, year_comparison):
     if "ov7-download-csv_ind" == ctx.triggered_id:
         if year_comparison:
             original_year, compared_year = year_comparison.split("-")
-            _, joined_df_geo = queryTable(geo, int(original_year), income_indigenous_year)
-            _, joined_df_geo_c = queryTable(geo, int(compared_year), income_indigenous_year)
+            _, joined_df_geo = query_table(geo, int(original_year), income_indigenous_year)
+            _, joined_df_geo_c = query_table(geo, int(compared_year), income_indigenous_year)
             joined_df_download = pd.concat([joined_df_geo, joined_df_geo_c])
             joined_df_download = joined_df_download.drop(columns=['pk_x', 'pk_y'])
 
             return dcc.send_data_frame(joined_df_download.to_csv, "result.csv")
         else:
-            _, joined_df_geo = queryTable(geo, default_year, income_indigenous_year)
-            _, joined_df_geo_c = queryTable(geo, default_year, income_indigenous_year)
+            _, joined_df_geo = query_table(geo, default_year, income_indigenous_year)
+            _, joined_df_geo_c = query_table(geo, default_year, income_indigenous_year)
             joined_df_download_ind = pd.concat([joined_df_geo, joined_df_geo_c])
             joined_df_download_ind = joined_df_download_ind.drop(columns=['pk_x', 'pk_y'])
 

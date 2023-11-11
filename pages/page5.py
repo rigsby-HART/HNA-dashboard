@@ -12,7 +12,7 @@ from helpers.style_helper import style_header_conditional, style_data_conditiona
 from helpers.create_engine import income_partners_year, default_year
 from helpers.table_helper import area_scale_comparison, area_scale_primary_only, error_region_table, error_region_figure, \
     query_table
-from pages.page2_helpers.page2_main import layout
+from pages.page5_helpers.page5_main import layout
 
 warnings.filterwarnings("ignore")
 
@@ -117,15 +117,15 @@ def table_amhi_shelter_cost(geo: str, is_second: bool, year: int = default_year)
 # Callback logic for the table update
 
 @callback(
-    Output('income-category-affordability-table', 'columns'),
-    Output('income-category-affordability-table', 'data'),
-    Output('income-category-affordability-table', 'style_data_conditional'),
-    Output('income-category-affordability-table', 'style_cell_conditional'),
-    Output('income-category-affordability-table', 'style_header_conditional'),
+    Output('income-category-affordability-table-pg5', 'columns'),
+    Output('income-category-affordability-table-pg5', 'data'),
+    Output('income-category-affordability-table-pg5', 'style_data_conditional'),
+    Output('income-category-affordability-table-pg5', 'style_cell_conditional'),
+    Output('income-category-affordability-table-pg5', 'style_header_conditional'),
     Input('main-area', 'data'),
     Input('comparison-area', 'data'),
     Input('year-comparison', 'data'),
-    Input('income-category-affordability-table', 'selected_columns'),
+    Input('income-category-affordability-table-pg5', 'selected_columns'),
     Input('area-scale-store', 'data'),
 )
 def update_table1(geo, geo_c, year_comparison: str, selected_columns, scale):
@@ -315,12 +315,12 @@ def plot_df_core_housing_need_by_income(geo: str, is_second: bool, year: int = d
 
 # Callback logic for the plot update
 @callback(
-    Output('graph', 'figure'),
+    Output('graph-pg5', 'figure'),
     Input('main-area', 'data'),
     Input('comparison-area', 'data'),
     Input('year-comparison', 'data'),
     Input('area-scale-store', 'data'),
-    Input('income-category-affordability-table', 'selected_columns'),
+    Input('income-category-affordability-table-pg5', 'selected_columns'),
 )
 def update_geo_figure(geo: str, geo_c: str, year_comparison: str, scale, refresh):
     # Single area mode
@@ -533,12 +533,12 @@ def plot_df_core_housing_need_by_amhi(geo: str, IsComparison: bool, year: int = 
 
 # Callback logic for the plot update
 @callback(
-    Output('graph2', 'figure'),
+    Output('graph2-pg5', 'figure'),
     Input('main-area', 'data'),
     Input('comparison-area', 'data'),
     Input('year-comparison', 'data'),
     Input('area-scale-store', 'data'),
-    Input('income-category-affordability-table', 'selected_columns'),
+    Input('income-category-affordability-table-pg5', 'selected_columns'),
 )
 def update_geo_figure2(geo, geo_c, year_comparison: str, scale, refresh):
     # Single area mode
@@ -792,15 +792,15 @@ def table_core_affordable_housing_deficit(geo, is_second, year: int = default_ye
 # Callback logic for the table update
 
 @callback(
-    Output('datatable2-interactivity', 'columns'),
-    Output('datatable2-interactivity', 'data'),
-    Output('datatable2-interactivity', 'style_data_conditional'),
-    Output('datatable2-interactivity', 'style_cell_conditional'),
-    Output('datatable2-interactivity', 'style_header_conditional'),
+    Output('datatable2-interactivity-pg5', 'columns'),
+    Output('datatable2-interactivity-pg5', 'data'),
+    Output('datatable2-interactivity-pg5', 'style_data_conditional'),
+    Output('datatable2-interactivity-pg5', 'style_cell_conditional'),
+    Output('datatable2-interactivity-pg5', 'style_header_conditional'),
     Input('main-area', 'data'),
     Input('comparison-area', 'data'),
     Input('year-comparison', 'data'),
-    Input('datatable2-interactivity', 'selected_columns'),
+    Input('datatable2-interactivity-pg5', 'selected_columns'),
     Input('area-scale-store', 'data'),
 )
 def update_table2(geo, geo_c, year_comparison: str, selected_columns, scale):
@@ -1053,12 +1053,12 @@ def color_dict_core_housing_need_by_priority_population(plot_df):
 # Callback logic for the plot update
 
 @callback(
-    Output('graph5', 'figure'),
+    Output('graph5-pg5', 'figure'),
     Input('main-area', 'data'),
     Input('comparison-area', 'data'),
     Input('year-comparison', 'data'),
     Input('area-scale-store', 'data'),
-    Input('income-category-affordability-table', 'selected_columns'),
+    Input('income-category-affordability-table-pg5', 'selected_columns'),
 )
 def update_geo_figure5(geo, geo_c, year_comparison: str, scale, refresh):
     if (geo == geo_c or geo_c == None or (geo == None and geo_c != None)) and not year_comparison:
@@ -1131,7 +1131,7 @@ def update_geo_figure5(geo, geo_c, year_comparison: str, scale, refresh):
             geo, geo_c = area_scale_comparison(geo, geo_c, scale)
             original_year, compared_year = default_year, default_year
 
-        # Subplot setting for the comparison mode 
+        # Subplot setting for the comparison mode
         fig5 = make_subplots(rows=1, cols=2, subplot_titles=(f"{geo + ' ' + compared_year if year_comparison else geo}",
                                                              f"{geo + ' ' + original_year if year_comparison else geo_c}"),
                              shared_yaxes=True, shared_xaxes=True)
@@ -1327,12 +1327,12 @@ def plot_df_core_housing_need_by_priority_population_income(geo, year=default_ye
 # Callback logic for the plot update
 
 @callback(
-    Output('graph6', 'figure'),
+    Output('graph6-pg5', 'figure'),
     Input('main-area', 'data'),
     Input('comparison-area', 'data'),
     Input('year-comparison', 'data'),
     Input('area-scale-store', 'data'),
-    Input('income-category-affordability-table', 'selected_columns'),
+    Input('income-category-affordability-table-pg5', 'selected_columns'),
 )
 def update_geo_figure6(geo, geo_c, year_comparison, scale, refresh):
     # Overried income category values
@@ -1506,17 +1506,17 @@ def update_geo_figure6(geo, geo_c, year_comparison, scale, refresh):
 
 
 @callback(
-    Output("income-categories-title-page2", "children"),
-    Output("percent-HH-CHN-title-page2", "children"),
-    Output("percent-IC-HH-CHN-title-page2", "children"),
-    Output("housing-deficit-page2", "children"),
-    Output("pct-pp-hh-chn-page2", "children"),
-    Output("pct-pp-ic-chn-page2", "children"),
+    Output("income-categories-title-page5", "children"),
+    Output("percent-HH-CHN-title-page5", "children"),
+    Output("percent-IC-HH-CHN-title-page5", "children"),
+    Output("housing-deficit-page5", "children"),
+    Output("pct-pp-hh-chn-page5", "children"),
+    Output("pct-pp-ic-chn-page5", "children"),
     State('main-area', 'data'),
     State('comparison-area', 'data'),
     Input('year-comparison', 'data'),
     State('area-scale-store', 'data'),
-    Input('income-category-affordability-table', 'selected_columns'),
+    Input('income-category-affordability-table-pg5', 'selected_columns'),
 )
 def change_title_labels(geo, geo_c, year_comparison, scale, refresh):
     # change based off of url
@@ -1541,8 +1541,8 @@ def change_title_labels(geo, geo_c, year_comparison, scale, refresh):
 
 
 @callback(
-    Output("ov7-download-text", "data"),
-    Input("ov7-download-csv", "n_clicks"),
+    Output("ov7-download-text-pg5", "data"),
+    Input("ov7-download-csv-pg5", "n_clicks"),
     Input('main-area', 'data'),
     Input('comparison-area', 'data'),
     State('year-comparison', 'data'),

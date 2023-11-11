@@ -26,7 +26,7 @@ numbers = df.iloc[4:, 1:].replace("x", "0").fillna(0).astype(int)
 # Total households/Transgender households are the last two types
 groups = len(CHN_status) * len(AMHI) * len(housing_type)
 offset = (len(minority_status) - 2) * groups
-transgender_households = numbers.iloc[:, offset:]
+renter_vs_owner_data = numbers.iloc[:, offset:]
 
 # Create the names of the columns
 columnName = pd.Series([""] * (groups * 2))
@@ -38,9 +38,9 @@ for minority in (minority_status[-2:]):
                 columnName[index] = f"{minority}-{housing}-{income}-{status}"
                 index += 1
 columnName = columnName.rename({x: (x + offset + 1) for x in range(groups * 2)})
-transgender_households = transgender_households.rename(columns=columnName.to_dict())
-transgender_households.insert(0, "Geography", df.iloc[4:, 0])
-transgender_households = transgender_households.reset_index(drop=True)
+renter_vs_owner_data = renter_vs_owner_data.rename(columns=columnName.to_dict())
+renter_vs_owner_data.insert(0, "Geography", df.iloc[4:, 0])
+renter_vs_owner_data = renter_vs_owner_data.reset_index(drop=True)
 
 # Create engine
 # engine = create_engine(f'sqlite:///sources//previous_years//hart2021.db')
@@ -61,11 +61,11 @@ def convert_to_name(original_name):
     return geo
 
 
-transgender_households.iat[0, 0] = "Canada"
-transgender_households.iloc[1:, 0] = transgender_households.iloc[1:, 0].apply(convert_to_name)
-condition = transgender_households.iloc[:, 0].notna()
-transgender_households = transgender_households[condition]
-transgender_households = transgender_households.reset_index(drop=True)
+renter_vs_owner_data.iat[0, 0] = "Canada"
+renter_vs_owner_data.iloc[1:, 0] = renter_vs_owner_data.iloc[1:, 0].apply(convert_to_name)
+condition = renter_vs_owner_data.iloc[:, 0].notna()
+renter_vs_owner_data = renter_vs_owner_data[condition]
+renter_vs_owner_data = renter_vs_owner_data.reset_index(drop=True)
 Base = declarative_base()
 
 # 'Percent Non-Binary HH in core housing need'
@@ -90,7 +90,7 @@ total_label, transgender_label = minority_status[-2:]
 def add_columns(row):
     # Match row to transgender row
     geo = row["Geography"]
-    trans_data = transgender_households[transgender_households["Geography"] == geo]
+    trans_data = renter_vs_owner_data[renter_vs_owner_data["Geography"] == geo]
     # Sometimes it exists in Partners, but not in the other transgender data
     if trans_data.empty:
         row_output = {x: None for x in output_columns}

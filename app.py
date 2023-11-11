@@ -8,7 +8,7 @@ from dash.dependencies import Input, Output
 from app_file import app
 from helpers.table_helper import storage_variables
 # Connect to app pages
-from pages import page1, page2, page3, page4
+from pages import page1, page2, page3, page4, page5
 
 # Define the index page layout
 
@@ -26,12 +26,14 @@ server = app.server
 def display_page(pathname):
     if pathname == '/page1':
         return page1.layout
-    if pathname == '/page2':
+    elif pathname == '/page2':
         return page2.layout
-    if pathname == '/page3':
+    elif pathname == '/page3':
         return page3.layout
-    if pathname == '/page4':
+    elif pathname == '/page4':
         return page4.layout
+    elif pathname == '/page5':
+        return page5.layout
     else:  # if redirected to unknown link
         return "404 Page Error! Please choose a link"
 

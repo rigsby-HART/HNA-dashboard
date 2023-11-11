@@ -44,9 +44,9 @@ def storage_variables():
     ]
 
 
-def errorRegionTable(geo: str, year: int):
+def error_region_table(geo: str, year: int):
     try:
-        geo, row = queryTable(geo, year, income_partners_year)
+        geo, row = query_table(geo, year, income_partners_year)
     except:
         no_data = f"No Data for {geo}, in the {year} dataset"
         table = pd.DataFrame({no_data: [""]})
@@ -64,7 +64,7 @@ def errorRegionTable(geo: str, year: int):
     return None
 
 
-def errorRegionTablePopulation(geo: str, year: int, no_cd=False):
+def error_region_table_population(geo: str, year: int, no_cd=False):
     geo_code_clicked = mapped_geo_code.loc[mapped_geo_code['Geography'] == geo, 'Geo_Code'].tolist()[0]
     updated_csd_filtered = updated_csd_year[year].query('Geo_Code ==' + f"{geo_code_clicked}")
     hh_size = updated_csd_filtered[
@@ -84,9 +84,9 @@ def errorRegionTablePopulation(geo: str, year: int, no_cd=False):
     return False
 
 
-def errorIndigenousTable(geo: str, year: int):
+def error_indigenous_table(geo: str, year: int):
     try:
-        geo, joined_df_filtered = queryTable(geo, year, income_indigenous_year)
+        geo, joined_df_filtered = query_table(geo, year, income_indigenous_year)
     except:
         no_data = f"No Data for {geo}, please try CD/Provincial level"
         table = pd.DataFrame({no_data: [""]})
@@ -100,9 +100,10 @@ def errorIndigenousTable(geo: str, year: int):
         table = pd.DataFrame({no_data: [""]})
         return [{"name": no_data, "id": no_data}], table.to_dict("records"), [], [], style_header_conditional
 
-def errorRegionFigure(geo: str, year: int):
+
+def error_region_figure(geo: str, year: int):
     try:
-        geo, row = queryTable(geo, year, income_partners_year)
+        geo, row = query_table(geo, year, income_partners_year)
     except:
         fig = px.line(x=[f"No Data for {geo} in the {year} dataset"],
                       y=[''])
@@ -118,10 +119,9 @@ def errorRegionFigure(geo: str, year: int):
         return fig
 
 
-
-def errorIndigenousFigure(geo: str, year: int):
+def error_indigenous_figure(geo: str, year: int):
     try:
-        geo, joined_df_filtered = queryTable(geo, year, income_indigenous_year)
+        geo, joined_df_filtered = query_table(geo, year, income_indigenous_year)
     except:
         fig = px.line(x=[f"No Data for {geo} in the {year} dataset"],
                       y=[''])
@@ -134,8 +134,9 @@ def errorIndigenousFigure(geo: str, year: int):
                       y=[''])
         return fig
 
+
 # Every year has varying names, so this converts between them
-def queryTable(geo: str, year: int, df_list, source_year=default_year):
+def query_table(geo: str, year: int, df_list, source_year=default_year):
     if year == 2021:
         return geo, df_list[year].query('Geography == ' + f'"{geo}"')
     if year == 2016:
@@ -145,3 +146,11 @@ def queryTable(geo: str, year: int, df_list, source_year=default_year):
         return geo_name, df_list[year].query('Geography == ' + f'"{geo_name}"')
 
 
+def query_table_owner(geo: str, year: int, df_list, source_year=default_year, owner=True):
+    if year == 2021:
+        return geo, df_list[year].query('Geography == ' + f'"{geo}"')
+    if year == 2016:
+        # Takes the name from 2021 (or whatever source year is), converts to geo code, then converts to year
+        geo_code = mapped_geo_code_year[source_year].query('Geography == ' + f'"{geo}"')["Geo_Code"].item()
+        geo_name = mapped_geo_code_year[year].query(f'Geo_Code == {geo_code}')["Geography"].item()
+        return geo_name, df_list[year].query('Geography == ' + f'"{geo_name}"')
