@@ -194,62 +194,8 @@ def layout(year:int=default_year):
                                     ),
                                 ], className='pg5-table-plot-box-lgeo'),
 
-                                # Percentage of Households in Core Housing Need by Priority Population
 
-                                html.Div([
-                                    # Title
-                                    html.H3(
-                                        children=html.Strong(
-                                            f'Percentage of Households in Core Housing Need by Priority Population, {year}'),
-                                        id='pct-pp-hh-chn-page5'),
-                                    # Description
-                                    html.Div([
-                                        html.H6(
-                                            'The following chart compares the rates of Core Housing Need across populations that are at high risk of experiencing housing need. The "Community (all HH)" bar represents the rate of Core Housing Need for all households in the selected community to act as a point of reference. The population with the greatest rate of Core Housing Need is highlighted in dark blue. When there is no bar for a priority population, it means that either there are no households in Core Housing Need within that priority population, or that there are too few households to report.')
-                                    ], className='muni-reg-text-lgeo'),
 
-                                    # Graphs
-
-                                    html.Div(children=[
-
-                                        dcc.Graph(
-                                            id='graph5-pg5',
-                                            figure=fig,
-                                            config=config,
-                                        )
-                                    ],
-                                        className='pg5-plot-lgeo'
-                                    ),
-                                ], className='pg5-table-plot-box-lgeo'),
-
-                                # Percentage of Households in Core Housing Need by Priority Population and Income Category
-
-                                html.Div([
-                                    # Title
-                                    html.H3(children=html.Strong(
-                                        f'Percentage of Households in Core Housing Need by Priority Population and Income Category, {year}'),
-                                        id='pct-pp-ic-chn-page5'),
-                                    # Description
-                                    html.Div([
-                                        html.H6(
-                                            'The following chart looks at those households in Core Housing Need for each priority population and shows their relative distribution by household income category. When there is no bar for a priority population, it means that either there are no households in Core Housing Need within that priority population, or that there are too few households to report.')
-                                    ], className='muni-reg-text-lgeo'),
-
-                                    # Graphs
-
-                                    html.Div(children=[
-
-                                        dcc.Graph(
-                                            id='graph6-pg5',
-                                            figure=fig,
-                                            config=config,
-                                        )
-
-                                    ],
-                                        className='pg5-plot-lgeo'
-                                    ),
-
-                                ], className='pg5-table-plot-box-lgeo'),
 
                                 # Raw data download button
 

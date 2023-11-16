@@ -436,7 +436,7 @@ def update_geo_figure(geo, geo_c, year_comparison, scale, refresh):
         # Generating dataframe for main plot
         if year_comparison:
             if error_indigenous_figure(geo, int(compared_year)):
-                return error_indigenous_figure(geo, int(compared_year))
+                return error_indigenous_figure(geo, int(compared_year),)
         else:
             if error_indigenous_figure(geo, default_year):
                 return error_indigenous_figure(geo, default_year)

@@ -31,7 +31,7 @@ def layout(year:int=default_year):
                                     # Title
                                     html.H3(
                                         children=html.Strong(f'Income Categories and Affordable Shelter Costs, {year}'),
-                                        id='income-categories-title-page2'),
+                                        id='income-categories-title-pg2'),
                                     # Description
                                     html.Div([
                                         html.H6(
@@ -39,7 +39,7 @@ def layout(year:int=default_year):
                                             'shelter costs for each income category, in 2020 dollar values, '
                                             'as well what percentage of the total number of households falls within '
                                             'each category.')
-                                    ], className='muni-reg-text-lgeo'),
+                                    ], className='muni-reg-text-lgeo', ),
 
                                     # Table
 
@@ -91,7 +91,7 @@ def layout(year:int=default_year):
                                     # Title
                                     html.H3(children=html.Strong(
                                         f'Percentage of Households in Core Housing Need, by Income Category, {year}'),
-                                        id='percent-HH-CHN-title-page2'),
+                                        id='percent-HH-CHN-title-pg2'),
                                     # Description
                                     html.Div([
                                         html.H6(
@@ -120,7 +120,7 @@ def layout(year:int=default_year):
                                     # Title
                                     html.H3(children=html.Strong(
                                         f'Percentage of Households in Core Housing Need, by Income Category and HH Size, {year}'),
-                                        id='percent-IC-HH-CHN-title-page2'),
+                                        id='percent-IC-HH-CHN-title-pg2'),
                                     # Description
                                     html.Div([
                                         html.H6(
@@ -147,7 +147,7 @@ def layout(year:int=default_year):
                                 html.Div([
                                     # Title
                                     html.H3(children=html.Strong(f'{year} Affordable Housing Deficit'),
-                                            id='housing-deficit-page2'),
+                                            id='housing-deficit-pg2'),
                                     # Description
                                     html.Div([
                                         html.H6(
@@ -203,7 +203,7 @@ def layout(year:int=default_year):
                                     html.H3(
                                         children=html.Strong(
                                             f'Percentage of Households in Core Housing Need by Priority Population, {year}'),
-                                        id='pct-pp-hh-chn-page2'),
+                                        id='pct-pp-hh-chn-pg2'),
                                     # Description
                                     html.Div([
                                         html.H6(
@@ -230,7 +230,7 @@ def layout(year:int=default_year):
                                     # Title
                                     html.H3(children=html.Strong(
                                         f'Percentage of Households in Core Housing Need by Priority Population and Income Category, {year}'),
-                                        id='pct-pp-ic-chn-page2'),
+                                        id='pct-pp-ic-chn-pg2'),
                                     # Description
                                     html.Div([
                                         html.H6(

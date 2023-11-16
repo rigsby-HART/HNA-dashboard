@@ -26,18 +26,18 @@ numbers = df.iloc[4:, 1:].replace("x", "0").fillna(0).astype(int)
 # Total households/Transgender households are the last two types
 groups = len(CHN_status) * len(AMHI) * len(housing_type)
 offset = (len(minority_status) - 2) * groups
-renter_vs_owner_data = numbers.iloc[:, offset:]
+renter_vs_owner_data = numbers.iloc[:, 1:groups+1]
 
 # Create the names of the columns
-columnName = pd.Series([""] * (groups * 2))
+columnName = pd.Series([""] * (groups))
 index = 0
-for minority in (minority_status[-2:]):
-    for housing in housing_type:
-        for income in AMHI:
-            for status in CHN_status:
-                columnName[index] = f"{minority}-{housing}-{income}-{status}"
-                index += 1
-columnName = columnName.rename({x: (x + offset + 1) for x in range(groups * 2)})
+
+for housing in housing_type:
+    for income in AMHI:
+        for status in CHN_status:
+            columnName[index] = f"{housing}-{income}-{status}"
+            index += 1
+columnName = columnName.rename({x: (x + 2) for x in range(groups * 2)})
 renter_vs_owner_data = renter_vs_owner_data.rename(columns=columnName.to_dict())
 renter_vs_owner_data.insert(0, "Geography", df.iloc[4:, 0])
 renter_vs_owner_data = renter_vs_owner_data.reset_index(drop=True)
@@ -84,8 +84,8 @@ output_columns = [
                  ] + [
                      f'{output_transgender_label} with income {i} of AMHI' for i in income_lv_list[1:]
                  ]
-output_df = pd.DataFrame(columns=output_columns)
 total_label, transgender_label = minority_status[-2:]
+
 
 def add_columns(row):
     # Match row to transgender row

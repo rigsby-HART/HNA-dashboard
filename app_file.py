@@ -9,10 +9,17 @@ from dash import DiskcacheManager
 # background_callback_manager = DiskcacheManager(
 #     cache, cache_by=[], expire=300
 # )
+
+# Adding in translation
+# external_scripts = [
+#     "https://cdn.gtranslate.net/widgets/latest/float.js",
+# ]
+
 app = dash.Dash(__name__, 
                 external_stylesheets=[dbc.themes.BOOTSTRAP], 
                 meta_tags=[{"name": "viewport", "content": "width=device-width"}],
                 suppress_callback_exceptions=True,
+                # external_scripts=external_scripts,
                 # background_callback_manager = background_callback_manager,
                 # use_pages=True
                 )

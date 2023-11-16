@@ -1,6 +1,6 @@
 # Importing Libraries
 import copy
-
+import re
 import pandas as pd
 import plotly.graph_objects as go
 import math as math
@@ -10,10 +10,11 @@ from dash.dash_table.Format import Format, Scheme, Group
 from plotly.subplots import make_subplots
 from helpers.style_helper import style_header_conditional, style_data_conditional
 from helpers.create_engine import income_partners_year, default_year
-from helpers.table_helper import area_scale_comparison, area_scale_primary_only, error_region_table, error_region_figure, \
-    query_table
+from helpers.table_helper import area_scale_comparison, area_scale_primary_only, error_region_table, \
+    error_region_figure, \
+    query_table, get_language
 from pages.page2_helpers.page2_main import layout
-
+from pages.page2_helpers.page2_localization import localization
 warnings.filterwarnings("ignore")
 
 # Preprocessing - Preparing main dataset and categories being used for plots
@@ -127,9 +128,12 @@ def table_amhi_shelter_cost(geo: str, is_second: bool, year: int = default_year)
     Input('year-comparison', 'data'),
     Input('income-category-affordability-table', 'selected_columns'),
     Input('area-scale-store', 'data'),
+    State('url', 'search'),
 )
-def update_table1(geo, geo_c, year_comparison: str, selected_columns, scale):
+def update_table1(geo, geo_c, year_comparison: str, selected_columns, scale, lang_query):
     # Single area mode
+
+    language = get_language(lang_query)
     if not year_comparison and (geo == geo_c or geo_c is None or (geo is None and geo_c is not None)):
 
         # When no area is selected
@@ -142,8 +146,8 @@ def update_table1(geo, geo_c, year_comparison: str, selected_columns, scale):
         geo = area_scale_primary_only(geo, scale)
 
         # Generating table
-        if error_region_table(geo, default_year):
-            return error_region_table(geo, default_year)
+        if error_region_table(geo, default_year, language):
+            return error_region_table(geo, default_year, language)
         table, median_income, median_rent = table_amhi_shelter_cost(geo, False)
 
         # Generating callback output to update table
@@ -197,11 +201,11 @@ def update_table1(geo, geo_c, year_comparison: str, selected_columns, scale):
 
         # Generating main table
         if year_comparison:
-            if error_region_table(geo, default_year):
-                return error_region_table(geo, int(compared_year))
+            if error_region_table(geo, int(compared_year), language):
+                return error_region_table(geo, int(compared_year), language)
         else:
-            if error_region_table(geo, default_year):
-                return error_region_table(geo, default_year)
+            if error_region_table(geo, default_year, language):
+                return error_region_table(geo, default_year, language)
         table, median_income, median_rent = (
             table_amhi_shelter_cost(geo, False, int(compared_year)) if year_comparison else
             table_amhi_shelter_cost(geo, False)
@@ -213,11 +217,11 @@ def update_table1(geo, geo_c, year_comparison: str, selected_columns, scale):
 
         # Generating comparison table
         if year_comparison:
-            if error_region_table(geo, default_year):
-                return error_region_table(geo, default_year)
+            if error_region_table(geo, default_year, language):
+                return error_region_table(geo, default_year, language)
         else:
-            if error_region_table(geo_c, default_year):
-                return error_region_table(geo_c, default_year)
+            if error_region_table(geo_c, default_year, language):
+                return error_region_table(geo_c, default_year, language)
         table_c, median_income_c, median_rent_c = (
             table_amhi_shelter_cost(geo, True) if year_comparison else
             table_amhi_shelter_cost(geo_c, True)
@@ -281,7 +285,7 @@ def update_table1(geo, geo_c, year_comparison: str, selected_columns, scale):
 # Percentage of Households in Core Housing Need, by Income Category, 2021
 
 # Plot dataframe generator
-def plot_df_core_housing_need_by_income(geo: str, is_second: bool, year: int = default_year):
+def plot_df_core_housing_need_by_income(geo: str, is_second: bool, language, year: int = default_year, ):
     geo, joined_df_filtered = query_table(geo, year, income_partners_year)
 
     x_list = []
@@ -308,7 +312,7 @@ def plot_df_core_housing_need_by_income(geo: str, is_second: bool, year: int = d
 
     x_list = [sub.replace('$$', '$') for sub in x_list]
     x_list = [sub.replace('.0', '') for sub in x_list]
-    plot_df = pd.DataFrame({'Income_Category': x_list, 'Percent HH': joined_df_filtered[columns].T.iloc[:, 0].tolist()})
+    plot_df = pd.DataFrame({"Income_Category": x_list, 'Percent HH': joined_df_filtered[columns].T.iloc[:, 0].tolist()})
 
     return plot_df
 
@@ -321,8 +325,12 @@ def plot_df_core_housing_need_by_income(geo: str, is_second: bool, year: int = d
     Input('year-comparison', 'data'),
     Input('area-scale-store', 'data'),
     Input('income-category-affordability-table', 'selected_columns'),
+    State('url', 'search')
 )
-def update_geo_figure(geo: str, geo_c: str, year_comparison: str, scale, refresh):
+def update_geo_figure(geo: str, geo_c: str, year_comparison: str, scale, refresh, lang_query):
+
+    # Use regex to extract the value of the 'lang' parameter
+    language = get_language(lang_query)
     # Single area mode
     if not year_comparison and (geo == geo_c or geo_c == None or (geo == None and geo_c != None)):
 
@@ -336,9 +344,9 @@ def update_geo_figure(geo: str, geo_c: str, year_comparison: str, scale, refresh
         geo = area_scale_primary_only(geo, scale)
 
         # Generating dataframe for plot
-        if error_region_figure(geo, default_year):
-            return error_region_figure(geo, default_year)
-        plot_df = plot_df_core_housing_need_by_income(geo, False)
+        if error_region_figure(geo, default_year, language):
+            return error_region_figure(geo, default_year, language)
+        plot_df = plot_df_core_housing_need_by_income(geo, False, language)
 
         # Generating plot
         fig = go.Figure()
@@ -369,13 +377,13 @@ def update_geo_figure(geo: str, geo_c: str, year_comparison: str, scale, refresh
             fixedrange=True,
             range=[0, 1],
             tickformat=',.0%',
-            title='% of HH',
+            title=localization[language]["percent-hh"],
             tickfont=dict(size=10)
         )
         fig.update_yaxes(
             tickfont=dict(size=10),
             fixedrange=True,
-            title='Income Categories<br>(Max. affordable shelter costs)'
+            title=localization[language]["income-category"] + '<br>' + localization[language]["affordable-shelter"]
         )
 
         return fig
@@ -401,14 +409,14 @@ def update_geo_figure(geo: str, geo_c: str, year_comparison: str, scale, refresh
 
         # Generating dataframe for main plot
         if year_comparison:
-            if error_region_figure(geo, int(compared_year)):
-                return error_region_figure(geo, int(compared_year))
+            if error_region_figure(geo, int(compared_year), language):
+                return error_region_figure(geo, int(compared_year), language)
         else:
-            if error_region_figure(geo, default_year):
-                return error_region_figure(geo, default_year)
+            if error_region_figure(geo, default_year, language):
+                return error_region_figure(geo, default_year, language)
         plot_df = (
-            plot_df_core_housing_need_by_income(geo, False, int(compared_year)) if year_comparison else
-            plot_df_core_housing_need_by_income(geo, is_second=False)
+            plot_df_core_housing_need_by_income(geo, False, language, int(compared_year)) if year_comparison else
+            plot_df_core_housing_need_by_income(geo, False, language)
         )
 
         # Generating main plot
@@ -432,14 +440,14 @@ def update_geo_figure(geo: str, geo_c: str, year_comparison: str, scale, refresh
 
         # Generating dataframe for comparison plot
         if year_comparison:
-            if error_region_figure(geo, default_year):
-                return error_region_figure(geo, default_year)
+            if error_region_figure(geo, default_year, language):
+                return error_region_figure(geo, default_year, language)
         else:
-            if error_region_figure(geo_c, default_year):
-                return error_region_figure(geo_c, default_year)
+            if error_region_figure(geo_c, default_year, language):
+                return error_region_figure(geo_c, default_year, language)
         plot_df_c = (
-            plot_df_core_housing_need_by_income(geo, True) if year_comparison else
-            plot_df_core_housing_need_by_income(geo_c, True)
+            plot_df_core_housing_need_by_income(geo, True, language) if year_comparison else
+            plot_df_core_housing_need_by_income(geo_c, True, language)
         )
 
         # Generating comparison plot
@@ -539,9 +547,11 @@ def plot_df_core_housing_need_by_amhi(geo: str, IsComparison: bool, year: int = 
     Input('year-comparison', 'data'),
     Input('area-scale-store', 'data'),
     Input('income-category-affordability-table', 'selected_columns'),
+    State('url', 'search')
 )
-def update_geo_figure2(geo, geo_c, year_comparison: str, scale, refresh):
+def update_geo_figure2(geo, geo_c, year_comparison: str, scale, refresh, lang_query):
     # Single area mode
+    language = get_language(lang_query)
     if not year_comparison and (geo == geo_c or geo_c == None or (geo == None and geo_c != None)):
 
         # When no area is selected
@@ -554,8 +564,8 @@ def update_geo_figure2(geo, geo_c, year_comparison: str, scale, refresh):
         geo = area_scale_primary_only(geo, scale)
 
         # Generating dataframe for plot
-        if error_region_figure(geo, default_year):
-            return error_region_figure(geo, default_year)
+        if error_region_figure(geo, default_year, language):
+            return error_region_figure(geo, default_year, language)
         plot_df = plot_df_core_housing_need_by_amhi(geo, False)
 
         # Generating plot
@@ -620,11 +630,11 @@ def update_geo_figure2(geo, geo_c, year_comparison: str, scale, refresh):
         # Main Plot
 
         if year_comparison:
-            if error_region_figure(geo, int(compared_year)):
-                return error_region_figure(geo, int(compared_year))
+            if error_region_figure(geo, int(compared_year), language):
+                return error_region_figure(geo, int(compared_year), language)
         else:
-            if error_region_figure(geo, default_year):
-                return error_region_figure(geo, default_year)
+            if error_region_figure(geo, default_year, language):
+                return error_region_figure(geo, default_year, language)
         # Generating dataframe for main plot
         plot_df = (
             plot_df_core_housing_need_by_amhi(geo, False, int(compared_year)) if year_comparison else
@@ -651,11 +661,11 @@ def update_geo_figure2(geo, geo_c, year_comparison: str, scale, refresh):
         # Comparison plot
 
         if year_comparison:
-            if error_region_figure(geo, default_year):
-                return error_region_figure(geo, default_year)
+            if error_region_figure(geo, default_year, language):
+                return error_region_figure(geo, default_year, language)
         else:
-            if error_region_figure(geo_c, default_year):
-                return error_region_figure(geo_c, default_year)
+            if error_region_figure(geo_c, default_year, language):
+                return error_region_figure(geo_c, default_year, language)
         # Generating dataframe for comparison plot
         plot_df_c = (
             plot_df_core_housing_need_by_amhi(geo, True) if year_comparison else
@@ -802,9 +812,11 @@ def table_core_affordable_housing_deficit(geo, is_second, year: int = default_ye
     Input('year-comparison', 'data'),
     Input('datatable2-interactivity', 'selected_columns'),
     Input('area-scale-store', 'data'),
+    State('url', 'search')
 )
-def update_table2(geo, geo_c, year_comparison: str, selected_columns, scale):
+def update_table2(geo, geo_c, year_comparison: str, selected_columns, scale, lang_query):
     # Single area mode
+    language = get_language(lang_query)
     if not year_comparison and (geo == geo_c or geo_c == None or (geo == None and geo_c != None)):
 
         # When no area is selected
@@ -881,11 +893,11 @@ def update_table2(geo, geo_c, year_comparison: str, selected_columns, scale):
         # Generating main table
 
         if year_comparison:
-            if error_region_table(geo, int(compared_year)):
-                return error_region_table(geo, default_year)
+            if error_region_table(geo, int(compared_year), language):
+                return error_region_table(geo, int(compared_year), language)
         else:
-            if error_region_table(geo, default_year):
-                return error_region_table(geo, default_year)
+            if error_region_table(geo, default_year, language):
+                return error_region_table(geo, default_year, language)
         table2 = (
             table_core_affordable_housing_deficit(geo, False, int(compared_year)) if year_comparison else
             table_core_affordable_housing_deficit(geo, False)
@@ -897,11 +909,11 @@ def update_table2(geo, geo_c, year_comparison: str, selected_columns, scale):
 
         # Generating comparison table
         if year_comparison:
-            if error_region_table(geo, default_year):
-                return error_region_table(geo, default_year)
+            if error_region_table(geo, default_year, language):
+                return error_region_table(geo, default_year, language)
         else:
-            if error_region_table(geo_c, default_year):
-                return error_region_table(geo_c, default_year)
+            if error_region_table(geo_c, default_year, language):
+                return error_region_table(geo_c, default_year, language)
         table2_c = (
             table_core_affordable_housing_deficit(geo, True) if year_comparison else
             table_core_affordable_housing_deficit(geo_c, True)
@@ -1059,8 +1071,11 @@ def color_dict_core_housing_need_by_priority_population(plot_df):
     Input('year-comparison', 'data'),
     Input('area-scale-store', 'data'),
     Input('income-category-affordability-table', 'selected_columns'),
+    State('url', 'search')
 )
-def update_geo_figure5(geo, geo_c, year_comparison: str, scale, refresh):
+def update_geo_figure5(geo, geo_c, year_comparison: str, scale, refresh, lang_query):
+    language = get_language(lang_query)
+
     if (geo == geo_c or geo_c == None or (geo == None and geo_c != None)) and not year_comparison:
 
         # When no area is selected
@@ -1075,8 +1090,8 @@ def update_geo_figure5(geo, geo_c, year_comparison: str, scale, refresh):
         geo = area_scale_primary_only(geo, scale)
 
         # Generating dataframe for plot and color lists
-        if error_region_figure(geo, default_year):
-            return error_region_figure(geo, default_year)
+        if error_region_figure(geo, default_year, language):
+            return error_region_figure(geo, default_year, language)
         plot_df = plot_df_core_housing_need_by_priority_population(geo)
         color_dict = color_dict_core_housing_need_by_priority_population(plot_df)
 
@@ -1141,11 +1156,11 @@ def update_geo_figure5(geo, geo_c, year_comparison: str, scale, refresh):
         # Generating dataframe for main plot and color list
 
         if year_comparison:
-            if error_region_figure(geo, int(compared_year)):
-                return error_region_figure(geo, int(compared_year))
+            if error_region_figure(geo, int(compared_year), language):
+                return error_region_figure(geo, int(compared_year), language)
         else:
-            if error_region_figure(geo, default_year):
-                return error_region_figure(geo, default_year)
+            if error_region_figure(geo, default_year, language):
+                return error_region_figure(geo, default_year, language)
         plot_df = plot_df_core_housing_need_by_priority_population(geo, int(compared_year) if year_comparison else
                                                                    default_year)
         color_dict = color_dict_core_housing_need_by_priority_population(plot_df)
@@ -1168,11 +1183,11 @@ def update_geo_figure5(geo, geo_c, year_comparison: str, scale, refresh):
         # Generating dataframe for comparison plot and color list
 
         if year_comparison:
-            if error_region_figure(geo, default_year):
-                return error_region_figure(geo, default_year)
+            if error_region_figure(geo, default_year, language):
+                return error_region_figure(geo, default_year, language)
         else:
-            if error_region_figure(geo_c, default_year):
-                return error_region_figure(geo_c, default_year)
+            if error_region_figure(geo_c, default_year, language):
+                return error_region_figure(geo_c, default_year, language)
         plot_df_c = (
             plot_df_core_housing_need_by_priority_population(geo, int(original_year)) if year_comparison else
             plot_df_core_housing_need_by_priority_population(geo_c)
@@ -1333,11 +1348,13 @@ def plot_df_core_housing_need_by_priority_population_income(geo, year=default_ye
     Input('year-comparison', 'data'),
     Input('area-scale-store', 'data'),
     Input('income-category-affordability-table', 'selected_columns'),
+    State('url', 'search')
 )
-def update_geo_figure6(geo, geo_c, year_comparison, scale, refresh):
+def update_geo_figure6(geo, geo_c, year_comparison, scale, refresh, lang_query):
     # Overried income category values
     income_category_override = ['Very Low', 'Low', 'Moderate', 'Median', 'High']
 
+    language = get_language(lang_query)
     # Single area mode
 
     if not year_comparison and (geo == geo_c or geo_c == None or (geo == None and geo_c != None)):
@@ -1351,8 +1368,8 @@ def update_geo_figure6(geo, geo_c, year_comparison, scale, refresh):
         geo = area_scale_primary_only(geo, scale)
 
         # Generating dataframe for plot
-        if error_region_figure(geo, default_year):
-            return error_region_figure(geo, default_year)
+        if error_region_figure(geo, default_year, language):
+            return error_region_figure(geo, default_year, language)
         plot_df = plot_df_core_housing_need_by_priority_population_income(geo)
 
         # Generating plot
@@ -1415,11 +1432,11 @@ def update_geo_figure6(geo, geo_c, year_comparison, scale, refresh):
 
         # Main Plot
         if year_comparison:
-            if error_region_figure(geo, int(compared_year)):
-                return error_region_figure(geo, int(compared_year))
+            if error_region_figure(geo, int(compared_year), language):
+                return error_region_figure(geo, int(compared_year), language)
         else:
-            if error_region_figure(geo, default_year):
-                return error_region_figure(geo, default_year)
+            if error_region_figure(geo, default_year, language):
+                return error_region_figure(geo, default_year, language)
         # Generating dataframe for main plot
         plot_df = (
             plot_df_core_housing_need_by_priority_population_income(geo,
@@ -1447,11 +1464,11 @@ def update_geo_figure6(geo, geo_c, year_comparison, scale, refresh):
 
         # Generating dataframe for comparison plot
         if year_comparison:
-            if error_region_figure(geo, default_year):
-                return error_region_figure(geo, default_year)
+            if error_region_figure(geo, default_year, language):
+                return error_region_figure(geo, default_year, language)
         else:
-            if error_region_figure(geo_c, default_year):
-                return error_region_figure(geo_c, default_year)
+            if error_region_figure(geo_c, default_year, language):
+                return error_region_figure(geo_c, default_year, language)
         plot_df_c = (
             plot_df_core_housing_need_by_priority_population_income(geo, int(original_year)) if year_comparison else
             plot_df_core_housing_need_by_priority_population_income(geo_c)
@@ -1506,12 +1523,12 @@ def update_geo_figure6(geo, geo_c, year_comparison, scale, refresh):
 
 
 @callback(
-    Output("income-categories-title-page2", "children"),
-    Output("percent-HH-CHN-title-page2", "children"),
-    Output("percent-IC-HH-CHN-title-page2", "children"),
-    Output("housing-deficit-page2", "children"),
-    Output("pct-pp-hh-chn-page2", "children"),
-    Output("pct-pp-ic-chn-page2", "children"),
+    Output("income-categories-title-pg2", "children"),
+    Output("percent-HH-CHN-title-pg2", "children"),
+    Output("percent-IC-HH-CHN-title-pg2", "children"),
+    Output("housing-deficit-pg2", "children"),
+    Output("pct-pp-hh-chn-pg2", "children"),
+    Output("pct-pp-ic-chn-pg2", "children"),
     State('main-area', 'data'),
     State('comparison-area', 'data'),
     Input('year-comparison', 'data'),
