@@ -1,8 +1,8 @@
 localization = {
-    "en|en": {
+    "en": {
 
     },
-    "en|fr": {
+    "fr": {
 
     }
 }

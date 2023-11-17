@@ -162,5 +162,7 @@ def query_table_owner(geo: str, year: int, df_list, source_year=default_year, ow
 
 def get_language(lang_query: str):
     match = re.search(r'\blang=(.+)', lang_query)
-
-    return match.group(1) if match else "en"
+    output = match.group(1) if match else "en"
+    if output not in localization.keys():
+        return "en"
+    return output

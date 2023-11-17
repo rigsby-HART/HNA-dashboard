@@ -1,10 +1,14 @@
 localization = {
-    "en|en": {
+    "en": {
         "very-low-income": "Very Low Income",
         "low-income": "Low Income",
         "moderate-income": "Moderate Income",
         "median-income": "Median Income",
         "high-income": "High Income",
+        "price-format-label": "{b}<br> (${value})",
+        "price-format-label-comp": " (${value}) ",
+        "price-format-label-last": "{b}<br> (>${value})",
+        "price-format-label-last-comp": " (>${value}) ",
         "up-to-20%-amhi": "up to 20% of AMHI",
         "21%-to-50%-amhi": "21% to 50% of AMHI",
         "51%-to-80%-amhi": "51% to 80% of AMHI",
@@ -15,15 +19,20 @@ localization = {
         "income-category": "Income Category",
         "percent-hh": "% of HH",
         "affordable-shelter": "(Max. affordable shelter costs)",
-        "fig-title": 'Percentage of Households in Core Housing Need, by Income Category, {default_year}<br>{geo}',
-
+        "fig-title": 'Percentage of Households in Core Housing Need, by Income Category,',
+        "income": "Income",
+        "vs": "vs",
     },
-    "en|fr": {
+    "fr": {
         "very-low-income": "Très faible revenu",
         "low-income": "Faible revenu",
         "moderate-income": "Revenue modéré",
         "median-income": "Revenu médian",
         "high-income": "Revenu élevé",
+        "price-format-label": "{b}<br> ({value}$)",
+        "price-format-label-comp": " ({value}$) ",
+        "price-format-label-last": "{b}<br> (>{value}$)",
+        "price-format-label-last-comp": " (>{value}$) ",
         "up-to-20%-amhi": "jusqu'à 20% de ce revenue",
         "21%-to-50%-amhi": "21% à 50% de ce revenue",
         "51%-to-80%-amhi": "51% à 80% de ce revenue",
@@ -33,7 +42,9 @@ localization = {
                                  "prioritaire et revenu Catégorie, {default_year}",
         "income-category": "Catégorie de revenu",
         "percent-hh": "% du ménage",
-        "affordable-shelter": "(Coût mensuel maximal du logement abordable)",
-        "fig-title": 'Percentage of Households in Core Housing Need, by Income Category, {default_year}<br>{geo}',
+        "affordable-shelter": "(coût maximal du logement abordable)",
+        "fig-title": 'Pourcentage de ménages ayant des besoins impérieux en matière de logement, <br>par catégorie de revenu',
+        "income": "Revenu",
+        "vs": "contre",
     }
 }
