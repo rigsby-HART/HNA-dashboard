@@ -83,13 +83,15 @@ layout = layout(default_year)
 
 # Table generator
 
-def table_amhi_shelter_cost_ind(geo, IsComparison, year:int=default_year):
+def table_amhi_shelter_cost_ind(geo, IsComparison, year: int = default_year):
     # joined_df_filtered = income_indigenous_year[year].query('Geography == ' + f'"{geo}"')
     geo, joined_df_filtered = queryTable(geo, year, income_indigenous_year)
     portion_of_total_hh = []
 
     for x in x_base_echn:
-        portion_of_total_hh.append(joined_df_filtered[f'Aboriginal household status-Total - Private households by tenure including presence of mortgage payments and subsidized housing-Households with income {x}'].tolist()[0])
+        portion_of_total_hh.append(joined_df_filtered[
+                                       f'Aboriginal household status-Total - Private households by tenure including presence of mortgage payments and subsidized housing-Households with income {x}'].tolist()[
+                                       0])
 
     sum_portion_of_total_hh = sum(portion_of_total_hh)
 
@@ -307,7 +309,7 @@ chn_columns = [column_format + c for c in x_base_chn]
 
 
 # Plot dataframe generator
-def plot_df_core_housing_need_by_income(geo, IsComparison, year:int=default_year):
+def plot_df_core_housing_need_by_income(geo, IsComparison, year: int = default_year):
     geo, joined_df_filtered = queryTable(geo, year, income_indigenous_year)
 
     x_list = []
@@ -525,7 +527,7 @@ def update_geo_figure(geo, geo_c, year_comparison, scale, refresh):
 # and 2021 Affordable Housing Deficit for Indigenous Households (table)
 
 # plot df, table generator
-def plot_df_core_housing_need_by_amhi(geo, IsComparison, year:int=default_year):
+def plot_df_core_housing_need_by_amhi(geo, IsComparison, year: int = default_year):
     geo, joined_df_filtered = queryTable(geo, year, income_indigenous_year)
 
     x_list = []
@@ -653,7 +655,7 @@ def update_geo_figure34(geo, geo_c, year_comparison, scale, refresh):
 
         # Generating dataframe for plot
         if errorIndigenousTable(geo, default_year):
-            return ([errorIndigenousFigure(geo, default_year)]+list(errorIndigenousTable(geo, default_year)))
+            return ([errorIndigenousFigure(geo, default_year)] + list(errorIndigenousTable(geo, default_year)))
         plot_df, table2 = plot_df_core_housing_need_by_amhi(geo, False)
         table2 = table2.drop('Income Category', axis=1)
         # Generating plot
@@ -746,7 +748,7 @@ def update_geo_figure34(geo, geo_c, year_comparison, scale, refresh):
         # Subplot setting for the comparison mode
         fig2 = make_subplots(rows=1, cols=2, subplot_titles=(
             f"{geo} {compared_year}" if year_comparison else geo,
-            f"{geo} {original_year}" if year_comparison else geo_c),  shared_xaxes=True)
+            f"{geo} {original_year}" if year_comparison else geo_c), shared_xaxes=True)
 
         # Main Plot
 
@@ -940,6 +942,7 @@ def func_ov7(n_clicks, geo, geo_c, year_comparison):
 
             return dcc.send_data_frame(joined_df_download_ind.to_csv, "result.csv")
 
+
 @callback(
     Output("Income-Category-Indigenous-Title-page4", "children"),
     Output("CHN-IC-page4", "children"),
@@ -959,14 +962,79 @@ def change_title_labels(geo, geo_c, year_comparison, scale, refresh):
 
         return (
             html.Strong(f'Income Categories and Affordable Shelter Costs, {compared_year} vs {year}'),
-            html.Strong(f'Percentage of Indigenous Households in Core Housing Need, by Income Category, {compared_year} vs {year}'),
-            html.Strong(f'Percentage of Indigenous Households in Core Housing Need, by Income Category and HH Size, {compared_year} vs {year}'),
+            html.Strong(
+                f'Percentage of Indigenous Households in Core Housing Need, by Income Category, {compared_year} vs {year}'),
+            html.Strong(
+                f'Percentage of Indigenous Households in Core Housing Need, by Income Category and HH Size, {compared_year} vs {year}'),
             html.Strong(f'{compared_year} vs {year} Affordable Housing Deficit for Indigenous Households'),
         )
     prediction_year = default_year + 10
     return (
         html.Strong(f'Income Categories and Affordable Shelter Costs, {year}'),
         html.Strong(f'Percentage of Indigenous Households in Core Housing Need, by Income Category, {year}'),
-        html.Strong(f'Percentage of Indigenous Households in Core Housing Need, by Income Category and HH Size, {year}'),
+        html.Strong(
+            f'Percentage of Indigenous Households in Core Housing Need, by Income Category and HH Size, {year}'),
         html.Strong(f'{year} Affordable Housing Deficit for Indigenous Households'),
+    )
+
+
+@callback(
+    Output("Income-Category-Indigenous-Description-page4", "children"),
+    Output("CHN-IC-description-page4", "children"),
+    Output("CHN-IC-HH-description-page4", "children"),
+    Output("Deficit-description-page4", "children"),
+    State('main-area', 'data'),
+    State('comparison-area', 'data'),
+    Input('year-comparison', 'data'),
+    State('area-scale-store', 'data'),
+    Input('datatable-interactivity_ind', 'selected_columns'),
+)
+def change_description_labels(geo, geo_c, year_comparison, scale, refresh):
+    # change based off of url
+    year = default_year
+    if year_comparison:
+        original_year, compared_year = year_comparison.split("-")
+
+        return (
+            html.H6('The following table compares the 2016 and 2021 range of Indigenous household incomes and '
+                        'affordable shelter costs for each income category, as well what percentage of the total '
+                        'number of Indigenous households that fall within each category.'),
+            html.H6('Income categories are determined by their relationship with each geography’s Area Median '
+                        'Household Income (AMHI). The following graph compares the 2016 and 2021 range of Indigenous '
+                        'household incomes and affordable shelter costs for each income category, as well what '
+                        'percentage of the total number of Indigenous households falls within each category.'),
+            html.H6('The following graph looks at those 2016 and 2021 Indigenous households in Core Housing Need '
+                        'and shows their relative distribution by household size (i.e. the number of individuals in a '
+                        'given household) for each household income category. Where there are no reported households '
+                        'in Core Housing Need, there are too few households to report while protecting privacy.'),
+            html.H6('The following table compares the 2016 and 2021 total number of Indigenous households in Core '
+                        'Housing Need by household size and income category, which may be considered as the existing '
+                        'deficit of housing options in the community. Where there are zero households to report, '
+                        'it means there are too few to report while protecting privacy.'),
+        )
+    prediction_year = default_year + 10
+    return (
+        html.H6('The following table shows the range of Indigenous household incomes and '
+                    'affordable shelter costs for each income category, in 2020 dollar '
+                    'values, as well what percentage of the total number of Indigenous '
+                    'households that fall within each category. Income categories are '
+                    'determined by their relationship with each geography’s Area Median '
+                    'Household Income (AMHI). Please note that this tool only measures urban '
+                    'and non-reserve Indigenous households. On-reserve households are not '
+                    'measured in the census.'),
+        html.H6('The below chart shows percentage of Indigenous households in each income '
+                    'category that are in core housing need. When there is no bar for an '
+                    'income category, it means that either there are no Indigenous households '
+                    'in Core Housing Need within an income category, or that there are too '
+                    'few to report.'),
+        html.H6('The following graph looks at those Indigenous households in Core Housing '
+                    'Need and shows their relative distribution by household size (i.e. the '
+                    'number of individuals in a given household) for each household income '
+                    'category. Where there are no reported households in Core Housing Need, '
+                    'there are too few households to report while protecting privacy.'),
+        html.H6('The following table shows the total number of Indigenous households in '
+                    'Core Housing Need by household size and income category, which may be '
+                    'considered as the existing deficit of housing options in the community. '
+                    'Where there are zero households to report, it means there are too few to '
+                    'report while protecting privacy.'),
     )

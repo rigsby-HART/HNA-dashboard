@@ -38,8 +38,9 @@ def layout(year:int=default_year):
                                             'The following table shows the range of household incomes and affordable '
                                             'shelter costs for each income category, in 2020 dollar values, '
                                             'as well what percentage of the total number of households falls within '
-                                            'each category.')
-                                    ], className='muni-reg-text-lgeo'),
+                                            'each category. Income categories are determined by their relationship '
+                                            'with each geography’s Area Median Household Income (AMHI).')
+                                    ], className='muni-reg-text-lgeo', id='income-categories-description-page2'),
 
                                     # Table
 
@@ -95,8 +96,12 @@ def layout(year:int=default_year):
                                     # Description
                                     html.Div([
                                         html.H6(
-                                            'Income categories are determined by their relationship with each geography’s Area Median Household Income (AMHI). This table shows the range of household incomes and affordable shelter costs for each income category, in 2020 dollar values, as well what percentage of the total number of households falls within each category.')
-                                    ], className='muni-reg-text-lgeo'),
+                                            'The below chart shows percentage of households in each income category '
+                                            'that are in core housing need. When there is no bar for an income '
+                                            'category, it means that either there are no households in Core Housing '
+                                            'Need within an income category, or that there are too few households to '
+                                            'report.')
+                                    ], className='muni-reg-text-lgeo', id='percent-HH-CHN-description-page2'),
 
                                     # Graph
 
@@ -124,8 +129,13 @@ def layout(year:int=default_year):
                                     # Description
                                     html.Div([
                                         html.H6(
-                                            'The following chart looks at those households in Core Housing Need and shows their relative distribution by household size (i.e. the number of individuals in a given household) for each household income category. When there is no bar for an income category, it means that either there are no households in Core Housing Need within an income category, or that there are too few households to report.')
-                                    ], className='muni-reg-text-lgeo'),
+                                            'The following chart looks at those households in Core Housing Need and '
+                                            'shows their relative distribution by household size (i.e. the number of '
+                                            'individuals in a given household) for each household income category. '
+                                            'When there is no bar for an income category, it means that either there '
+                                            'are no households in Core Housing Need within an income category, '
+                                            'or that there are too few households to report.')
+                                    ], className='muni-reg-text-lgeo', id="percent-IC-HH-CHN-description-page2"),
 
                                     # Graph
 
@@ -151,8 +161,10 @@ def layout(year:int=default_year):
                                     # Description
                                     html.Div([
                                         html.H6(
-                                            'The following table shows the total number of households in Core Housing Need by household size and income category, which may be considered as the existing deficit of housing options in the community.')
-                                    ], className='muni-reg-text-lgeo'),
+                                            'The following table shows the total number of households in Core Housing '
+                                            'Need by household size and income category, which may be considered as '
+                                            'the existing deficit of housing options in the community in 2020.')
+                                    ], className='muni-reg-text-lgeo', id='housing-deficit-description-page2'),
 
                                     # Table
 
@@ -207,8 +219,16 @@ def layout(year:int=default_year):
                                     # Description
                                     html.Div([
                                         html.H6(
-                                            'The following chart compares the rates of Core Housing Need across populations that are at high risk of experiencing housing need. The "Community (all HH)" bar represents the rate of Core Housing Need for all households in the selected community to act as a point of reference. The population with the greatest rate of Core Housing Need is highlighted in dark blue. When there is no bar for a priority population, it means that either there are no households in Core Housing Need within that priority population, or that there are too few households to report.')
-                                    ], className='muni-reg-text-lgeo'),
+                                            'The following chart compares the rates of Core Housing Need across '
+                                            'populations that are at high risk of experiencing housing need. The '
+                                            '"Community (all HH)" bar represents the rate of Core Housing Need for '
+                                            'all households in the selected community to act as a point of reference. '
+                                            'The population with the greatest rate of Core Housing Need is '
+                                            'highlighted in dark blue. When there is no bar for a priority '
+                                            'population, it means that either there are no households in Core Housing '
+                                            'Need within that priority population, or that there are too few '
+                                            'households to report.')
+                                    ], className='muni-reg-text-lgeo', id='pct-pp-hh-chn-description-page2'),
 
                                     # Graphs
 
@@ -234,8 +254,13 @@ def layout(year:int=default_year):
                                     # Description
                                     html.Div([
                                         html.H6(
-                                            'The following chart looks at those households in Core Housing Need for each priority population and shows their relative distribution by household income category. When there is no bar for a priority population, it means that either there are no households in Core Housing Need within that priority population, or that there are too few households to report.')
-                                    ], className='muni-reg-text-lgeo'),
+                                            'The following chart looks at those households in Core Housing Need for '
+                                            'each priority population and shows their relative distribution by '
+                                            'household income category. When there is no bar for a priority '
+                                            'population, it means that either there are no households in Core Housing '
+                                            'Need within that priority population, or that there are too few '
+                                            'households to report.')
+                                    ], className='muni-reg-text-lgeo', id='pct-pp-ic-chn-description-page2'),
 
                                     # Graphs
 

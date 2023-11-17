@@ -1147,7 +1147,7 @@ def update_geo_figure5(geo, geo_c, year_comparison: str, scale, refresh):
             if errorRegionFigure(geo, default_year):
                 return errorRegionFigure(geo, default_year)
         plot_df = plot_df_core_housing_need_by_priority_population(geo, int(compared_year) if year_comparison else
-                                                                   default_year)
+        default_year)
         color_dict = color_dict_core_housing_need_by_priority_population(plot_df)
 
         # Generating main plot
@@ -1524,11 +1524,15 @@ def change_title_labels(geo, geo_c, year_comparison, scale, refresh):
         original_year, compared_year = year_comparison.split("-")
         return (
             html.Strong(f'Income Categories and Affordable Shelter Costs, {compared_year} vs {original_year}'),
-            html.Strong(f'Percentage of Households in Core Housing Need, by Income Category, {compared_year} vs {original_year}'),
-            html.Strong(f'Percentage of Households in Core Housing Need, by Income Category and HH Size, {compared_year} vs {original_year}'),
+            html.Strong(
+                f'Percentage of Households in Core Housing Need, by Income Category, {compared_year} vs {original_year}'),
+            html.Strong(
+                f'Percentage of Households in Core Housing Need, by Income Category and HH Size, {compared_year} vs {original_year}'),
             html.Strong(f'{compared_year} vs {original_year} Affordable Housing Deficit'),
-            html.Strong(f'Percentage of Households in Core Housing Need by Priority Population, {compared_year} vs {original_year}'),
-            html.Strong(f'Percentage of Households in Core Housing Need by Priority Population and Income Category, {compared_year} vs {original_year}')
+            html.Strong(
+                f'Percentage of Households in Core Housing Need by Priority Population, {compared_year} vs {original_year}'),
+            html.Strong(
+                f'Percentage of Households in Core Housing Need by Priority Population and Income Category, {compared_year} vs {original_year}')
         )
     return (
         html.Strong(f'Income Categories and Affordable Shelter Costs, {default_year}'),
@@ -1536,7 +1540,101 @@ def change_title_labels(geo, geo_c, year_comparison, scale, refresh):
         html.Strong(f'Percentage of Households in Core Housing Need, by Income Category and HH Size, {default_year}'),
         html.Strong(f'{default_year} Affordable Housing Deficit'),
         html.Strong(f'Percentage of Households in Core Housing Need by Priority Population, {default_year}'),
-        html.Strong(f'Percentage of Households in Core Housing Need by Priority Population and Income Category, {default_year}')
+        html.Strong(
+            f'Percentage of Households in Core Housing Need by Priority Population and Income Category, {default_year}')
+    )
+
+
+@callback(
+    Output("income-categories-description-page2", "children"),
+    Output("percent-HH-CHN-description-page2", "children"),
+    Output("percent-IC-HH-CHN-description-page2", "children"),
+    Output("housing-deficit-description-page2", "children"),
+    Output("pct-pp-hh-chn-description-page2", "children"),
+    Output("pct-pp-ic-chn-description-page2", "children"),
+    State('main-area', 'data'),
+    State('comparison-area', 'data'),
+    Input('year-comparison', 'data'),
+    State('area-scale-store', 'data'),
+    Input('income-category-affordability-table', 'selected_columns'),
+)
+def change_description_labels(geo, geo_c, year_comparison, scale, refresh):
+    # change based off of url
+    if year_comparison:
+        original_year, compared_year = year_comparison.split("-")
+        return (
+            html.H6('The following table shows the change between 2016 and 2021 of the range of household incomes and '
+                    'affordable shelter costs for each income category, as well as the percentage of total number of '
+                    'households that fall within each category. Note that the 2021 data reflects income changes that '
+                    'may have been impacted by the Canadian Emergency Response Benefit (CERB), which 35.2% of '
+                    'Canadian workers received in 2020 as the census was collected.'),
+            html.H6('Income categories are determined by their relationship with each geography’s Area Median '
+                    'Household Income (AMHI). The below graph shows the percentage of households in each income '
+                    'category that are in core housing need for 2016 and 2021. For the lowest-earning households in '
+                    'Canada, income between 2019 and 2020 increased by 529% temporarily. After CERB ended, '
+                    'some households went on EI (which paid $100 less per week than CERB). The Canadian Centre for '
+                    'Policy Alternatives predicted that almost three-quarters of former CERB recipients would be '
+                    'worse off than before they received aid.'),
+            html.H6('The following chart looks at those households in Core Housing Need and shows their relative '
+                    'distribution by household size (i.e. the number of individuals in a given household) for each '
+                    'household income category. When there is no bar for an income category, it means that either '
+                    'there are no households in Core Housing Need within an income category, or that there are too '
+                    'few households to report.'),
+            html.H6('The following table compares 2016 and 2021’s total number of households in Core Housing Need by '
+                    'household size and income category, which may be considered as the existing deficit of housing '
+                    'options in the community. For almost every community in Canada, it is vital to remember that '
+                    'CERB likely resulted in artificially depressed Core Housing Need. Furthermore, the economic '
+                    'circumstances since 2023 have been far more volatile in many communities, which have seen a '
+                    'dramatic increase in home costs, rents, and expenses, which should be considered when evaluating '
+                    'this data.'),
+            html.H6('The following chart compares the 2016 and 2021 rates of Core Housing Need across populations '
+                    'that are at high risk of experiencing housing need. The "Community (all HH)" bar represents the '
+                    'rate of Core Housing Need for all households in the selected community to act as a point of '
+                    'reference. The population with the greatest rate of Core Housing Need is highlighted in dark '
+                    'blue. When there is no bar for a priority population, it means that either there are no '
+                    'households in Core Housing Need within that priority population, or that there are too few '
+                    'households to report.'),
+            html.H6('The following chart looks at those households in both 2016 and 2021 in Core Housing Need for '
+                    'each priority population and shows their relative distribution by household income category. '
+                    'When there is no bar for a priority population, it means that either there are no households in '
+                    'Core Housing Need within that priority population, or that there are too few households to '
+                    'report.')
+        )
+    return (
+        html.H6('The following table shows the range of household incomes and affordable '
+                'shelter costs for each income category, in 2020 dollar values, '
+                'as well what percentage of the total number of households falls within '
+                'each category. Income categories are determined by their relationship '
+                'with each geography’s Area Median Household Income (AMHI).'),
+        html.H6('The below chart shows percentage of households in each income category '
+                'that are in core housing need. When there is no bar for an income '
+                'category, it means that either there are no households in Core Housing '
+                'Need within an income category, or that there are too few households to '
+                'report.'),
+        html.H6('The following chart looks at those households in Core Housing Need and '
+                'shows their relative distribution by household size (i.e. the number of '
+                'individuals in a given household) for each household income category. '
+                'When there is no bar for an income category, it means that either there '
+                'are no households in Core Housing Need within an income category, '
+                'or that there are too few households to report.'),
+        html.H6('The following table shows the total number of households in Core Housing '
+                'Need by household size and income category, which may be considered as '
+                'the existing deficit of housing options in the community in 2020.'),
+        html.H6('The following chart compares the rates of Core Housing Need across '
+                'populations that are at high risk of experiencing housing need. The '
+                '"Community (all HH)" bar represents the rate of Core Housing Need for '
+                'all households in the selected community to act as a point of reference. '
+                'The population with the greatest rate of Core Housing Need is '
+                'highlighted in dark blue. When there is no bar for a priority '
+                'population, it means that either there are no households in Core Housing '
+                'Need within that priority population, or that there are too few '
+                'households to report.'),
+        html.H6('The following chart looks at those households in Core Housing Need for '
+                'each priority population and shows their relative distribution by '
+                'household income category. When there is no bar for a priority '
+                'population, it means that either there are no households in Core Housing '
+                'Need within that priority population, or that there are too few '
+                'households to report.')
     )
 
 
@@ -1566,5 +1664,3 @@ def func_ov7(n_clicks, geo, geo_c, year_comparison):
             joined_df_download = joined_df_download.drop(columns=['pk_x', 'pk_y'])
 
             return dcc.send_data_frame(joined_df_download.to_csv, "result.csv")
-
-

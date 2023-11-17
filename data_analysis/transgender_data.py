@@ -85,7 +85,7 @@ output_columns = [
                      f'{output_transgender_label} with income {i} of AMHI' for i in income_lv_list[1:]
                  ]
 output_df = pd.DataFrame(columns=output_columns)
-
+transgender_label = minority_status[-1]
 
 def add_columns(row):
     # Match row to transgender row

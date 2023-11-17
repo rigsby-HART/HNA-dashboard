@@ -37,11 +37,15 @@ def layout(year):
                                     html.Div([
                                         html.H6(
                                             'The following table shows the range of Indigenous household incomes and '
-                                            'affordable shelter costs for each income category, in 2020 dollar values, '
-                                            'as well what percentage of the total number of Indigenous households that '
-                                            'fall within each category.'),
+                                            'affordable shelter costs for each income category, in 2020 dollar '
+                                            'values, as well what percentage of the total number of Indigenous '
+                                            'households that fall within each category. Income categories are '
+                                            'determined by their relationship with each geography’s Area Median '
+                                            'Household Income (AMHI). Please note that this tool only measures urban '
+                                            'and non-reserve Indigenous households. On-reserve households are not '
+                                            'measured in the census.'),
 
-                                    ], className='muni-reg-text-lgeo'),
+                                    ], className='muni-reg-text-lgeo', id='Income-Category-Indigenous-Description-page4'),
 
                                     # Table
 
@@ -93,8 +97,12 @@ def layout(year):
                                     # Description
                                     html.Div([
                                         html.H6(
-                                            'Income categories are determined by their relationship with each geography’s Area Median Household Income (AMHI). The following graph shows the range of Indigenous household incomes and affordable shelter costs for each income category, in 2020 dollar values, as well what percentage of the total number of Indigenous households falls within each category.')
-                                    ], className='muni-reg-text-lgeo'),
+                                            'The below chart shows percentage of Indigenous households in each income '
+                                            'category that are in core housing need. When there is no bar for an '
+                                            'income category, it means that either there are no Indigenous households '
+                                            'in Core Housing Need within an income category, or that there are too '
+                                            'few to report.')
+                                    ], className='muni-reg-text-lgeo', id='CHN-IC-description-page4'),
 
                                     # Graph
 
@@ -123,8 +131,12 @@ def layout(year):
                                     # Description
                                     html.Div([
                                         html.H6(
-                                            'The following graph looks at those Indigenous households in Core Housing Need and shows their relative distribution by household size (i.e. the number of individuals in a given household) for each household income category. Where there are no reported households in Core Housing Need, there are too few households to report while protecting privacy.')
-                                    ], className='muni-reg-text-lgeo'),
+                                            'The following graph looks at those Indigenous households in Core Housing '
+                                            'Need and shows their relative distribution by household size (i.e. the '
+                                            'number of individuals in a given household) for each household income '
+                                            'category. Where there are no reported households in Core Housing Need, '
+                                            'there are too few households to report while protecting privacy.')
+                                    ], className='muni-reg-text-lgeo', id='CHN-IC-HH-description-page4'),
 
                                     # Graph
 
@@ -152,8 +164,12 @@ def layout(year):
                                     # Description
                                     html.Div([
                                         html.H6(
-                                            'The following table shows the total number of Indigenous households in Core Housing Need by household size and income category, which may be considered as the existing deficit of housing options in the community. Where there are zero households to report, it means there are too few to report while protecting privacy.')
-                                    ], className='muni-reg-text-lgeo'),
+                                            'The following table shows the total number of Indigenous households in '
+                                            'Core Housing Need by household size and income category, which may be '
+                                            'considered as the existing deficit of housing options in the community. '
+                                            'Where there are zero households to report, it means there are too few to '
+                                            'report while protecting privacy.')
+                                    ], className='muni-reg-text-lgeo', id='Deficit-description-page4'),
 
                                     # Table
 
