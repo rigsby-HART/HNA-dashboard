@@ -471,7 +471,7 @@ def update_geo_figure(geo: str, geo_c: str, year_comparison: str, scale, refresh
 
         # Plot layout settings
         fig.update_layout(
-            title=localization[language]["fig-title"] +
+            title=localization[language]["fig-title"] + f" {geo}" +
                   (f' {compared_year} {localization[language]["vs"]} {original_year}' if year_comparison
                    else f" {default_year}"),
             showlegend=False,
@@ -509,7 +509,9 @@ def plot_df_core_housing_need_by_amhi(geo: str, IsComparison: bool, language:str
     x_list = []
 
     i = 0
-    for b, c in zip(x_base, x_columns):
+    row_labels = ["very-low-income", "low-income", "moderate-income", "median-income", "high-income"]
+    base = [localization[language][label] for label in row_labels]
+    for b, c in zip(base, x_columns):
         value = str(joined_df_filtered[c].tolist()[0])
         if i < 4:
             if IsComparison is False:
@@ -596,7 +598,7 @@ def update_geo_figure2(geo, geo_c, year_comparison: str, scale, refresh, lang_qu
             yaxis=dict(autorange="reversed"),
             barmode='stack',
             plot_bgcolor='#F8F9F9',
-            title=f'Percentage of Households in Core Housing Need, by Income Category and HH Size, 2021<br>{geo}',
+            title= localization[language]["fig2-title"] + f' {default_year}<br>{geo}',
             legend_title="Household Size"
         )
         fig2.update_yaxes(
@@ -660,7 +662,8 @@ def update_geo_figure2(geo, geo_c, year_comparison: str, scale, refresh, lang_qu
             ), row=1, col=1)
             n += 1
 
-        fig2.update_yaxes(title='Income Categories<br>(Max. affordable shelter costs)', row=1, col=1)
+        fig2.update_yaxes(title=localization[language]["income-category"] +
+                               '<br>' + localization[language]["affordable-shelter"], row=1, col=1)
 
         # Comparison plot
 
@@ -695,7 +698,9 @@ def update_geo_figure2(geo, geo_c, year_comparison: str, scale, refresh, lang_qu
         # Plot layout settings
         fig2.update_layout(
             font=dict(size=10),
-            title='Percentage of Households in Core Housing Need, by Income Category and HH Size, 2021',
+            title=localization[language]["fig2-title"] + f" {geo}" +
+                  (f' {compared_year} {localization[language]["vs"]} {original_year}' if year_comparison
+                   else f" {default_year}"),
             legend_traceorder='normal',
             modebar_color=modebar_color,
             modebar_activecolor=modebar_activecolor,
@@ -1005,21 +1010,22 @@ def update_table2(geo, geo_c, year_comparison: str, selected_columns, scale, lan
 # Preparing global variables for the table
 
 hh_category_dict = {
-    'Percent Single Mother led HH in core housing need': 'Single mother-led HH',
-    'Percent Women-led HH in core housing need': 'Women-led HH',
-    'Percent Indigenous HH in core housing need': 'Indigenous HH',
-    'Percent Visible minority HH in core housing need': 'Visible minority HH',
-    'Percent Black-led HH in core housing need': 'Black-led HH',
-    'Percent New migrant-led HH in core housing need': 'New migrant-led HH',
-    'Percent Refugee claimant-led HH in core housing need': 'Refugee claimant-led HH',
-    'Percent HH head under 25 in core housing need': 'HH head under 25',
-    'Percent HH head over 65 in core housing need': 'HH head over 65',
-    'Percent HH head over 85 in core housing need': 'HH head over 85',
-    'Percent HH with physical act. limit. in core housing need': 'HH with physical activity limitation',
-    'Percent HH with cognitive, mental, or addictions activity limitation in core housing need': 'HH with cognitive, mental,<br>or addictions activity limitation',
-    'Percent of Transgender HH in core housing': 'Transgender or Non-binary HH',
-    'Percent HH in core housing need': 'Community (all HH)'
+    'Percent Single Mother led HH in core housing need': 'single-mother-hh',
+    'Percent Women-led HH in core housing need': 'women-led-hh',
+    'Percent Indigenous HH in core housing need': 'indigenous-hh',
+    'Percent Visible minority HH in core housing need': 'minority-hh',
+    'Percent Black-led HH in core housing need': 'black-hh',
+    'Percent New migrant-led HH in core housing need': 'migrant-hh',
+    'Percent Refugee claimant-led HH in core housing need': 'refugee-hh',
+    'Percent HH head under 25 in core housing need': '25-hh',
+    'Percent HH head over 65 in core housing need': '65-hh',
+    'Percent HH head over 85 in core housing need': '85-hh',
+    'Percent HH with physical act. limit. in core housing need': 'physical-limit-hh',
+    'Percent HH with cognitive, mental, or addictions activity limitation in core housing need': 'mental-hh',
+    'Percent of Transgender HH in core housing': 'transgender-hh',
+    'Percent HH in core housing need': 'all-hh'
 }
+
 
 hh_columns = hh_category_dict.keys()
 hh_categories = list(hh_category_dict.values())
@@ -1027,20 +1033,20 @@ hh_categories = list(hh_category_dict.values())
 
 # Plot dataframe generator
 
-def plot_df_core_housing_need_by_priority_population(geo, year: int = default_year):
+def plot_df_core_housing_need_by_priority_population(geo, language:str, year: int = default_year):
     geo, joined_df_filtered = query_table(geo, year, income_partners_year)
     if year == 2016:
         columns = list(hh_columns)
         columns.remove('Percent of Transgender HH in core housing')
         percent_hh = [joined_df_filtered[c].tolist()[0] for c in columns]
 
-        categories = copy.deepcopy(hh_categories)
-        categories.remove('Transgender or Non-binary HH')
+        categories = [localization[language][category] for category in hh_categories]
+        categories.remove(localization[language]["transgender-hh"])
         plot_df = pd.DataFrame({'HH_Category': categories, 'Percent_HH': percent_hh})
     else:
         percent_hh = [joined_df_filtered[c].tolist()[0] for c in hh_columns]
-
-        plot_df = pd.DataFrame({'HH_Category': hh_categories, 'Percent_HH': percent_hh})
+        categories = [localization[language][category] for category in hh_categories]
+        plot_df = pd.DataFrame({'HH_Category': categories, 'Percent_HH': percent_hh})
         plot_df['Percent_HH'] = plot_df['Percent_HH'].fillna(0)
 
     return plot_df
@@ -1096,13 +1102,13 @@ def update_geo_figure5(geo, geo_c, year_comparison: str, scale, refresh, lang_qu
         # Generating dataframe for plot and color lists
         if error_region_figure(geo, default_year, language):
             return error_region_figure(geo, default_year, language)
-        plot_df = plot_df_core_housing_need_by_priority_population(geo)
+        plot_df = plot_df_core_housing_need_by_priority_population(geo, language)
         color_dict = color_dict_core_housing_need_by_priority_population(plot_df)
 
         # Generating plot
 
         fig5 = go.Figure()
-        for i in hh_categories:
+        for i in [localization[language][category] for category in hh_categories]:
             plot_df_frag = plot_df.loc[plot_df['HH_Category'] == i, :]
             fig5.add_trace(go.Bar(
                 y=plot_df_frag['HH_Category'],
@@ -1122,7 +1128,7 @@ def update_geo_figure5(geo, geo_c, year_comparison: str, scale, refresh, lang_qu
             modebar_activecolor=modebar_activecolor,
             showlegend=False,
             plot_bgcolor='#F8F9F9',
-            title=f'Percentage of Households in Core Housing Need by Priority Population, 2021<br>{geo}',
+            title=localization[language]["fig5-title"] + f' {default_year}<br>{geo}',
             legend_title="HH Category"
         )
         fig5.update_xaxes(
@@ -1130,7 +1136,7 @@ def update_geo_figure5(geo, geo_c, year_comparison: str, scale, refresh, lang_qu
             fixedrange=True,
             tickformat=',.0%',
             range=[0, math.ceil(plot_df['Percent_HH'].max() * 10) / 10],
-            title='% of Priority Population HH'
+            title=localization[language]["percent-pp-hh"]
         )
         fig5.update_yaxes(
             fixedrange=True,
@@ -1165,7 +1171,7 @@ def update_geo_figure5(geo, geo_c, year_comparison: str, scale, refresh, lang_qu
         else:
             if error_region_figure(geo, default_year, language):
                 return error_region_figure(geo, default_year, language)
-        plot_df = plot_df_core_housing_need_by_priority_population(geo, int(compared_year) if year_comparison else
+        plot_df = plot_df_core_housing_need_by_priority_population(geo, language, int(compared_year) if year_comparison else
         default_year)
         color_dict = color_dict_core_housing_need_by_priority_population(plot_df)
 
@@ -1193,14 +1199,14 @@ def update_geo_figure5(geo, geo_c, year_comparison: str, scale, refresh, lang_qu
             if error_region_figure(geo_c, default_year, language):
                 return error_region_figure(geo_c, default_year, language)
         plot_df_c = (
-            plot_df_core_housing_need_by_priority_population(geo, int(original_year)) if year_comparison else
-            plot_df_core_housing_need_by_priority_population(geo_c)
+            plot_df_core_housing_need_by_priority_population(geo, language, int(original_year)) if year_comparison else
+            plot_df_core_housing_need_by_priority_population(geo_c, language)
         )
         color_dict = color_dict_core_housing_need_by_priority_population(plot_df_c)
 
         # Generating comparison plot
 
-        for i in hh_categories:
+        for i in [localization[language][category] for category in hh_categories]:
             plot_df_frag_c = plot_df_c.loc[plot_df_c['HH_Category'] == i, :]
             fig5.add_trace(go.Bar(
                 y=plot_df_frag_c['HH_Category'],
@@ -1214,7 +1220,7 @@ def update_geo_figure5(geo, geo_c, year_comparison: str, scale, refresh, lang_qu
         # Plot layout settings
 
         fig5.update_layout(
-            title='Percentage of Households in Core Housing Need by Priority Population, 2021',
+            title=localization[language]["fig5-title"] + f'<br>{geo}',
             width=900,
             height=500,
             legend=dict(font=dict(size=8)),
@@ -1231,7 +1237,7 @@ def update_geo_figure5(geo, geo_c, year_comparison: str, scale, refresh, lang_qu
             tickformat=',.0%',
             fixedrange=True,
             range=[0, math.ceil(max(plot_df['Percent_HH'].max(), plot_df_c['Percent_HH'].max()) * 10) / 10],
-            title='% of Priority Population HH'
+            title=localization[language]["percent-pp-hh"]
         )
         fig5.update_yaxes(
             fixedrange=True,
@@ -1246,48 +1252,48 @@ def update_geo_figure5(geo, geo_c, year_comparison: str, scale, refresh, lang_qu
 # Preparing global variables for the table
 
 hh_category_dict2 = {
-    'Percent of Single Mother led HH in core housing need': 'Single mother-led HH',
-    'Percent of Women-led HH in core housing need': 'Women-led HH',
-    'Percent of Indigenous HH in core housing need': 'Indigenous HH',
-    'Percent of Visible minority HH in core housing need': 'Visible minority HH',
-    'Percent of Black-led HH in core housing need': 'Black-led HH',
-    'Percent of New migrant-led HH in core housing need': 'New migrant-led HH',
-    'Percent of Refugee claimant-led HH in core housing need': 'Refugee claimant-led HH',
-    'Percent of HH head under 25 in core housing need': 'HH head under 25',
-    'Percent of HH head over 65 in core housing need': 'HH head over 65',
-    'Percent of HH head over 85 in core housing need': 'HH head over 85',
-    'Percent of HH with physical act. limit. in core housing need': 'HH with physical activity limitation',
-    'Percent of HH with with cognitive, mental, or addictions activity limitation in core housing need': 'HH with cognitive, mental,<br>or addictions activity limitation',
+    'Percent of Single Mother led HH in core housing need': 'single-mother-hh',
+    'Percent of Women-led HH in core housing need': 'women-led-hh',
+    'Percent of Indigenous HH in core housing need': 'indigenous-hh',
+    'Percent of Visible minority HH in core housing need': 'minority-hh',
+    'Percent of Black-led HH in core housing need': 'black-hh',
+    'Percent of New migrant-led HH in core housing need': 'migrant-hh',
+    'Percent of Refugee claimant-led HH in core housing need': 'refugee-hh',
+    'Percent of HH head under 25 in core housing need': '25-hh',
+    'Percent of HH head over 65 in core housing need': '65-hh',
+    'Percent of HH head over 85 in core housing need': '85-hh',
+    'Percent of HH with physical act. limit. in core housing need': 'physical-limit-hh',
+    'Percent of HH with with cognitive, mental, or addictions activity limitation in core housing need': 'mental-hh',
 }
 
 hh_category_dict3 = {
-    'Percent of Single Mother led HH core housing': 'Single mother-led HH',
-    'Percent of Women-led HH core housing': 'Women-led HH',
-    'Percent of Indigenous HH in core housing': 'Indigenous HH',
-    'Percent of Visible minority HH core housing': 'Visible minority HH',
-    'Percent of Black-led HH core housing': 'Black-led HH',
-    'Percent of New migrant-led HH core housing': 'New migrant-led HH',
-    'Percent of Refugee claimant-led HH core housing': 'Refugee claimant-led HH',
-    'Percent of HH head under 25 core housing': 'HH head under 25',
-    'Percent of HH head over 65 core housing': 'HH head over 65',
-    'Percent of HH head over 85 core housing': 'HH head over 85',
-    'Percent of HH with physical act. limit. in core housing': 'HH with physical activity limitation',
-    'Percent of HH with cognitive, mental, or addictions activity limitation in core housing': 'HH with cognitive, mental,<br>or addictions activity limitation',
+    'Percent of Single Mother led HH core housing': 'single-mother-hh',
+    'Percent of Women-led HH core housing': 'women-led-hh',
+    'Percent of Indigenous HH in core housing': 'indigenous-hh',
+    'Percent of Visible minority HH core housing': 'minority-hh',
+    'Percent of Black-led HH core housing': 'black-hh',
+    'Percent of New migrant-led HH core housing': 'migrant-hh',
+    'Percent of Refugee claimant-led HH core housing': 'refugee-hh',
+    'Percent of HH head under 25 core housing': '25-hh',
+    'Percent of HH head over 65 core housing': '65-hh',
+    'Percent of HH head over 85 core housing': '85-hh',
+    'Percent of HH with physical act. limit. in core housing': 'physical-limit-hh',
+    'Percent of HH with cognitive, mental, or addictions activity limitation in core housing': 'mental-hh',
 }
 
 hh_category_dict4 = {
-    'Percent of Single Mother led HH in core housing': 'Single mother-led HH',
-    'Percent of Women-led HH in core housing': 'Women-led HH',
-    'Percent of Indigenous HH in core housing': 'Indigenous HH',
-    'Percent of Visible minority HH in core housing': 'Visible minority HH',
-    'Percent of Black-led HH in core housing': 'Black-led HH',
-    'Percent of New migrant-led HH in core housing': 'New migrant-led HH',
-    'Percent of Refugee claimant-led HH in core housing': 'Refugee claimant-led HH',
-    'Percent of HH head under 25 in core housing': 'HH head under 25',
-    'Percent of HH head over 65 in core housing': 'HH head over 65',
-    'Percent of HH head over 85 in core housing': 'HH head over 85',
-    'Percent of HH with physical act. limit. in core housing': 'HH with physical activity limitation',
-    'Percent of HH with cognitive, mental, or addictions activity limitation in core housing': 'HH with cognitive, mental,<br>or addictions activity limitation',
+    'Percent of Single Mother led HH in core housing': 'single-mother-hh',
+    'Percent of Women-led HH in core housing': 'women-led-hh',
+    'Percent of Indigenous HH in core housing': 'indigenous-hh',
+    'Percent of Visible minority HH in core housing': 'minority-hh',
+    'Percent of Black-led HH in core housing': 'black-hh',
+    'Percent of New migrant-led HH in core housing': 'migrant-hh',
+    'Percent of Refugee claimant-led HH in core housing': 'refugee-hh',
+    'Percent of HH head under 25 in core housing': '25-hh',
+    'Percent of HH head over 65 in core housing': '65-hh',
+    'Percent of HH head over 85 in core housing': '85-hh',
+    'Percent of HH with physical act. limit. in core housing': 'physical-limit-hh',
+    'Percent of HH with cognitive, mental, or addictions activity limitation in core housing': 'mental-hh',
 }
 
 columns2 = hh_category_dict2.keys()
@@ -1299,7 +1305,7 @@ income_lv_list = ['20% or under', '21% to 50%', '51% to 80%', '81% to 120%', '12
 
 # Plot dataframe generator
 
-def plot_df_core_housing_need_by_priority_population_income(geo, year=default_year):
+def plot_df_core_housing_need_by_priority_population_income(geo:str, language:str, year=default_year):
     geo, joined_df_filtered = query_table(geo, year, income_partners_year)
 
     income_col = []
@@ -1317,14 +1323,19 @@ def plot_df_core_housing_need_by_priority_population_income(geo, year=default_ye
         dict2 = copy.deepcopy(dict2)
         dict3 = copy.deepcopy(dict3)
         dict4 = copy.deepcopy(dict4)
-        dict2['Percent of Transgender HH in core housing'] = 'Transgender or Non-binary HH'
-        dict3['Percent of Transgender HH in core housing'] = 'Transgender or Non-binary HH'
-        dict4['Percent of Transgender HH in core housing'] = 'Transgender or Non-binary HH'
+        dict2['Percent of Transgender HH in core housing'] = 'transgender-hh'
+        dict3['Percent of Transgender HH in core housing'] = 'transgender-hh'
+        dict4['Percent of Transgender HH in core housing'] = 'transgender-hh'
         col2 = dict2.keys()
         col3 = dict3.keys()
         col4 = dict4.keys()
+    dict2 = {key: localization[language][value] for key, value in zip(dict2.keys(), dict2.values())}
+    dict3 = {key: localization[language][value] for key, value in zip(dict3.keys(), dict3.values())}
+    dict4 = {key: localization[language][value] for key, value in zip(dict4.keys(), dict4.values())}
+    row_labels = ["very-low-income", "low-income", "moderate-income", "median-income", "high-income"]
+    base = [localization[language][label] for label in row_labels]
     for c, c2, c3 in zip(col2, col3, col4):
-        for i in income_lv_list:
+        for index, i in enumerate(income_lv_list):
             if i == '20% or under':
                 p_hh = joined_df_filtered[f'{c} with income {i} of the AMHI'].tolist()[0]
                 hh_cat_col.append(dict2[c])
@@ -1335,7 +1346,7 @@ def plot_df_core_housing_need_by_priority_population_income(geo, year=default_ye
                 p_hh = joined_df_filtered[f'{c3} with income {i} of AMHI'].tolist()[0]
                 hh_cat_col.append(dict4[c3])
 
-            income_col.append(i)
+            income_col.append(base[index])
             percent_col.append(p_hh)
 
     plot_df = pd.DataFrame({'Income_Category': income_col, 'HH_Category': hh_cat_col, 'Percent': percent_col})
@@ -1374,7 +1385,7 @@ def update_geo_figure6(geo, geo_c, year_comparison, scale, refresh, lang_query):
         # Generating dataframe for plot
         if error_region_figure(geo, default_year, language):
             return error_region_figure(geo, default_year, language)
-        plot_df = plot_df_core_housing_need_by_priority_population_income(geo)
+        plot_df = plot_df_core_housing_need_by_priority_population_income(geo, language)
 
         # Generating plot
         fig6 = go.Figure()
@@ -1402,8 +1413,8 @@ def update_geo_figure6(geo, geo_c, year_comparison, scale, refresh, lang_query):
             yaxis=dict(autorange="reversed"),
             barmode='stack',
             plot_bgcolor='#F8F9F9',
-            title=f'Percentage of Households in Core Housing Need by Priority Population and Income Category, 2021<br>{geo}',
-            legend_title="Income Category"
+            title=localization[language]["fig6-title"] + f' {default_year}<br>{geo}',
+            legend_title=localization[language]["income-category"]
         )
         fig6.update_xaxes(
             title_font=dict(size=10),
@@ -1443,7 +1454,7 @@ def update_geo_figure6(geo, geo_c, year_comparison, scale, refresh, lang_query):
                 return error_region_figure(geo, default_year, language)
         # Generating dataframe for main plot
         plot_df = (
-            plot_df_core_housing_need_by_priority_population_income(geo,
+            plot_df_core_housing_need_by_priority_population_income(geo, language,
                                                                     int(compared_year) if year_comparison else
                                                                     int(original_year))
         )
@@ -1456,10 +1467,10 @@ def update_geo_figure6(geo, geo_c, year_comparison, scale, refresh, lang_query):
             fig6.add_trace(go.Bar(
                 y=plot_df_frag['HH_Category'],
                 x=plot_df_frag['Percent'],
-                name=o,
+                name=i,
                 marker_color=c,
                 orientation='h',
-                hovertemplate='%{y}, ' + f'{o} Income - ' + '%{x: .2%}<extra></extra>',
+                hovertemplate='%{y}, ' + f'{i} Income - ' + '%{x: .2%}<extra></extra>',
                 legendgroup=f'{n}'
             ), row=1, col=1)
             n += 1
@@ -1474,8 +1485,9 @@ def update_geo_figure6(geo, geo_c, year_comparison, scale, refresh, lang_query):
             if error_region_figure(geo_c, default_year, language):
                 return error_region_figure(geo_c, default_year, language)
         plot_df_c = (
-            plot_df_core_housing_need_by_priority_population_income(geo, int(original_year)) if year_comparison else
-            plot_df_core_housing_need_by_priority_population_income(geo_c)
+            plot_df_core_housing_need_by_priority_population_income(geo, language, int(original_year))
+            if year_comparison
+            else plot_df_core_housing_need_by_priority_population_income(geo_c, language)
         )
 
         # Generating comparison plot
@@ -1486,10 +1498,10 @@ def update_geo_figure6(geo, geo_c, year_comparison, scale, refresh, lang_query):
             fig6.add_trace(go.Bar(
                 y=plot_df_frag_c['HH_Category'],
                 x=plot_df_frag_c['Percent'],
-                name=o,
+                name=i,
                 marker_color=c,
                 orientation='h',
-                hovertemplate='%{y}, ' + f'{o} Income - ' + '%{x: .2%}<extra></extra>',
+                hovertemplate='%{y}, ' + f'{i} Income - ' + '%{x: .2%}<extra></extra>',
                 legendgroup=f'{n}',
                 showlegend=False
             ), row=1, col=2)
@@ -1498,7 +1510,7 @@ def update_geo_figure6(geo, geo_c, year_comparison, scale, refresh, lang_query):
         # Plot layout settings
 
         fig6.update_layout(
-            title='Percentage of Households in Core Housing Need by Priority Population and Income Category, 2021',
+            title=localization[language]["fig6-title"],
             width=900,
             height=500,
             font=dict(size=10),
@@ -1509,7 +1521,7 @@ def update_geo_figure6(geo, geo_c, year_comparison, scale, refresh, lang_query):
             yaxis=dict(autorange="reversed"),
             barmode='stack',
             plot_bgcolor='#F8F9F9',
-            legend_title="Income Category"
+            legend_title=localization[language]["income-category"]
         )
         fig6.update_xaxes(
             title_font=dict(size=10),
