@@ -1181,7 +1181,7 @@ def update_geo_figure5(geo, geo_c, year_comparison: str, scale, refresh):
 
         # Generating comparison plot
 
-        for i in hh_categories:
+        for i in plot_df_c['HH_Category']:
             plot_df_frag_c = plot_df_c.loc[plot_df_c['HH_Category'] == i, :]
             fig5.add_trace(go.Bar(
                 y=plot_df_frag_c['HH_Category'],
@@ -1195,7 +1195,7 @@ def update_geo_figure5(geo, geo_c, year_comparison: str, scale, refresh):
         # Plot layout settings
 
         fig5.update_layout(
-            title='Percentage of Households in Core Housing Need by Priority Population, 2021',
+            title='Percentage of Households in Core Housing Need by Priority Population',
             width=900,
             height=500,
             legend=dict(font=dict(size=8)),
@@ -1593,12 +1593,14 @@ def change_description_labels(geo, geo_c, year_comparison, scale, refresh):
                     'reference. The population with the greatest rate of Core Housing Need is highlighted in dark '
                     'blue. When there is no bar for a priority population, it means that either there are no '
                     'households in Core Housing Need within that priority population, or that there are too few '
-                    'households to report.'),
+                    'households to report. Transgender or non-binary HH was introduced in the 2021 census, and so all '
+                    'values will reflect zero in 2016.'),
             html.H6('The following chart looks at those households in both 2016 and 2021 in Core Housing Need for '
                     'each priority population and shows their relative distribution by household income category. '
                     'When there is no bar for a priority population, it means that either there are no households in '
                     'Core Housing Need within that priority population, or that there are too few households to '
-                    'report.')
+                    'report. Transgender or non-binary HH was introduced in the 2021 census, and so all values will '
+                    'reflect zero in 2016.')
         )
     return (
         html.H6('The following table shows the range of household incomes and affordable '

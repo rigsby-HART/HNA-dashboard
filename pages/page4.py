@@ -997,44 +997,44 @@ def change_description_labels(geo, geo_c, year_comparison, scale, refresh):
 
         return (
             html.H6('The following table compares the 2016 and 2021 range of Indigenous household incomes and '
-                        'affordable shelter costs for each income category, as well what percentage of the total '
-                        'number of Indigenous households that fall within each category.'),
+                    'affordable shelter costs for each income category, as well what percentage of the total '
+                    'number of Indigenous households that fall within each category.'),
             html.H6('Income categories are determined by their relationship with each geography’s Area Median '
-                        'Household Income (AMHI). The following graph compares the 2016 and 2021 range of Indigenous '
-                        'household incomes and affordable shelter costs for each income category, as well what '
-                        'percentage of the total number of Indigenous households falls within each category.'),
+                    'Household Income (AMHI). The following graph compares the 2016 and 2021 range of Indigenous '
+                    'household incomes and affordable shelter costs for each income category, as well what '
+                    'percentage of the total number of Indigenous households falls within each category.'),
             html.H6('The following graph looks at those 2016 and 2021 Indigenous households in Core Housing Need '
-                        'and shows their relative distribution by household size (i.e. the number of individuals in a '
-                        'given household) for each household income category. Where there are no reported households '
-                        'in Core Housing Need, there are too few households to report while protecting privacy.'),
+                    'and shows their relative distribution by household size (i.e. the number of individuals in a '
+                    'given household) for each household income category. Where there are no reported households '
+                    'in Core Housing Need, there are too few households to report while protecting privacy.'),
             html.H6('The following table compares the 2016 and 2021 total number of Indigenous households in Core '
-                        'Housing Need by household size and income category, which may be considered as the existing '
-                        'deficit of housing options in the community. Where there are zero households to report, '
-                        'it means there are too few to report while protecting privacy.'),
+                    'Housing Need by household size and income category, which may be considered as the existing '
+                    'deficit of housing options in the community. Where there are zero households to report, '
+                    'it means there are too few to report while protecting privacy.'),
         )
     prediction_year = default_year + 10
     return (
         html.H6('The following table shows the range of Indigenous household incomes and '
-                    'affordable shelter costs for each income category, in 2020 dollar '
-                    'values, as well what percentage of the total number of Indigenous '
-                    'households that fall within each category. Income categories are '
-                    'determined by their relationship with each geography’s Area Median '
-                    'Household Income (AMHI). Please note that this tool only measures urban '
-                    'and non-reserve Indigenous households. On-reserve households are not '
-                    'measured in the census.'),
+                'affordable shelter costs for each income category, in 2020 dollar '
+                'values, as well what percentage of the total number of Indigenous '
+                'households that fall within each category. Income categories are '
+                'determined by their relationship with each geography’s Area Median '
+                'Household Income (AMHI). Please note that this tool only measures urban '
+                'and non-reserve Indigenous households. On-reserve households are not '
+                'measured in the census.'),
         html.H6('The below chart shows percentage of Indigenous households in each income '
-                    'category that are in core housing need. When there is no bar for an '
-                    'income category, it means that either there are no Indigenous households '
-                    'in Core Housing Need within an income category, or that there are too '
-                    'few to report.'),
+                'category that are in core housing need. When there is no bar for an '
+                'income category, it means that either there are no Indigenous households '
+                'in Core Housing Need within an income category, or that there are too '
+                'few to report.'),
         html.H6('The following graph looks at those Indigenous households in Core Housing '
-                    'Need and shows their relative distribution by household size (i.e. the '
-                    'number of individuals in a given household) for each household income '
-                    'category. Where there are no reported households in Core Housing Need, '
-                    'there are too few households to report while protecting privacy.'),
+                'Need and shows their relative distribution by household size (i.e. the '
+                'number of individuals in a given household) for each household income '
+                'category. Where there are no reported households in Core Housing Need, '
+                'there are too few households to report while protecting privacy.'),
         html.H6('The following table shows the total number of Indigenous households in '
-                    'Core Housing Need by household size and income category, which may be '
-                    'considered as the existing deficit of housing options in the community. '
-                    'Where there are zero households to report, it means there are too few to '
-                    'report while protecting privacy.'),
+                'Core Housing Need by household size and income category, which may be '
+                'considered as the existing deficit of housing options in the community. '
+                'Where there are zero households to report, it means there are too few to '
+                'report while protecting privacy.'),
     )
