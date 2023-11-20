@@ -512,7 +512,6 @@ def toggle_year_comparison(year_comparison, *args):
         else:
             return "2016-2021", {"visibility": "hidden"}, {
                 "color": "#FFFFFF",
-                "border-color": "buttonborder",
                 "background-color": "#3EB549"
             }
 
