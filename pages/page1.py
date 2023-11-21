@@ -510,7 +510,7 @@ def toggle_year_comparison(year_comparison, *args):
         if year_comparison is not None:
             return None, {"visibility": "visible"}, {}
         else:
-            return "2016-2021", {"visibility": "hidden"}, {
+            return "2021-2016", {"visibility": "hidden"}, {
                 "color": "#FFFFFF",
                 "background-color": "#3EB549"
             }
