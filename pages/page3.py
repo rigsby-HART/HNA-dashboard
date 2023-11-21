@@ -16,7 +16,8 @@ from dash import Input, Output, callback, html, State
 from helpers.style_helper import style_data_conditional, style_header_conditional
 from helpers.create_engine import engine_current, default_year, df_geo_list, df_region_list, df_province_list, \
     mapped_geo_code, updated_csd_year, updated_csd_current, updated_cd_current, updated_cd_year
-from helpers.table_helper import area_scale_comparison, area_scale_primary_only, error_region_table_population
+from helpers.table_helper import area_scale_comparison, area_scale_primary_only, error_region_table_population, \
+    get_language
 from pages.page3_helpers.page3_main import layout
 
 warnings.filterwarnings("ignore")
@@ -133,14 +134,15 @@ def plot1_new_projection(geo, is_comparison, year=default_year):
     Output('graph9', 'figure'),
     Input('main-area', 'data'),
     Input('comparison-area', 'data'),
-    Input('year-comparison', 'data'),
     Input('area-scale-store', 'data'),
     Input('datatable5-interactivity', 'selected_columns'),
+    State('url', 'search'),
 )
-def update_geo_figure6(geo, geo_c, year_comparison: str, scale, selected_columns):
+def update_geo_figure6(geo, geo_c, scale, selected_columns, lang_query):
+    language = get_language(lang_query)
     # Single area mode
 
-    if not year_comparison and (geo == geo_c or geo_c == None or (geo == None and geo_c != None)):
+    if (geo == geo_c or geo_c == None or (geo == None and geo_c != None)):
 
         # When no area is selected
         if geo == None and geo_c != None:
@@ -152,8 +154,8 @@ def update_geo_figure6(geo, geo_c, year_comparison: str, scale, selected_columns
         geo = area_scale_primary_only(geo, scale)
 
         # Generating plot dataframe/table
-        if error_region_table_population(geo, default_year):
-            return error_region_table_population(geo, default_year)
+        if error_region_table_population(geo, default_year, language):
+            return error_region_table_population(geo, default_year, language)
         plot_df, table1 = plot1_new_projection(geo, False)
 
         # Generating plot
@@ -230,34 +232,22 @@ def update_geo_figure6(geo, geo_c, year_comparison: str, scale, selected_columns
     else:
 
         # Area Scaling up/down when user clicks area scale button on page 1
-        if year_comparison:
-            original_year, compared_year = year_comparison.split("-")
-            geo = area_scale_primary_only(geo, scale)
-        # Area Scaling up/down when user clicks area scale button on page 1
-        else:
-            geo, geo_c = area_scale_comparison(geo, geo_c, scale)
-            original_year, compared_year = default_year, default_year
+        geo, geo_c = area_scale_comparison(geo, geo_c, scale)
+        original_year, compared_year = default_year, default_year
 
         # Main Plot/Table
 
         # Generating main plot df/table
 
-        if year_comparison:
-            if error_region_table_population(geo, int(compared_year)):
-                return error_region_table_population(geo, int(compared_year))
-        else:
-            if error_region_table_population(geo, default_year):
-                return error_region_table_population(geo, default_year)
+        if error_region_table_population(geo, default_year, language):
+            return error_region_table_population(geo, default_year, language)
         plot_df, table1 = (
-            plot1_new_projection(geo, False, int(compared_year)) if year_comparison else
             plot1_new_projection(geo, False)
         )
 
         # Generating main plot
 
-        fig_new_proj_1 = make_subplots(rows=1, cols=2, subplot_titles=(
-            f"{geo} {int(compared_year)+10}" if year_comparison else geo,
-            f"{geo} {int(original_year)+10}" if year_comparison else geo_c), shared_yaxes=True,
+        fig_new_proj_1 = make_subplots(rows=1, cols=2, subplot_titles=(geo, geo_c), shared_yaxes=True,
                                        shared_xaxes=True)
 
         for i, c in zip(plot_df['Category'].unique(), bar_colors):
@@ -273,16 +263,10 @@ def update_geo_figure6(geo, geo_c, year_comparison: str, scale, selected_columns
         # Comparison Plot/Table
 
         # Generating comparison plot df/table
-
-        if year_comparison:
-            if error_region_table_population(geo, default_year):
-                return error_region_table_population(geo, default_year)
-        else:
-            if error_region_table_population(geo_c, default_year):
-                return error_region_table_population(geo_c, default_year)
+        if error_region_table_population(geo_c, default_year, language):
+            return error_region_table_population(geo_c, default_year, language)
 
         plot_df_c, table1_c = (
-            plot1_new_projection(geo, True, int(original_year)) if year_comparison else
             plot1_new_projection(geo_c, True)
         )
 
@@ -295,7 +279,7 @@ def update_geo_figure6(geo, geo_c, year_comparison: str, scale, selected_columns
                 y=plot_df_frag['Pop'],
                 name=i,
                 marker_color=c,
-                showlegend=True if year_comparison else False,
+                showlegend=False,
                 hovertemplate='%{x}, ' + f'{i} - ' + '%{y}<extra></extra>'
             ), row=1, col=2)
 
@@ -307,12 +291,9 @@ def update_geo_figure6(geo, geo_c, year_comparison: str, scale, selected_columns
             modebar_activecolor=modebar_activecolor,
             barmode='relative',
             plot_bgcolor='#F8F9F9',
-            title=f'{str(int(compared_year) + 10) + " and " + str(int(original_year) + 10) if year_comparison else str(default_year)}'
-                  f' Household Projections by Income Category',
+            title=f'{default_year} Household Projections by Income Category',
             legend=dict(font=dict(size=9)),
-            legend_title=f"{compared_year} and {original_year} households<br>vs "
-                         "10 year projections<br>" if year_comparison else
-            f"{default_year} households<br>and {default_year}-{default_year + 10} change<br>")
+            legend_title=f"{default_year} households<br>and {default_year}-{default_year + 10} change<br>")
         fig_new_proj_1.update_yaxes(
             range=[min(plot_df['Pop'].min(), plot_df_c['Pop'].min()) * 1.1,
                    max(plot_df.groupby('Income Category')['Pop'].sum().max(),
@@ -341,7 +322,7 @@ def update_geo_figure6(geo, geo_c, year_comparison: str, scale, selected_columns
             if i == 'HH Income Category':
                 col_list.append({"name": ["Areas", i], "id": i})
             else:
-                col_list.append({"name": [f"{geo} {int(compared_year)+10}" if year_comparison else geo, i],
+                col_list.append({"name": [geo, i],
                                  "id": i,
                                  "type": 'numeric',
                                  "format": Format(
@@ -354,7 +335,7 @@ def update_geo_figure6(geo, geo_c, year_comparison: str, scale, selected_columns
             if i == 'HH Income Category':
                 col_list.append({"name": ["Areas", i], "id": i})
             else:
-                col_list.append({"name": [f"{geo} {int(original_year)+10} " if year_comparison else geo_c, i],
+                col_list.append({"name": [geo_c, i],
                                  "id": i,
                                  "type": 'numeric',
                                  "format": Format(
@@ -462,14 +443,15 @@ def plot2_new_projection(geo, IsComparison, year: int = default_year):
     Output('graph10', 'figure'),
     Input('main-area', 'data'),
     Input('comparison-area', 'data'),
-    Input('year-comparison', 'data'),
     Input('area-scale-store', 'data'),
     Input('datatable6-interactivity', 'selected_columns'),
+    State('url', 'search'),
 )
-def update_geo_figure7(geo, geo_c, year_comparison, scale, selected_columns):
+def update_geo_figure7(geo, geo_c, scale, selected_columns, lang_query):
+    language = get_language(lang_query)
     # Single area mode
 
-    if not year_comparison and (geo == geo_c or geo_c == None or (geo == None and geo_c != None)):
+    if (geo == geo_c or geo_c == None or (geo == None and geo_c != None)):
 
         # When no area is selected
         if geo == None and geo_c != None:
@@ -481,8 +463,8 @@ def update_geo_figure7(geo, geo_c, year_comparison, scale, selected_columns):
         geo = area_scale_primary_only(geo, scale)
 
         # Generating plot dataframe/table
-        if error_region_table_population(geo, default_year):
-            return error_region_table_population(geo, default_year)
+        if error_region_table_population(geo, default_year, language):
+            return error_region_table_population(geo, default_year, language)
         plot_df, table1 = plot2_new_projection(geo, False)
 
         # Generating plot
@@ -558,33 +540,21 @@ def update_geo_figure7(geo, geo_c, year_comparison, scale, selected_columns):
 
     else:
         # Area Scaling up/down when user clicks area scale button on page 1
-        if year_comparison:
-            original_year, compared_year = year_comparison.split("-")
-            geo = area_scale_primary_only(geo, scale)
-        # Area Scaling up/down when user clicks area scale button on page 1
-        else:
-            geo, geo_c = area_scale_comparison(geo, geo_c, scale)
-            original_year, compared_year = default_year, default_year
+        geo, geo_c = area_scale_comparison(geo, geo_c, scale)
+        original_year, compared_year = default_year, default_year
 
         # Main Plot/Table
 
         # Generating main plot df/table
-        if year_comparison:
-            if error_region_table_population(geo, int(compared_year)):
-                return error_region_table_population(geo, int(compared_year))
-        else:
-            if error_region_table_population(geo, default_year):
-                return error_region_table_population(geo, default_year)
+        if error_region_table_population(geo, default_year, language):
+            return error_region_table_population(geo, default_year, language)
         plot_df, table1 = (
-            plot2_new_projection(geo, False, int(compared_year)) if year_comparison else
             plot2_new_projection(geo, False)
         )
         # Generating main plot
 
         fig_new_proj_1 = make_subplots(rows=1, cols=2,
-                                       subplot_titles=(
-                                           f"{geo + ' ' + compared_year if year_comparison else geo}",
-                                           f"{geo + ' ' + original_year if year_comparison else geo_c}"),
+                                       subplot_titles=(geo, geo_c),
                                        shared_yaxes=True,
                                        shared_xaxes=True)
 
@@ -601,14 +571,9 @@ def update_geo_figure7(geo, geo_c, year_comparison, scale, selected_columns):
         # Comparison Plot/Table
 
         # Generating comparison plot df/table
-        if year_comparison:
-            if error_region_table_population(geo, default_year):
-                return error_region_table_population(geo, default_year)
-        else:
-            if error_region_table_population(geo_c, default_year):
-                return error_region_table_population(geo_c, default_year)
+        if error_region_table_population(geo_c, default_year, language):
+            return error_region_table_population(geo_c, default_year, language)
         plot_df_c, table1_c = (
-            plot2_new_projection(geo, True) if year_comparison else
             plot2_new_projection(geo_c, True)
         )
 
@@ -621,7 +586,7 @@ def update_geo_figure7(geo, geo_c, year_comparison, scale, selected_columns):
                 y=plot_df_frag['Pop'],
                 name=i,
                 marker_color=c,
-                showlegend=True if year_comparison else False,
+                showlegend=False,
                 hovertemplate='%{x}, ' + f'{i} - ' + '%{y}<extra></extra>'
             ), row=1, col=2)
 
@@ -633,12 +598,9 @@ def update_geo_figure7(geo, geo_c, year_comparison, scale, selected_columns):
             modebar_activecolor=modebar_activecolor,
             barmode='relative',
             plot_bgcolor='#F8F9F9',
-            title=(f'{int(compared_year)+10} and {int(original_year)+10}' if year_comparison else str(default_year+10))+
-                  f' Household Projections by Household Size',
+            title=f'{default_year+10} Household Projections by Household Size',
             legend=dict(font=dict(size=9)),
-            legend_title=(f"{compared_year} and {original_year} households<br>vs "
-                          "10 year projections<br>" if year_comparison else
-                          f"{default_year} households<br>and {default_year}-{default_year + 10} change<br>")
+            legend_title=f"{default_year} households<br>and {default_year}-{default_year + 10} change<br>"
         )
         fig_new_proj_1.update_yaxes(
             range=[min(plot_df['Pop'].min(), plot_df_c['Pop'].min()) * 1.1,
@@ -668,7 +630,7 @@ def update_geo_figure7(geo, geo_c, year_comparison, scale, selected_columns):
             if i == 'HH Size':
                 col_list.append({"name": ["Areas", i], "id": i})
             else:
-                col_list.append({"name": [f"{geo} {int(compared_year)+10}" if year_comparison else geo, i],
+                col_list.append({"name": [geo, i],
                                  "id": i,
                                  "type": 'numeric',
                                  "format": Format(
@@ -681,7 +643,7 @@ def update_geo_figure7(geo, geo_c, year_comparison, scale, selected_columns):
             if i == 'HH Size':
                 col_list.append({"name": ["Areas", i], "id": i})
             else:
-                col_list.append({"name": [f"{geo} {int(original_year)+10} " if year_comparison else geo_c, i],
+                col_list.append({"name": [geo_c, i],
                                  "id": i,
                                  "type": 'numeric',
                                  "format": Format(
@@ -787,14 +749,15 @@ def projections_future_hh_size(geo, IsComparison, year: int = default_year):
     Output('graph-h', 'figure'),
     Input('main-area', 'data'),
     Input('comparison-area', 'data'),
-    Input('year-comparison', 'data'),
     Input('area-scale-store', 'data'),
     Input('datatable-h-interactivity', 'selected_columns'),
+    State('url', 'search')
 )
-def update_geo_figure_h(geo, geo_c, year_comparison, scale, selected_columns):
+def update_geo_figure_h(geo, geo_c, scale, selected_columns, lang_query):
+    language = get_language(lang_query)
     # Single area mode
 
-    if not year_comparison and (geo == geo_c or geo_c == None or (geo == None and geo_c != None)):
+    if(geo == geo_c or geo_c == None or (geo == None and geo_c != None)):
 
         # When no area is selected
 
@@ -808,8 +771,8 @@ def update_geo_figure_h(geo, geo_c, year_comparison, scale, selected_columns):
         geo = area_scale_primary_only(geo, scale)
 
         # Generating plot dataframe/table
-        if error_region_table_population(geo, default_year):
-            return error_region_table_population(geo, default_year)
+        if error_region_table_population(geo, default_year, language):
+            return error_region_table_population(geo, default_year, language)
         table1, table1_csd_plot = projections_future_hh_size(geo, False)
 
         # Generating plot
@@ -885,34 +848,22 @@ def update_geo_figure_h(geo, geo_c, year_comparison, scale, selected_columns):
 
     else:
         # Area Scaling up/down when user clicks area scale button on page 1
-        if year_comparison:
-            original_year, compared_year = year_comparison.split("-")
-            geo = area_scale_primary_only(geo, scale)
-        # Area Scaling up/down when user clicks area scale button on page 1
-        else:
-            geo, geo_c = area_scale_comparison(geo, geo_c, scale)
-            original_year, compared_year = default_year, default_year
+        geo, geo_c = area_scale_comparison(geo, geo_c, scale)
+        original_year, compared_year = default_year, default_year
 
         # Main Plot/Table
 
         # Generating main plot df/table
-        if year_comparison:
-            if error_region_table_population(geo, int(compared_year)):
-                return error_region_table_population(geo, int(compared_year))
-        else:
-            if error_region_table_population(geo, default_year):
-                return error_region_table_population(geo, default_year)
+        if error_region_table_population(geo, default_year, language):
+            return error_region_table_population(geo, default_year, language)
         table1, table1_csd_plot = (
-            projections_future_hh_size(geo, False, int(compared_year)) if year_comparison else
             projections_future_hh_size(geo, False)
         )
 
         # Generating main plot
 
         fig_csd = make_subplots(rows=1, cols=2,
-                                subplot_titles=(
-                                    f"{geo} {int(compared_year)+10}" if year_comparison else geo,
-                                    f"{geo} {int(original_year)+10}" if year_comparison else geo_c),
+                                subplot_titles=(geo, geo_c),
                                 shared_yaxes=True,
                                 shared_xaxes=True)
 
@@ -929,14 +880,9 @@ def update_geo_figure_h(geo, geo_c, year_comparison, scale, selected_columns):
         # Comparison Plot/Table
 
         # Generating comparison plot df/table
-        if year_comparison:
-            if error_region_table_population(geo, default_year):
-                return error_region_table_population(geo, default_year)
-        else:
-            if error_region_table_population(geo_c, default_year):
-                return error_region_table_population(geo_c, default_year)
+        if error_region_table_population(geo_c, default_year, language):
+            return error_region_table_population(geo_c, default_year, language)
         table1_c, table1_csd_plot_c = (
-            projections_future_hh_size(geo, True, int(original_year)) if year_comparison else
             projections_future_hh_size(geo_c, True)
         )
 
@@ -959,7 +905,7 @@ def update_geo_figure_h(geo, geo_c, year_comparison, scale, selected_columns):
             modebar_activecolor=modebar_activecolor,
             barmode='relative',
             plot_bgcolor='#F8F9F9',
-            title=f'{str(int(compared_year) + 10) + " and " + str(int(original_year) + 10) if year_comparison else (default_year + 10)} '
+            title=f'{(default_year + 10)} '
                   f'Projected Households by Household Size and Income Category',
             legend=dict(font=dict(size=9)),
             legend_title="HH Size"
@@ -991,7 +937,7 @@ def update_geo_figure_h(geo, geo_c, year_comparison, scale, selected_columns):
             if i == 'HH Income Category':
                 col_list.append({"name": ["Areas", i], "id": i})
             else:
-                col_list.append({"name": [f"{geo} {int(compared_year)+10}" if year_comparison else geo, i],
+                col_list.append({"name": [geo, i],
                                  "id": i,
                                  "type": 'numeric',
                                  "format": Format(
@@ -1004,7 +950,7 @@ def update_geo_figure_h(geo, geo_c, year_comparison, scale, selected_columns):
             if i == 'HH Income Category':
                 col_list.append({"name": ["Areas", i], "id": i})
             else:
-                col_list.append({"name": [f"{geo} {int(original_year)+10} " if year_comparison else geo_c, i],
+                col_list.append({"name": [geo_c, i],
                                  "id": i,
                                  "type": 'numeric',
                                  "format": Format(
@@ -1110,14 +1056,15 @@ def projections_future_deltas(geo, IsComparison, year: int = default_year):
     Output('graph11', 'figure'),
     Input('main-area', 'data'),
     Input('comparison-area', 'data'),
-    Input('year-comparison', 'data'),
     Input('area-scale-store', 'data'),
     Input('datatable7-interactivity', 'selected_columns'),
+    State('url', 'search')
 )
-def update_geo_figure8(geo, geo_c, year_comparison, scale, selected_columns):
+def update_geo_figure8(geo, geo_c, scale, selected_columns, lang_query):
+    language = get_language(lang_query)
     # Single area mode
 
-    if not year_comparison and (geo == geo_c or geo_c == None or (geo == None and geo_c != None)):
+    if (geo == geo_c or geo_c == None or (geo == None and geo_c != None)):
 
         # When no area is selected
         if geo == None and geo_c != None:
@@ -1129,8 +1076,8 @@ def update_geo_figure8(geo, geo_c, year_comparison, scale, selected_columns):
         geo = area_scale_primary_only(geo, scale)
 
         # Generating plot dataframe/table
-        if error_region_table_population(geo, default_year):
-            return error_region_table_population(geo, default_year)
+        if error_region_table_population(geo, default_year, language):
+            return error_region_table_population(geo, default_year, language)
         table1, table1_csd_plot = projections_future_deltas(geo, False)
 
         # Generating plot
@@ -1204,33 +1151,21 @@ def update_geo_figure8(geo, geo_c, year_comparison, scale, selected_columns):
 
     else:
         # Area Scaling up/down when user clicks area scale button on page 1
-        if year_comparison:
-            original_year, compared_year = year_comparison.split("-")
-            geo = area_scale_primary_only(geo, scale)
-        # Area Scaling up/down when user clicks area scale button on page 1
-        else:
-            geo, geo_c = area_scale_comparison(geo, geo_c, scale)
-            original_year, compared_year = default_year, default_year
+        geo, geo_c = area_scale_comparison(geo, geo_c, scale)
+        original_year, compared_year = default_year, default_year
 
         # Main Plot/Table
 
         # Generating main plot df/table
-        if year_comparison:
-            if error_region_table_population(geo, int(compared_year)):
-                return error_region_table_population(geo, int(compared_year))
-        else:
-            if error_region_table_population(geo, default_year):
-                return error_region_table_population(geo, default_year)
+        if error_region_table_population(geo, default_year, language):
+            return error_region_table_population(geo, default_year, language)
         table1, table1_csd_plot = (
-            projections_future_deltas(geo, False, int(compared_year)) if year_comparison else
             projections_future_deltas(geo, False)
         )
 
         # Generating main plot
 
-        fig_csd = make_subplots(rows=1, cols=2, subplot_titles=(
-            f"{geo} {int(compared_year)+10}" if year_comparison else geo,
-            f"{geo} {int(original_year)+10}" if year_comparison else geo_c), shared_yaxes=True,
+        fig_csd = make_subplots(rows=1, cols=2, subplot_titles=(geo, geo_c), shared_yaxes=True,
                                 shared_xaxes=True)
 
         for i, c in zip(table1_csd_plot['HH Category'].unique(), colors):
@@ -1246,14 +1181,9 @@ def update_geo_figure8(geo, geo_c, year_comparison, scale, selected_columns):
         # Comparison Plot/Table
 
         # Generating comparison plot df/table
-        if year_comparison:
-            if error_region_table_population(geo, default_year):
-                return error_region_table_population(geo, default_year)
-        else:
-            if error_region_table_population(geo_c, default_year):
-                return error_region_table_population(geo_c, default_year)
+        if error_region_table_population(geo_c, default_year, language):
+            return error_region_table_population(geo_c, default_year, language)
         table1_c, table1_csd_plot_c = (
-            projections_future_deltas(geo, True, int(original_year)) if year_comparison else
             projections_future_deltas(geo_c, True)
         )
 
@@ -1278,9 +1208,7 @@ def update_geo_figure8(geo, geo_c, year_comparison, scale, selected_columns):
             modebar_activecolor=modebar_activecolor,
             barmode='relative',
             plot_bgcolor='#F8F9F9',
-            title=f'{int(compared_year) + 10} and {int(original_year) + 10} Projected Household Gain/Loss'
-            if year_comparison else f'{default_year} Projected Household Gain/Loss '
-                                    f'({default_year} to {default_year + 10}',
+            title=f'{default_year} Projected Household Gain/Loss {default_year} to {default_year + 10}',
             legend=dict(font=dict(size=9)),
             legend_title="HH Size"
         )
@@ -1312,7 +1240,7 @@ def update_geo_figure8(geo, geo_c, year_comparison, scale, selected_columns):
             if i == 'HH Income Category':
                 col_list.append({"name": ["Areas", i], "id": i})
             else: # Projected Household Gain/Loss Table Name
-                col_list.append({"name": [f"{geo} {int(compared_year)+10}" if year_comparison else geo, i],
+                col_list.append({"name": [geo, i],
                                  "id": i,
                                  "type": 'numeric',
                                  "format": Format(
@@ -1325,7 +1253,7 @@ def update_geo_figure8(geo, geo_c, year_comparison, scale, selected_columns):
             if i == 'HH Income Category':
                 col_list.append({"name": ["Areas", i], "id": i})
             else: # Projected Household Gain/Loss Table Name
-                col_list.append({"name": [f"{geo} {int(original_year)+10} " if year_comparison else geo_c, i],
+                col_list.append({"name": [geo_c, i],
                                  "id": i,
                                  "type": 'numeric',
                                  "format": Format(
@@ -1454,11 +1382,12 @@ def projections_future_pop_income(geo, IsComparison, year: int = default_year):
     Output('graph12', 'figure'),
     Input('main-area', 'data'),
     Input('comparison-area', 'data'),
-    Input('year-comparison', 'data'),
     Input('area-scale-store', 'data'),
     Input('datatable8-interactivity', 'selected_columns'),
+    State('url', 'search'),
 )
-def update_geo_figure8(geo, geo_c, year_comparison, scale, selected_columns):
+def update_geo_figure8(geo, geo_c, scale, selected_columns, lang_query):
+    language = get_language(lang_query)
     # If selected area is None
     # -> Set default area (Canada)
 
@@ -1520,7 +1449,7 @@ def update_geo_figure8(geo, geo_c, year_comparison, scale, selected_columns):
         if len(str(clicked_code_c)) < 7:
             geo_c = None
 
-    if not year_comparison and (geo == geo_c or geo_c == None or (geo == None and geo_c != None)):
+    if (geo == geo_c or geo_c == None or (geo == None and geo_c != None)):
 
         # When no area is selected    
 
@@ -1611,33 +1540,21 @@ def update_geo_figure8(geo, geo_c, year_comparison, scale, selected_columns):
 
     else:
         # Area Scaling up/down when user clicks area scale button on page 1
-        if year_comparison:
-            original_year, compared_year = year_comparison.split("-")
-            geo = area_scale_primary_only(geo, scale)
-        # Area Scaling up/down when user clicks area scale button on page 1
-        else:
-            geo, geo_c = area_scale_comparison(geo, geo_c, scale)
-            original_year, compared_year = default_year, default_year
+        geo, geo_c = area_scale_comparison(geo, geo_c, scale)
+        original_year, compared_year = default_year, default_year
 
         # Main Plot/Table
 
         # Generating main plot df/table
-        if year_comparison:
-            if error_region_table_population(geo, int(compared_year), True):
-                return error_region_table_population(geo, int(compared_year), True)
-        else:
-            if error_region_table_population(geo, default_year, True):
-                return error_region_table_population(geo, default_year, True)
+        if error_region_table_population(geo, default_year, True):
+            return error_region_table_population(geo, default_year, True)
         table1, plot_df = (
-            projections_future_pop_income(geo, False, int(compared_year)) if year_comparison else
             projections_future_pop_income(geo, False)
         )
 
         # Generating main plot
 
-        fig_pgr = make_subplots(rows=1, cols=2, subplot_titles=(
-            f"{geo} {int(compared_year)+10}" if year_comparison else geo,
-            f"{geo} {int(original_year)+10}" if year_comparison else geo_c),
+        fig_pgr = make_subplots(rows=1, cols=2, subplot_titles=(geo, geo_c),
                                 shared_yaxes=True,
                                 shared_xaxes=True)
 
@@ -1656,14 +1573,9 @@ def update_geo_figure8(geo, geo_c, year_comparison, scale, selected_columns):
         # Comparison Plot/Table
 
         # Generating comparison plot df/table
-        if year_comparison:
-            if error_region_table_population(geo, default_year, True):
-                return error_region_table_population(geo, default_year, True)
-        else:
-            if error_region_table_population(geo_c, default_year, True):
-                return error_region_table_population(geo_c, default_year, True)
+        if error_region_table_population(geo_c, default_year, language, True):
+            return error_region_table_population(geo_c, default_year, language, True)
         table1_c, plot_df_c = (
-            projections_future_pop_income(geo, True, int(original_year)) if year_comparison else
             projections_future_pop_income(geo_c, True)
         )
 
@@ -1724,7 +1636,7 @@ def update_geo_figure8(geo, geo_c, year_comparison, scale, selected_columns):
             if i == 'HH Income Category':
                 col_list.append({"name": ["Areas", i], "id": i})
             else:
-                col_list.append({"name": [f"{geo} {compared_year} - {int(compared_year)+10}" if year_comparison else geo, i],
+                col_list.append({"name": [geo, i],
                                  "id": i,
                                  "type": 'numeric',
                                  "format": Format(
@@ -1737,7 +1649,7 @@ def update_geo_figure8(geo, geo_c, year_comparison, scale, selected_columns):
             if i == 'HH Income Category':
                 col_list.append({"name": ["Areas", i], "id": i})
             else:
-                col_list.append({"name": [f"{geo} {original_year} - {int(original_year)+10} " if year_comparison else geo_c, i],
+                col_list.append({"name": [geo_c, i],
                                  "id": i,
                                  "type": 'numeric',
                                  "format": Format(
@@ -1858,11 +1770,12 @@ def projections_future_pop_hh(geo, IsComparison: bool, year: int = default_year)
     Output('graph13', 'figure'),
     Input('main-area', 'data'),
     Input('comparison-area', 'data'),
-    Input('year-comparison', 'data'),
     Input('area-scale-store', 'data'),
     Input('datatable9-interactivity', 'selected_columns'),
+    State('url', 'search'),
 )
-def update_geo_figure9(geo, geo_c, year_comparison, scale, selected_columns):
+def update_geo_figure9(geo, geo_c, scale, selected_columns, lang_query):
+    language = get_language(lang_query)
     # If selected area is None
     # -> Set default area (Canada)
 
@@ -1924,7 +1837,7 @@ def update_geo_figure9(geo, geo_c, year_comparison, scale, selected_columns):
         if len(str(clicked_code_c)) < 7:
             geo_c = None
 
-    if not year_comparison and (geo == geo_c or geo_c == None or (geo == None and geo_c != None)):
+    if (geo == geo_c or geo_c == None or (geo == None and geo_c != None)):
 
         # When no area is selected
         if geo == None and geo_c != None:
@@ -2013,33 +1926,21 @@ def update_geo_figure9(geo, geo_c, year_comparison, scale, selected_columns):
 
     else:
         # Area Scaling up/down when user clicks area scale button on page 1
-        if year_comparison:
-            original_year, compared_year = year_comparison.split("-")
-            geo = area_scale_primary_only(geo, scale)
-        # Area Scaling up/down when user clicks area scale button on page 1
-        else:
-            geo, geo_c = area_scale_comparison(geo, geo_c, scale)
-            original_year, compared_year = default_year, default_year
+        geo, geo_c = area_scale_comparison(geo, geo_c, scale)
+        original_year, compared_year = default_year, default_year
 
         # Main Plot/Table
 
         # Generating main plot df/table
-        if year_comparison:
-            if error_region_table_population(geo, int(compared_year), True):
-                return error_region_table_population(geo, int(compared_year), True)
-        else:
-            if error_region_table_population(geo, default_year, True):
-                return error_region_table_population(geo, default_year, True)
+        if error_region_table_population(geo, default_year, True):
+            return error_region_table_population(geo, default_year, True)
         table1, plot_df = (
-            projections_future_pop_hh(geo, False, int(compared_year)) if year_comparison else
             projections_future_pop_hh(geo, False)
         )
 
         # Generating main plot
 
-        fig_pgr = make_subplots(rows=1, cols=2, subplot_titles=(
-            f"{geo} {int(compared_year)+10}" if year_comparison else geo,
-            f"{geo} {int(original_year)+10}" if year_comparison else geo_c), shared_yaxes=True,
+        fig_pgr = make_subplots(rows=1, cols=2, subplot_titles=(geo, geo_c), shared_yaxes=True,
                                 shared_xaxes=True)
 
         for s, c in zip(plot_df['Category'].unique(), m_r_colors):
@@ -2058,14 +1959,9 @@ def update_geo_figure9(geo, geo_c, year_comparison, scale, selected_columns):
         # Comparison Plot/Table
 
         # Generating comparison plot df/table
-        if year_comparison:
-            if error_region_table_population(geo, default_year):
-                return error_region_table_population(geo, default_year)
-        else:
-            if error_region_table_population(geo_c, default_year):
-                return error_region_table_population(geo_c, default_year)
+        if error_region_table_population(geo_c, default_year, language):
+            return error_region_table_population(geo_c, default_year, language)
         table1_c, plot_df_c = (
-            projections_future_pop_hh(geo, True, int(original_year)) if year_comparison else
             projections_future_pop_hh(geo_c, True)
         )
 
@@ -2125,7 +2021,7 @@ def update_geo_figure9(geo, geo_c, year_comparison, scale, selected_columns):
             if i == 'HH Size':
                 col_list.append({"name": ["Areas", i], "id": i})
             else:
-                col_list.append({"name": [f"{geo} {int(compared_year)+10}" if year_comparison else geo, i],
+                col_list.append({"name": [geo, i],
                                  "id": i,
                                  "type": 'numeric',
                                  "format": Format(
@@ -2138,7 +2034,7 @@ def update_geo_figure9(geo, geo_c, year_comparison, scale, selected_columns):
             if i == 'HH Size':
                 col_list.append({"name": ["Areas", i], "id": i})
             else:
-                col_list.append({"name": [f"{geo} {int(original_year)+10}" if year_comparison else geo_c, i],
+                col_list.append({"name": [geo_c, i],
                                  "id": i,
                                  "type": 'numeric',
                                  "format": Format(
@@ -2172,207 +2068,213 @@ def update_geo_figure9(geo, geo_c, year_comparison, scale, selected_columns):
         return col_list, table1_j.to_dict(
             'record'), style_data_conditional, style_cell_conditional, style_header_conditional, fig_pgr
 
-@callback(
-    Output("HH-IC-page3", "children"),
-    Output("HH-size-page3", "children"),
-    Output("HH-size-IC-page3", "children"),
-    Output("HH-gain-page3", "children"),
-    Output("growth-IC-page3", "children"),
-    Input('year-comparison', 'data'),
-    Input('datatable9-interactivity', 'selected_columns'),
-)
-def change_title_labels(year_comparison, _):
-    # change based off of url
-    year = default_year
-    if year_comparison:
-        original_year, compared_year = year_comparison.split("-")
-        prediction_year = int(original_year) + 10
-        compared_prediction = int(compared_year) + 10
-
-        return (
-            html.Strong(f'{compared_prediction} vs {prediction_year} Household Projections by Income Category'),
-            html.Strong(f'{compared_prediction} vs {prediction_year} Household Projections by Household Size'),
-            html.Strong(f'{compared_prediction} vs {prediction_year} Projected Households by Household Size and Income Category'),
-            html.Strong(f'{compared_prediction} vs {prediction_year} Projected Household Gain/Loss ({compared_year} to {compared_prediction} vs {year} to {prediction_year})'),
-            html.Strong(f'{compared_prediction} vs {prediction_year} Projected Municipal vs Regional Household Growth Rates by Income Category')
-        )
-    prediction_year = default_year + 10
-    return (
-        html.Strong(f'{prediction_year} Household Projections by Income Category'),
-        html.Strong(f'{prediction_year} Household Projections by Household Size'),
-        html.Strong(f'{prediction_year} Projected Households by Household Size and Income Category'),
-        html.Strong(f'{prediction_year} Projected Household Gain/Loss ({year} to {prediction_year})'),
-        html.Strong(f'{prediction_year} Projected Municipal vs Regional Household Growth Rates by Income Category')
-    )
-
-@callback(
-    Output("HH-IC-description-page3", "children"),
-    Output("HH-IC-graph-description-page3", "children"),
-    Output("HH-size-description-page3", "children"),
-    Output("HH-size-graph-description-page3", "children"),
-    Output("HH-size-IC-description-page3", "children"),
-    Output("HH-size-IC-graph-description-page3", "children"),
-    Output("HH-gain-description-page3", "children"),
-    Output("HH-gain-graph-description-page3", "children"),
-    Input('year-comparison', 'data'),
-    Input('datatable9-interactivity', 'selected_columns'),
-)
-def change_description_labels(year_comparison, _):
-    # change based off of url
-    if year_comparison:
-        original_year, compared_year = year_comparison.split("-")
-        prediction_year = int(original_year) + 10
-        compared_prediction = int(compared_year) + 10
-        return (
-            html.H6(
-                f'The following table shows the total number of households in {compared_year} and {original_year}, '
-                f'for each household income category, as well as the projected gain ('
-                f'positive) or loss (negative) of households between {compared_year}, '
-                f'{original_year} and 10 years in the future by applying the percentage change from '
-                f'2006 census data, to current households.'),
-            html.H6(
-                f'The following graph illustrates the above table, displaying the '
-                f'total number of households in {compared_year} and {original_year}, for each income category, '
-                f'with the projected gain of households between these years and '
-                f'{compared_prediction} and {prediction_year} stacked on top, and the projected loss of '
-                f'household stacked underneath.'),
-            html.H6(
-                f'The following table shows the total number of households in {compared_year} and {original_year}, '
-                f'for each household size category, as well as the projected gain ('
-                f'positive) or loss (negative) of households over the period between {compared_year}, '
-                f'{original_year} and 10 years in the future by applying the percentage change from '
-                f'2006 census data, to current households.'),
-            html.H6(
-                f'The following graph illustrates the above table, displaying the '
-                f'total number of households in {compared_year} and {original_year}, for each size of household, '
-                f'with the projected gain of households between {compared_year} and {original_year} '
-                f'and in ten years stacked on top, and the projected loss of '
-                f'household stacked underneath.'),
-            html.H6(
-                f'The following table shows the projected total number of households in '
-                f'{compared_prediction} and {prediction_year} by household size and income category.'),
-            html.H6(
-                f'The following graph illustrates the above table, displaying the '
-                f'projected total number of households in {compared_prediction} and {prediction_year} by '
-                f'household size and income category. Each bar is broken out by the '
-                f'projected number of households within each income category.'),
-            html.H6(
-                f'The following table shows the projected gain or loss of households '
-                f'by household size and income. These values represent projections '
-                f'for the period between {compared_year} and {original_year} and 10 years in the future.'),
-            html.H6(
-                f'The following graph illustrates the above table, displaying the '
-                f'projected gain or loss of households between {compared_year} and {original_year} and '
-                f'in ten years for each size of household. Each bar is broken '
-                f'out by the projected number of households within each income '
-                f'category. Projected loss of households are stacked underneath.'),
-        )
-
-    prediction_year = int(default_year) + 10
-    compared_prediction = int(default_year) + 10
-    year = default_year
-    year_minus_15 = year-15
-    return (
-        html.H6(
-            f'The following table shows the total number of households in {year}, '
-            f'for each household income category, as well as the projected gain ('
-            f'positive) or loss (negative) of households over the period between '
-            f'{year} and {prediction_year} by applying the percentage change from '
-            f'{year_minus_15}-{year}, to {year} households.'),
-        html.H6(
-            f'The following graph illustrates the above table, displaying the '
-            f'total number of households in {year}, for each income category, '
-            f'with the projected gain of households between {year} and '
-            f'{prediction_year} stacked on top, and the projected loss of '
-            f'household stacked underneath.'),
-        html.H6(
-            f'The following table shows the total number of households in {year}, '
-            f'for each household size category, as well as the projected gain ('
-            f'positive) or loss (negative) of households over the period between '
-            f'{year} and {prediction_year} by applying the percentage change from '
-            f'{year_minus_15}-{year}, to {year} households.'),
-        html.H6(
-            f'The following graph illustrates the above table, displaying the '
-            f'total number of households in {year}, for each size of household, '
-            f'with the projected gain of households between {year} and '
-            f'{prediction_year} stacked on top, and the projected loss of '
-            f'household stacked underneath.'),
-        html.H6(
-            f'The following table shows the projected total number of households in '
-            f'{prediction_year} by household size and income category.'),
-        html.H6(
-            f'The following graph illustrates the above table, displaying the '
-            f'projected total number of households in {prediction_year} by '
-            f'household size and income category. Each bar is broken out by the '
-            f'projected number of households within each income category.'),
-        html.H6(
-            f'The following table shows the projected gain or loss of households '
-            f'by household size and income. These values represent projections '
-            f'for the period between {year} and {prediction_year}.'),
-        html.H6(
-            f'The following graph illustrates the above table, displaying the '
-            f'projected gain or loss of households between {year} and '
-            f'{prediction_year} for each size of household. Each bar is broken '
-            f'out by the projected number of households within each income '
-            f'category. Projected loss of households are stacked underneath.'),
-    )
-
-# Split into two for easier debugging and reading
-@callback(
-    Output("growth-IC-description-page3", "children"),
-    Output("growth-IC-description2-page3", "children"),
-    Output("growth-IC-description3-page3", "children"),
-    Output("growth-IC-description4-page3", "children"),
-    Input('year-comparison', 'data'),
-    Input('datatable9-interactivity', 'selected_columns'),
-)
-def change_description_labels_2(year_comparison, _):
-    # change based off of url
-    if year_comparison:
-        original_year, compared_year = year_comparison.split("-")
-        prediction_year = int(original_year) + 10
-        compared_prediction = int(compared_year) + 10
-        return (
-            html.H6(
-                f'The following table illustrates the projected household growth '
-                f'rates between {compared_year}, {original_year} and in ten years in the community and '
-                f'{compared_prediction}, {prediction_year} in the surrounding region for each income category.'),
-            html.H6(
-                f'The following graph illustrates the above table, displaying the '
-                f'projected household growth rates between {compared_year}, {original_year} and in '
-                f'{compared_prediction}, {prediction_year} in the community and in the community and surrounding region'
-                f' for each income category.'),
-            html.H6(
-                f'The following table illustrates the projected household growth '
-                f'rates between {compared_year}, {original_year} and in {compared_prediction}, '
-                f'{prediction_year} in the community and surrounding region for each household size.'),
-            html.H6(
-                f'The following graph illustrates the above table, displaying the '
-                f'projected household growth rates {compared_year}, {original_year} and in {compared_prediction}, '
-                f'{prediction_year} in the community and surrounding region for each income category.')
-        )
-
-    prediction_year = int(default_year) + 10
-    compared_prediction = int(default_year) + 10
-    year = default_year
-    year_minus_15 = year-15
-    return (
-        html.H6(
-            f'The following table illustrates the projected household growth '
-            f'rates between {year} and {prediction_year} in the community and '
-            f'surrounding region for each income category.'),
-        html.H6(
-            f'The following graph illustrates the above table, displaying the '
-            f'projected household growth rates between {year} and '
-            f'{prediction_year} in the community and surrounding region for each '
-            f'income category.'),
-        html.H6(
-            f'The following table illustrates the projected household growth '
-            f'rates between {year} and {prediction_year} in the community and '
-            f'surrounding region for each household size.'),
-        html.H6(
-            f'The following graph illustrates the above table, displaying the '
-            f'projected household growth rates between {year} and '
-            f'{prediction_year} in the community and surrounding region for each '
-            f'income category.')
-    )
+# @callback(
+#     Output("HH-IC-page3", "children"),
+#     Output("HH-size-page3", "children"),
+#     Output("HH-size-IC-page3", "children"),
+#     Output("HH-gain-page3", "children"),
+#     Output("growth-IC-page3", "children"),
+#     Input('year-comparison', 'data'),
+#     Input('datatable9-interactivity', 'selected_columns'),
+#     State('url', 'search'),
+# )
+# def change_title_labels(year_comparison, _, lang_query):
+#     language = get_language(lang_query)
+#     # change based off of url
+#     year = default_year
+#     if year_comparison:
+#         original_year, compared_year = year_comparison.split("-")
+#         prediction_year = int(original_year) + 10
+#         compared_prediction = int(compared_year) + 10
+#
+#         return (
+#             html.Strong(f'{compared_prediction} vs {prediction_year} Household Projections by Income Category'),
+#             html.Strong(f'{compared_prediction} vs {prediction_year} Household Projections by Household Size'),
+#             html.Strong(f'{compared_prediction} vs {prediction_year} Projected Households by Household Size and Income Category'),
+#             html.Strong(f'{compared_prediction} vs {prediction_year} Projected Household Gain/Loss ({compared_year} to {compared_prediction} vs {year} to {prediction_year})'),
+#             html.Strong(f'{compared_prediction} vs {prediction_year} Projected Municipal vs Regional Household Growth Rates by Income Category')
+#         )
+#     prediction_year = default_year + 10
+#     return (
+#         html.Strong(f'{prediction_year} Household Projections by Income Category'),
+#         html.Strong(f'{prediction_year} Household Projections by Household Size'),
+#         html.Strong(f'{prediction_year} Projected Households by Household Size and Income Category'),
+#         html.Strong(f'{prediction_year} Projected Household Gain/Loss ({year} to {prediction_year})'),
+#         html.Strong(f'{prediction_year} Projected Municipal vs Regional Household Growth Rates by Income Category')
+#     )
+#
+# @callback(
+#     Output("HH-IC-description-page3", "children"),
+#     Output("HH-IC-graph-description-page3", "children"),
+#     Output("HH-size-description-page3", "children"),
+#     Output("HH-size-graph-description-page3", "children"),
+#     Output("HH-size-IC-description-page3", "children"),
+#     Output("HH-size-IC-graph-description-page3", "children"),
+#     Output("HH-gain-description-page3", "children"),
+#     Output("HH-gain-graph-description-page3", "children"),
+#     Input('year-comparison', 'data'),
+#     Input('datatable9-interactivity', 'selected_columns'),
+#     State('url', 'search'),
+# )
+# def change_description_labels(year_comparison, _, lang_query):
+#     language = get_language(lang_query)
+#     # change based off of url
+#     if year_comparison:
+#         original_year, compared_year = year_comparison.split("-")
+#         prediction_year = int(original_year) + 10
+#         compared_prediction = int(compared_year) + 10
+#         return (
+#             html.H6(
+#                 f'The following table shows the total number of households in {compared_year} and {original_year}, '
+#                 f'for each household income category, as well as the projected gain ('
+#                 f'positive) or loss (negative) of households between {compared_year}, '
+#                 f'{original_year} and 10 years in the future by applying the percentage change from '
+#                 f'2006 census data, to current households.'),
+#             html.H6(
+#                 f'The following graph illustrates the above table, displaying the '
+#                 f'total number of households in {compared_year} and {original_year}, for each income category, '
+#                 f'with the projected gain of households between these years and '
+#                 f'{compared_prediction} and {prediction_year} stacked on top, and the projected loss of '
+#                 f'household stacked underneath.'),
+#             html.H6(
+#                 f'The following table shows the total number of households in {compared_year} and {original_year}, '
+#                 f'for each household size category, as well as the projected gain ('
+#                 f'positive) or loss (negative) of households over the period between {compared_year}, '
+#                 f'{original_year} and 10 years in the future by applying the percentage change from '
+#                 f'2006 census data, to current households.'),
+#             html.H6(
+#                 f'The following graph illustrates the above table, displaying the '
+#                 f'total number of households in {compared_year} and {original_year}, for each size of household, '
+#                 f'with the projected gain of households between {compared_year} and {original_year} '
+#                 f'and in ten years stacked on top, and the projected loss of '
+#                 f'household stacked underneath.'),
+#             html.H6(
+#                 f'The following table shows the projected total number of households in '
+#                 f'{compared_prediction} and {prediction_year} by household size and income category.'),
+#             html.H6(
+#                 f'The following graph illustrates the above table, displaying the '
+#                 f'projected total number of households in {compared_prediction} and {prediction_year} by '
+#                 f'household size and income category. Each bar is broken out by the '
+#                 f'projected number of households within each income category.'),
+#             html.H6(
+#                 f'The following table shows the projected gain or loss of households '
+#                 f'by household size and income. These values represent projections '
+#                 f'for the period between {compared_year} and {original_year} and 10 years in the future.'),
+#             html.H6(
+#                 f'The following graph illustrates the above table, displaying the '
+#                 f'projected gain or loss of households between {compared_year} and {original_year} and '
+#                 f'in ten years for each size of household. Each bar is broken '
+#                 f'out by the projected number of households within each income '
+#                 f'category. Projected loss of households are stacked underneath.'),
+#         )
+#
+#     prediction_year = int(default_year) + 10
+#     compared_prediction = int(default_year) + 10
+#     year = default_year
+#     year_minus_15 = year-15
+#     return (
+#         html.H6(
+#             f'The following table shows the total number of households in {year}, '
+#             f'for each household income category, as well as the projected gain ('
+#             f'positive) or loss (negative) of households over the period between '
+#             f'{year} and {prediction_year} by applying the percentage change from '
+#             f'{year_minus_15}-{year}, to {year} households.'),
+#         html.H6(
+#             f'The following graph illustrates the above table, displaying the '
+#             f'total number of households in {year}, for each income category, '
+#             f'with the projected gain of households between {year} and '
+#             f'{prediction_year} stacked on top, and the projected loss of '
+#             f'household stacked underneath.'),
+#         html.H6(
+#             f'The following table shows the total number of households in {year}, '
+#             f'for each household size category, as well as the projected gain ('
+#             f'positive) or loss (negative) of households over the period between '
+#             f'{year} and {prediction_year} by applying the percentage change from '
+#             f'{year_minus_15}-{year}, to {year} households.'),
+#         html.H6(
+#             f'The following graph illustrates the above table, displaying the '
+#             f'total number of households in {year}, for each size of household, '
+#             f'with the projected gain of households between {year} and '
+#             f'{prediction_year} stacked on top, and the projected loss of '
+#             f'household stacked underneath.'),
+#         html.H6(
+#             f'The following table shows the projected total number of households in '
+#             f'{prediction_year} by household size and income category.'),
+#         html.H6(
+#             f'The following graph illustrates the above table, displaying the '
+#             f'projected total number of households in {prediction_year} by '
+#             f'household size and income category. Each bar is broken out by the '
+#             f'projected number of households within each income category.'),
+#         html.H6(
+#             f'The following table shows the projected gain or loss of households '
+#             f'by household size and income. These values represent projections '
+#             f'for the period between {year} and {prediction_year}.'),
+#         html.H6(
+#             f'The following graph illustrates the above table, displaying the '
+#             f'projected gain or loss of households between {year} and '
+#             f'{prediction_year} for each size of household. Each bar is broken '
+#             f'out by the projected number of households within each income '
+#             f'category. Projected loss of households are stacked underneath.'),
+#     )
+#
+# # Split into two for easier debugging and reading
+# @callback(
+#     Output("growth-IC-description-page3", "children"),
+#     Output("growth-IC-description2-page3", "children"),
+#     Output("growth-IC-description3-page3", "children"),
+#     Output("growth-IC-description4-page3", "children"),
+#     Input('year-comparison', 'data'),
+#     Input('datatable9-interactivity', 'selected_columns'),
+#     State('url', 'search'),
+# )
+# def change_description_labels_2(year_comparison, _, lang_query):
+#     language = get_language(lang_query)
+#     # change based off of url
+#     if year_comparison:
+#         original_year, compared_year = year_comparison.split("-")
+#         prediction_year = int(original_year) + 10
+#         compared_prediction = int(compared_year) + 10
+#         return (
+#             html.H6(
+#                 f'The following table illustrates the projected household growth '
+#                 f'rates between {compared_year}, {original_year} and in ten years in the community and '
+#                 f'{compared_prediction}, {prediction_year} in the surrounding region for each income category.'),
+#             html.H6(
+#                 f'The following graph illustrates the above table, displaying the '
+#                 f'projected household growth rates between {compared_year}, {original_year} and in '
+#                 f'{compared_prediction}, {prediction_year} in the community and in the community and surrounding region'
+#                 f' for each income category.'),
+#             html.H6(
+#                 f'The following table illustrates the projected household growth '
+#                 f'rates between {compared_year}, {original_year} and in {compared_prediction}, '
+#                 f'{prediction_year} in the community and surrounding region for each household size.'),
+#             html.H6(
+#                 f'The following graph illustrates the above table, displaying the '
+#                 f'projected household growth rates {compared_year}, {original_year} and in {compared_prediction}, '
+#                 f'{prediction_year} in the community and surrounding region for each income category.')
+#         )
+#
+#     prediction_year = int(default_year) + 10
+#     compared_prediction = int(default_year) + 10
+#     year = default_year
+#     year_minus_15 = year-15
+#     return (
+#         html.H6(
+#             f'The following table illustrates the projected household growth '
+#             f'rates between {year} and {prediction_year} in the community and '
+#             f'surrounding region for each income category.'),
+#         html.H6(
+#             f'The following graph illustrates the above table, displaying the '
+#             f'projected household growth rates between {year} and '
+#             f'{prediction_year} in the community and surrounding region for each '
+#             f'income category.'),
+#         html.H6(
+#             f'The following table illustrates the projected household growth '
+#             f'rates between {year} and {prediction_year} in the community and '
+#             f'surrounding region for each household size.'),
+#         html.H6(
+#             f'The following graph illustrates the above table, displaying the '
+#             f'projected household growth rates between {year} and '
+#             f'{prediction_year} in the community and surrounding region for each '
+#             f'income category.')
+#     )
