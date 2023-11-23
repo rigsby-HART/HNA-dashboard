@@ -10,7 +10,8 @@ from plotly.subplots import make_subplots
 from helpers.create_engine import income_indigenous_year, default_year
 from helpers.style_helper import style_data_conditional, style_header_conditional
 from helpers.table_helper import area_scale_comparison, area_scale_primary_only, storage_variables, \
-    error_indigenous_table, error_indigenous_figure, query_table
+    error_indigenous_table, error_indigenous_figure, query_table, get_language
+from pages.page4_helpers.page4_localization import localization
 
 from pages.page4_helpers.page4_main import layout
 
@@ -83,7 +84,7 @@ layout = layout(default_year)
 
 # Table generator
 
-def table_amhi_shelter_cost_ind(geo, IsComparison, year:int=default_year):
+def table_amhi_shelter_cost_ind(geo, IsComparison, language, year:int=default_year):
     # joined_df_filtered = income_indigenous_year[year].query('Geography == ' + f'"{geo}"')
     geo, joined_df_filtered = query_table(geo, year, income_indigenous_year)
     portion_of_total_hh = []
@@ -139,8 +140,10 @@ def table_amhi_shelter_cost_ind(geo, IsComparison, year:int=default_year):
     Input('year-comparison', 'data'),
     Input('datatable-interactivity_ind', 'selected_columns'),
     Input('area-scale-store', 'data'),
+    State('url', 'search')
 )
-def update_table1(geo, geo_c, year_comparison, selected_columns, scale):
+def update_table1(geo, geo_c, year_comparison, selected_columns, scale, lang_query):
+    language = get_language(lang_query)
     # Single area mode
     if not year_comparison and (geo == geo_c or geo_c == None or (geo == None and geo_c != None)):
 
@@ -154,9 +157,9 @@ def update_table1(geo, geo_c, year_comparison, selected_columns, scale):
         geo = area_scale_primary_only(geo, scale)
 
         # Generating table
-        if error_indigenous_table(geo, default_year):
+        if error_indigenous_table(geo, default_year, ):
             return error_indigenous_table(geo, default_year)
-        table, median_income, median_rent = table_amhi_shelter_cost_ind(geo, IsComparison=False)
+        table, median_income, median_rent = table_amhi_shelter_cost_ind(geo, False, language)
 
         # Generating callback output to update table
         col_list = []
@@ -215,8 +218,8 @@ def update_table1(geo, geo_c, year_comparison, selected_columns, scale):
                 return error_indigenous_table(geo, default_year)
         # Generating main table
         table, median_income, median_rent = (
-            table_amhi_shelter_cost_ind(geo, False, int(compared_year)) if year_comparison else
-            table_amhi_shelter_cost_ind(geo, False)
+            table_amhi_shelter_cost_ind(geo, False, language, int(compared_year)) if year_comparison else
+            table_amhi_shelter_cost_ind(geo, False, language)
         )
 
         # Comparison Table
@@ -231,8 +234,8 @@ def update_table1(geo, geo_c, year_comparison, selected_columns, scale):
                 return error_indigenous_table(geo_c, default_year)
         # Generating comparison table
         table_c, median_income_c, median_rent_c = (
-            table_amhi_shelter_cost_ind(geo, True, int(original_year)) if year_comparison else
-            table_amhi_shelter_cost_ind(geo_c, True)
+            table_amhi_shelter_cost_ind(geo, True, language, int(original_year)) if year_comparison else
+            table_amhi_shelter_cost_ind(geo_c, True, language)
         )
 
         # Merging main and comparison table
@@ -307,25 +310,27 @@ chn_columns = [column_format + c for c in x_base_chn]
 
 
 # Plot dataframe generator
-def plot_df_core_housing_need_by_income(geo, IsComparison, year:int=default_year):
+def plot_df_core_housing_need_by_income(geo, IsComparison, language, year:int=default_year):
     geo, joined_df_filtered = query_table(geo, year, income_indigenous_year)
 
     x_list = []
 
     i = 0
-    for b, c in zip(x_base, x_columns):
+    row_labels = ["very-low-income", "low-income", "moderate-income", "median-income", "high-income"]
+    base = [localization[language][label] for label in row_labels]
+    for income_category, c in zip(base, x_columns):
         value = str(joined_df_filtered[c].tolist()[0])
         if i < 4:
             if IsComparison != True:
-                x = b + '<br>' + " ($" + value + ")"
+                x = localization[language]["price-format-label"].format(b=income_category, value=value)
             else:
-                x = " ($" + value + ") "
+                x = localization[language]["price-format-label-comp"].format(b=income_category, value=value)
             x_list.append(x)
         else:
             if IsComparison != True:
-                x = b + '<br>' + " (>$" + value + ")"
+                x = localization[language]["price-format-label-last"].format(b=income_category, value=value)
             else:
-                x = " (>$" + value + ") "
+                x = localization[language]["price-format-label-last-comp"].format(b=income_category, value=value)
             x_list.append(x)
         i += 1
 
@@ -354,8 +359,10 @@ def plot_df_core_housing_need_by_income(geo, IsComparison, year:int=default_year
     Input('year-comparison', 'data'),
     Input('area-scale-store', 'data'),
     Input('datatable-interactivity_ind', 'selected_columns'),
+    State('url', 'search')
 )
-def update_geo_figure(geo, geo_c, year_comparison, scale, refresh):
+def update_geo_figure(geo, geo_c, year_comparison, scale, refresh, lang_query):
+    language = get_language(lang_query)
     # Single area mode
     if not year_comparison and (geo == geo_c or geo_c == None or (geo == None and geo_c != None)):
 
@@ -369,9 +376,9 @@ def update_geo_figure(geo, geo_c, year_comparison, scale, refresh):
         geo = area_scale_primary_only(geo, scale)
 
         # Generating dataframe for plot
-        if error_indigenous_figure(geo, default_year):
-            return error_indigenous_figure(geo, default_year)
-        plot_df = plot_df_core_housing_need_by_income(geo, IsComparison=False)
+        if error_indigenous_figure(geo, default_year, language):
+            return error_indigenous_figure(geo, default_year, language)
+        plot_df = plot_df_core_housing_need_by_income(geo, False, language)
 
         # Generating plot
         fig = go.Figure()
@@ -395,20 +402,20 @@ def update_geo_figure(geo, geo_c, year_comparison, scale, refresh):
             modebar_color=modebar_color,
             modebar_activecolor=modebar_activecolor,
             plot_bgcolor='#F8F9F9',
-            title=f'Percentage of Indigenous Households in Core Housing Need, by Income Category, 2021<br>{geo}',
+            title=f'{localization[language]["fig2-title"]}, {default_year}<br>{geo}',
             legend_title="Income",
         )
         fig.update_xaxes(
             fixedrange=True,
             range=[0, 1],
             tickformat=',.0%',
-            title='% of Indigenous HH',
+            title=localization[language]["percent-ind-hh"],
             tickfont=dict(size=10)
         )
         fig.update_yaxes(
             tickfont=dict(size=10),
             fixedrange=True,
-            title='Income Categories<br>(Max. affordable shelter costs)'
+            title=f'{localization[language]["income-category"]}<br>{localization[language]["affordable-shelter"]}'
         )
 
         return fig
@@ -435,14 +442,14 @@ def update_geo_figure(geo, geo_c, year_comparison, scale, refresh):
 
         # Generating dataframe for main plot
         if year_comparison:
-            if error_indigenous_figure(geo, int(compared_year)):
-                return error_indigenous_figure(geo, int(compared_year),)
+            if error_indigenous_figure(geo, int(compared_year), language):
+                return error_indigenous_figure(geo, int(compared_year), language)
         else:
-            if error_indigenous_figure(geo, default_year):
-                return error_indigenous_figure(geo, default_year)
+            if error_indigenous_figure(geo, default_year, language):
+                return error_indigenous_figure(geo, default_year, language)
         plot_df = (
-            plot_df_core_housing_need_by_income(geo, False, int(compared_year)) if year_comparison else
-            plot_df_core_housing_need_by_income(geo, False)
+            plot_df_core_housing_need_by_income(geo, False, language, int(compared_year)) if year_comparison else
+            plot_df_core_housing_need_by_income(geo, False, language)
         )
 
         # Generating main plot
@@ -460,20 +467,21 @@ def update_geo_figure(geo, geo_c, year_comparison, scale, refresh):
             ), row=1, col=1)
             n += 1
 
-        fig.update_yaxes(title='Income Categories<br>(Max. affordable shelter costs)', row=1, col=1)
+        fig.update_yaxes(title=f'{localization[language]["income-category"]}<br>'
+                                f'{localization[language]["affordable-shelter"]}', row=1, col=1)
 
         # Comparison plot
 
         # Generating dataframe for comparison plot
         if year_comparison:
-            if error_indigenous_figure(geo, default_year):
-                return error_indigenous_figure(geo, default_year)
+            if error_indigenous_figure(geo, default_year, language):
+                return error_indigenous_figure(geo, default_year, language)
         else:
-            if error_indigenous_figure(geo_c, default_year):
-                return error_indigenous_figure(geo_c, default_year)
+            if error_indigenous_figure(geo_c, default_year, language):
+                return error_indigenous_figure(geo_c, default_year, language)
         plot_df_c = (
-            plot_df_core_housing_need_by_income(geo, True, int(original_year)) if year_comparison else
-            plot_df_core_housing_need_by_income(geo_c, True)
+            plot_df_core_housing_need_by_income(geo, True, language, int(original_year)) if year_comparison else
+            plot_df_core_housing_need_by_income(geo_c, True, language)
         )
 
         # Generating comparison plot
@@ -494,7 +502,7 @@ def update_geo_figure(geo, geo_c, year_comparison, scale, refresh):
 
         # Plot layout settings
         fig.update_layout(
-            title='Percentage of Indigenous Households in Core Housing Need, by Income Category, 2021',
+            title=f'{localization[language]["fig2-title"]}, {default_year}',
             showlegend=False,
             width=900,
             legend=dict(font=dict(size=8)),
@@ -513,7 +521,7 @@ def update_geo_figure(geo, geo_c, year_comparison, scale, refresh):
             fixedrange=True,
             range=[0, 1],
             tickformat=',.0%',
-            title='% of Indigenous HH',
+            title=localization[language]["percent-ind-hh"],
             title_font=dict(size=10),
             tickfont=dict(size=10)
         )
@@ -525,7 +533,7 @@ def update_geo_figure(geo, geo_c, year_comparison, scale, refresh):
 # and 2021 Affordable Housing Deficit for Indigenous Households (table)
 
 # plot df, table generator
-def plot_df_core_housing_need_by_amhi(geo, IsComparison, year:int=default_year):
+def plot_df_core_housing_need_by_amhi(geo, IsComparison, language, year:int=default_year):
     geo, joined_df_filtered = query_table(geo, year, income_indigenous_year)
 
     x_list = []
@@ -571,7 +579,9 @@ def plot_df_core_housing_need_by_amhi(geo, IsComparison, year:int=default_year):
     h_hold_value = []
     hh_p_num_list_full = []
     hh_column_name = ['1 person', '2 persons', '3 persons', '4 persons', '5 or more persons household']
-    hh_p_num_list = ['1 Person', '2 Person', '3 Person', '4 Person', '5+ Person']
+    # hh_p_num_list = ['1 Person', '2 Person', '3 Person', '4 Person', '5+ Person']
+    row_labels = ["1-person", "2-person", "3-person", "4-person", "5+-person"]
+    hh_p_num_list = [localization[language][label] for label in row_labels]
     for h, hc in zip(hh_p_num_list, hh_column_name):
         for i in income_lv_list:
             column = f'Aboriginal household status-{hc}-Households with income {i}-Households in core housing need'
@@ -636,8 +646,10 @@ def plot_df_core_housing_need_by_amhi(geo, IsComparison, year:int=default_year):
     Input('year-comparison', 'data'),
     Input('area-scale-store', 'data'),
     Input('datatable-interactivity_ind', 'selected_columns'),
+    State('url', 'search')
 )
-def update_geo_figure34(geo, geo_c, year_comparison, scale, refresh):
+def update_geo_figure34(geo, geo_c, year_comparison, scale, refresh, lang_query):
+    language = get_language(lang_query)
     # Single area mode
 
     if not year_comparison and (geo == geo_c or geo_c == None or (geo == None and geo_c != None)):
@@ -653,8 +665,8 @@ def update_geo_figure34(geo, geo_c, year_comparison, scale, refresh):
 
         # Generating dataframe for plot
         if error_indigenous_table(geo, default_year):
-            return ([error_indigenous_figure(geo, default_year)] + list(error_indigenous_table(geo, default_year)))
-        plot_df, table2 = plot_df_core_housing_need_by_amhi(geo, False)
+            return ([error_indigenous_figure(geo, default_year, language)] + list(error_indigenous_table(geo, default_year)))
+        plot_df, table2 = plot_df_core_housing_need_by_amhi(geo, False, language)
         table2 = table2.drop('Income Category', axis=1)
         # Generating plot
         fig2 = go.Figure()
@@ -667,7 +679,7 @@ def update_geo_figure34(geo, geo_c, year_comparison, scale, refresh):
                 name=h,
                 marker_color=c,
                 orientation='h',
-                hovertemplate='%{y}, ' + f'HH Size: {h} - ' + '%{x: .2%}<extra></extra>',
+                hovertemplate='%{y}, ' + f'{localization[language]["hh-size"]}: {h} - ' + '%{x: .2%}<extra></extra>',
             ))
 
         # Plot layout settings    
@@ -680,18 +692,18 @@ def update_geo_figure34(geo, geo_c, year_comparison, scale, refresh):
             yaxis=dict(autorange="reversed"),
             barmode='stack',
             plot_bgcolor='#F8F9F9',
-            title=f'Percentage of Indigenous Households in Core Housing Need, by Income and HH Size, 2021<br>{geo}',
-            legend_title="Household Size"
+            title=f'{localization[language]["fig-title"]}, {default_year}<br>{geo}',
+            legend_title=localization[language]["hh-size"]
         )
         fig2.update_yaxes(
             tickfont=dict(size=10),
             fixedrange=True,
-            title='Income Categories<br>(Max. affordable shelter costs)'
+            title=f'{localization[language]["income-category"]}<br>{localization[language]["affordable-shelter"]}'
         )
         fig2.update_xaxes(
             fixedrange=True,
             tickformat=',.0%',
-            title='% of Indigenous HH',
+            title=localization[language]["percent-ind-hh"],
             tickfont=dict(size=10)
         )
 
@@ -753,14 +765,14 @@ def update_geo_figure34(geo, geo_c, year_comparison, scale, refresh):
         # Generating dataframe for main plot
         if year_comparison:
             if error_indigenous_table(geo, int(compared_year)):
-                return [error_indigenous_figure(geo, int(compared_year))] + \
+                return [error_indigenous_figure(geo, int(compared_year), language)] + \
                     list(error_indigenous_table(geo, int(compared_year)))
         else:
             if error_indigenous_table(geo, default_year):
-                return [error_indigenous_figure(geo, default_year)] + list(error_indigenous_table(geo, default_year))
+                return [error_indigenous_figure(geo, default_year, language)] + list(error_indigenous_table(geo, default_year))
         plot_df, table2 = (
-            plot_df_core_housing_need_by_amhi(geo, False, int(compared_year)) if year_comparison else
-            plot_df_core_housing_need_by_amhi(geo, False)
+            plot_df_core_housing_need_by_amhi(geo, False, language, int(compared_year)) if year_comparison else
+            plot_df_core_housing_need_by_amhi(geo, False, language)
         )
 
         # Generating main plot
@@ -778,20 +790,21 @@ def update_geo_figure34(geo, geo_c, year_comparison, scale, refresh):
             ), row=1, col=1)
             n += 1
 
-        fig2.update_yaxes(title='Income Categories<br>(Max. affordable shelter costs)', row=1, col=1)
+        fig2.update_yaxes(title=f'{localization[language]["income-category"]}<br>'
+                                f'{localization[language]["affordable-shelter"]}', row=1, col=1)
 
         # Comparison plot
 
         # Generating dataframe for comparison plot
         if year_comparison:
             if error_indigenous_table(geo, default_year):
-                return [error_indigenous_figure(geo, default_year)] + list(error_indigenous_table(geo, default_year))
+                return [error_indigenous_figure(geo, default_year, language)] + list(error_indigenous_table(geo, default_year))
         else:
             if error_indigenous_table(geo_c, default_year):
-                return [error_indigenous_figure(geo_c, default_year)] + list(error_indigenous_table(geo_c, default_year))
+                return [error_indigenous_figure(geo_c, default_year, language)] + list(error_indigenous_table(geo_c, default_year))
         plot_df_c, table2_c = (
-            plot_df_core_housing_need_by_amhi(geo, True, int(original_year)) if year_comparison else
-            plot_df_core_housing_need_by_amhi(geo_c, True)
+            plot_df_core_housing_need_by_amhi(geo, True, language, int(original_year)) if year_comparison else
+            plot_df_core_housing_need_by_amhi(geo_c, True, language)
         )
 
         # Generating comparison plot
@@ -813,13 +826,13 @@ def update_geo_figure34(geo, geo_c, year_comparison, scale, refresh):
         # Plot layout settings
         fig2.update_layout(
             font=dict(size=10),
-            title='Percentage of Indigenous Households in Core Housing Need, by Income Category and HH Size, 2021',
+            title=f'{localization[language]["fig-title"]}, {default_year}',
             legend_traceorder='normal',
             modebar_color=modebar_color,
             modebar_activecolor=modebar_activecolor,
             barmode='stack',
             plot_bgcolor='#F8F9F9',
-            legend_title="Household Size",
+            legend_title=localization[language]["hh-size"],
             legend=dict(font=dict(size=8))
         )
         fig2.update_yaxes(
@@ -832,7 +845,7 @@ def update_geo_figure34(geo, geo_c, year_comparison, scale, refresh):
             title_font=dict(size=10),
             fixedrange=True,
             tickformat=',.0%',
-            title='% of Indigenous HH',
+            title=localization[language]["percent-ind-hh"],
             tickfont=dict(size=10)
         )
 
@@ -950,8 +963,10 @@ def func_ov7(n_clicks, geo, geo_c, year_comparison):
     Input('year-comparison', 'data'),
     State('area-scale-store', 'data'),
     Input('datatable-interactivity_ind', 'selected_columns'),
+    State('url', 'search')
 )
-def change_title_labels(geo, geo_c, year_comparison, scale, refresh):
+def change_title_labels(geo, geo_c, year_comparison, scale, refresh, lang_query):
+    language = get_language(lang_query)
     # change based off of url
     year = default_year
     if year_comparison:

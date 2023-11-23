@@ -18,6 +18,7 @@ from helpers.create_engine import engine_current, default_year, df_geo_list, df_
     mapped_geo_code, updated_csd_year, updated_csd_current, updated_cd_current, updated_cd_year
 from helpers.table_helper import area_scale_comparison, area_scale_primary_only, error_region_table_population, \
     get_language
+from pages.page3_helpers.page3_localization import localization
 from pages.page3_helpers.page3_main import layout
 
 warnings.filterwarnings("ignore")
@@ -46,13 +47,6 @@ comparison_font_size2 = '0.6em'
 
 default_value = 'Canada'
 
-# Setting a default plot and table which renders before the dashboard is fully loaded
-
-fig = px.line(x=['Not Available in CD/Regional level. Please select CSD/Municipal level'],
-              y=['Not Available in CD/Regional level. Please select CSD/Municipal level'])
-
-table = pd.DataFrame({'Not Available in CD/Regional level. Please select CSD/Municipal level': [0]})
-
 # Setting layout for dashboard
 
 layout = layout(default_year)
@@ -70,7 +64,7 @@ width_num = 1000
 
 # Plot DF/Table Generator
 
-def plot1_new_projection(geo, is_comparison, year=default_year):
+def plot1_new_projection(geo, is_comparison, language, year=default_year):
     geo_code_clicked = mapped_geo_code.loc[mapped_geo_code['Geography'] == geo, 'Geo_Code'].tolist()[0]
     updated_csd_filtered = updated_csd_year[year].query('Geo_Code ==' + f"{geo_code_clicked}")
 
@@ -91,8 +85,9 @@ def plot1_new_projection(geo, is_comparison, year=default_year):
         f'{prediction_year} Population Delta with income 121% or over of AMHI'
     ]].T.reset_index().drop(columns=['index'])
 
-    income_category = ['Very Low Income', 'Low Income', 'Moderate Income', 'Median Income', 'High Income']
-
+    # income_category = ['Very Low Income', 'Low Income', 'Moderate Income', 'Median Income', 'High Income']
+    row_labels = ["very-low-income", "low-income", "moderate-income", "median-income", "high-income"]
+    income_category = [localization[language][label] for label in row_labels]
     table1 = pd.DataFrame({'Income Category': income_category,
                            'Category': ([f'{year} pop'] * len(income_category)),
                            'Pop': updated_csd_filtered_current_plot1.iloc[:, 0]})
@@ -141,7 +136,7 @@ def plot1_new_projection(geo, is_comparison, year=default_year):
 def update_geo_figure6(geo, geo_c, scale, selected_columns, lang_query):
     language = get_language(lang_query)
     # Single area mode
-
+    prediction_year = default_year+10
     if (geo == geo_c or geo_c == None or (geo == None and geo_c != None)):
 
         # When no area is selected
@@ -156,7 +151,7 @@ def update_geo_figure6(geo, geo_c, scale, selected_columns, lang_query):
         # Generating plot dataframe/table
         if error_region_table_population(geo, default_year, language):
             return error_region_table_population(geo, default_year, language)
-        plot_df, table1 = plot1_new_projection(geo, False)
+        plot_df, table1 = plot1_new_projection(geo, False, language)
 
         # Generating plot
         fig_new_proj_1 = go.Figure()
@@ -180,21 +175,21 @@ def update_geo_figure6(geo, geo_c, scale, selected_columns, lang_query):
             modebar_activecolor=modebar_activecolor,
             barmode='relative',
             plot_bgcolor='#F8F9F9',
-            title=f'{default_year + 10} Household Projections by Income Category<br>{geo}',
+            title=f'{default_year + 10} {localization[language]["graph9-title"]}<br>{geo}',
             legend=dict(font=dict(size=9)),
-            legend_title=f"{default_year + 10} households<br>and {default_year}-{default_year + 10} change<br>"
+            legend_title=localization[language]["graph-legend"].format(year=default_year, prediction_year=prediction_year)
         )
         fig_new_proj_1.update_xaxes(
             title_font=dict(size=10),
             tickfont=dict(size=9),
             fixedrange=True,
-            title='Income Category'
+            title=localization[language]["income-category"]
         )
         fig_new_proj_1.update_yaxes(
             title_font=dict(size=10),
             tickfont=dict(size=9),
             fixedrange=True,
-            title='Number of Households'
+            title=localization[language]["number-of-households"]
         )
 
         # Generating Table Callback output
@@ -242,7 +237,7 @@ def update_geo_figure6(geo, geo_c, scale, selected_columns, lang_query):
         if error_region_table_population(geo, default_year, language):
             return error_region_table_population(geo, default_year, language)
         plot_df, table1 = (
-            plot1_new_projection(geo, False)
+            plot1_new_projection(geo, False, language)
         )
 
         # Generating main plot
@@ -267,7 +262,7 @@ def update_geo_figure6(geo, geo_c, scale, selected_columns, lang_query):
             return error_region_table_population(geo_c, default_year, language)
 
         plot_df_c, table1_c = (
-            plot1_new_projection(geo_c, True)
+            plot1_new_projection(geo_c, True, language)
         )
 
         # Generating comparison plot
@@ -291,9 +286,9 @@ def update_geo_figure6(geo, geo_c, scale, selected_columns, lang_query):
             modebar_activecolor=modebar_activecolor,
             barmode='relative',
             plot_bgcolor='#F8F9F9',
-            title=f'{default_year} Household Projections by Income Category',
+            title=f'{default_year} {localization[language]["graph9-title"]}',
             legend=dict(font=dict(size=9)),
-            legend_title=f"{default_year} households<br>and {default_year}-{default_year + 10} change<br>")
+            legend_title=localization[language]["graph-legend"].format(year=default_year, prediction_year=prediction_year))
         fig_new_proj_1.update_yaxes(
             range=[min(plot_df['Pop'].min(), plot_df_c['Pop'].min()) * 1.1,
                    max(plot_df.groupby('Income Category')['Pop'].sum().max(),
@@ -306,9 +301,9 @@ def update_geo_figure6(geo, geo_c, scale, selected_columns, lang_query):
             title_font=dict(size=10),
             tickfont=dict(size=9),
             fixedrange=True,
-            title='Income Category'
+            title=localization[language]["income-category"]
         )
-        fig_new_proj_1.update_yaxes(title='Number of Households', row=1, col=1)
+        fig_new_proj_1.update_yaxes(title=localization[language]["number-of-households"], row=1, col=1)
 
         # Merging main and comparison table
 
@@ -374,7 +369,7 @@ def update_geo_figure6(geo, geo_c, scale, selected_columns, lang_query):
 
 # Plot DF/Table Generator
 
-def plot2_new_projection(geo, IsComparison, year: int = default_year):
+def plot2_new_projection(geo, IsComparison, language, year: int = default_year):
     geo_code_clicked = mapped_geo_code.loc[mapped_geo_code['Geography'] == geo, 'Geo_Code'].tolist()[0]
     updated_csd_filtered = updated_csd_year[year].query('Geo_Code ==' + f"{geo_code_clicked}")
     # This predicts 10 years into the future.  I will hardcode the assumption of year + 10
@@ -396,8 +391,9 @@ def plot2_new_projection(geo, IsComparison, year: int = default_year):
         f'{prediction_year} Population Delta 5pp HH'
     ]].T.reset_index().drop(columns=['index'])
 
-    hh_category = ['1 Person', '2 Person', '3 Person', '4 Person', '5+ Person']
-
+    # hh_category = ['1 Person', '2 Person', '3 Person', '4 Person', '5+ Person']
+    row_labels = ["1-person", "2-person", "3-person", "4-person", "5+-person"]
+    hh_category = [localization[language][label] for label in row_labels]
     table2 = pd.DataFrame({'HH Category': hh_category,
                            'Category': ([f'{str(year)} pop'] * len(hh_category)),
                            'Pop': updated_csd_filtered_current_plot2.iloc[:, 0]})
@@ -465,7 +461,7 @@ def update_geo_figure7(geo, geo_c, scale, selected_columns, lang_query):
         # Generating plot dataframe/table
         if error_region_table_population(geo, default_year, language):
             return error_region_table_population(geo, default_year, language)
-        plot_df, table1 = plot2_new_projection(geo, False)
+        plot_df, table1 = plot2_new_projection(geo, False, language)
 
         # Generating plot
         fig_new_proj_1 = go.Figure()
@@ -488,22 +484,22 @@ def update_geo_figure7(geo, geo_c, scale, selected_columns, lang_query):
             modebar_activecolor=modebar_activecolor,
             barmode='relative',
             plot_bgcolor='#F8F9F9',
-            title=f'{default_year + 10} Household Projections by Household Size<br>{geo}',
+            title=f'{default_year + 10} {localization[language]["graph10-title"]}<br>{geo}',
             legend=dict(font=dict(size=9)),
-            legend_title=f"{default_year} households<br>and {default_year}-{default_year + 10} change<br>"
+            legend_title=localization[language]["graph-legend"].format(year=default_year, prediction_year=default_year+10)
         )
 
         fig_new_proj_1.update_xaxes(
             title_font=dict(size=10),
             tickfont=dict(size=9),
             fixedrange=True,
-            title='Household Size'
+            title=localization[language]["household-size"]
         )
         fig_new_proj_1.update_yaxes(
             title_font=dict(size=10),
             tickfont=dict(size=9),
             fixedrange=True,
-            title='Number of Households'
+            title=localization[language]["number-of-households"]
         )
 
         # Generating Table Callback output
@@ -549,7 +545,7 @@ def update_geo_figure7(geo, geo_c, scale, selected_columns, lang_query):
         if error_region_table_population(geo, default_year, language):
             return error_region_table_population(geo, default_year, language)
         plot_df, table1 = (
-            plot2_new_projection(geo, False)
+            plot2_new_projection(geo, False, language)
         )
         # Generating main plot
 
@@ -574,7 +570,7 @@ def update_geo_figure7(geo, geo_c, scale, selected_columns, lang_query):
         if error_region_table_population(geo_c, default_year, language):
             return error_region_table_population(geo_c, default_year, language)
         plot_df_c, table1_c = (
-            plot2_new_projection(geo_c, True)
+            plot2_new_projection(geo_c, True, language)
         )
 
         # Generating comparison plot
@@ -598,9 +594,9 @@ def update_geo_figure7(geo, geo_c, scale, selected_columns, lang_query):
             modebar_activecolor=modebar_activecolor,
             barmode='relative',
             plot_bgcolor='#F8F9F9',
-            title=f'{default_year+10} Household Projections by Household Size',
+            title=f'{default_year+10} {localization[language]["graph10-title"]}',
             legend=dict(font=dict(size=9)),
-            legend_title=f"{default_year} households<br>and {default_year}-{default_year + 10} change<br>"
+            legend_title=localization[language]["graph-legend"].format(year=default_year, prediction_year=default_year+10)
         )
         fig_new_proj_1.update_yaxes(
             range=[min(plot_df['Pop'].min(), plot_df_c['Pop'].min()) * 1.1,
@@ -616,7 +612,7 @@ def update_geo_figure7(geo, geo_c, scale, selected_columns, lang_query):
             fixedrange=True,
             title='Household Size'
         )
-        fig_new_proj_1.update_yaxes(title='Number of Households', row=1, col=1)
+        fig_new_proj_1.update_yaxes(title=localization[language]["number-of-households"], row=1, col=1)
 
         # Merging main and comparison table
 
@@ -693,7 +689,7 @@ pp_list = ['1pp', '2pp', '3pp', '4pp', '5pp']
 
 # Plot DF/Table Generator
 
-def projections_future_hh_size(geo, IsComparison, year: int = default_year):
+def projections_future_hh_size(geo, IsComparison, language, year: int = default_year):
     geo_code_clicked = mapped_geo_code.loc[mapped_geo_code['Geography'] == geo, 'Geo_Code'].tolist()[0]
     updated_csd_filtered = updated_csd_year[year].query('Geo_Code ==' + f"{geo_code_clicked}")
     # This predicts 10 years into the future.  I will hardcode the assumption of year + 10
@@ -710,9 +706,17 @@ def projections_future_hh_size(geo, IsComparison, year: int = default_year):
             pp_l.append(p)
             result_csd_l.append(updated_csd_filtered[col_format].tolist()[0])
 
-    income_l = ['Very Low Income'] * 5 + ['Low Income'] * 5 + ['Moderate Income'] * 5 + ['Median Income'] * 5 + [
-        'High Income'] * 5
-    hh_l = ['1 Person', '2 Person', '3 Person', '4 Person', '5+ Person']
+    # income_l = ['Very Low Income'] * 5 + ['Low Income'] * 5 + ['Moderate Income'] * 5 + ['Median Income'] * 5 + [
+    #     'High Income'] * 5
+    income_l = (
+            [localization[language]["very-low-income"]] * 5 +
+            [localization[language]["low-income"]] * 5 +
+            [localization[language]["moderate-income"]] * 5 +
+            [localization[language]["median-income"]] * 5 +
+            [localization[language]["high-income"]] * 5)
+    # hh_l = ['1 Person', '2 Person', '3 Person', '4 Person', '5+ Person']
+    row_labels = ["1-person", "2-person", "3-person", "4-person", "5+-person"]
+    hh_l = [localization[language][label] for label in row_labels]
 
     table3 = pd.DataFrame({'Income Category': income_l, 'HH Category': hh_l * 5, 'value': np.round(result_csd_l, 0)})
     table3 = table3.fillna(0)
@@ -773,7 +777,7 @@ def update_geo_figure_h(geo, geo_c, scale, selected_columns, lang_query):
         # Generating plot dataframe/table
         if error_region_table_population(geo, default_year, language):
             return error_region_table_population(geo, default_year, language)
-        table1, table1_csd_plot = projections_future_hh_size(geo, False)
+        table1, table1_csd_plot = projections_future_hh_size(geo, False, language)
 
         # Generating plot
 
@@ -797,21 +801,21 @@ def update_geo_figure_h(geo, geo_c, scale, selected_columns, lang_query):
             modebar_activecolor=modebar_activecolor,
             barmode='relative',
             plot_bgcolor='#F8F9F9',
-            title=f'{default_year + 10} Projected Households by Household Size and Income Category<br>{geo}',
+            title=f'{default_year + 10} {localization[language]["graphh-title"]}<br>{geo}',
             legend=dict(font=dict(size=9)),
-            legend_title="HH Size"
+            legend_title=localization[language]["hh-size"]
         )
         fig_csd.update_xaxes(
             title_font=dict(size=10),
             tickfont=dict(size=9),
             fixedrange=True,
-            title='Income Category'
+            title=localization[language]["income-category"]
         )
         fig_csd.update_yaxes(
             title_font=dict(size=10),
             tickfont=dict(size=9),
             fixedrange=True,
-            title='Number of Households'
+            title=localization[language]["number-of-households"]
         )
 
         # Generating Table Callback output
@@ -857,7 +861,7 @@ def update_geo_figure_h(geo, geo_c, scale, selected_columns, lang_query):
         if error_region_table_population(geo, default_year, language):
             return error_region_table_population(geo, default_year, language)
         table1, table1_csd_plot = (
-            projections_future_hh_size(geo, False)
+            projections_future_hh_size(geo, False, language)
         )
 
         # Generating main plot
@@ -883,7 +887,7 @@ def update_geo_figure_h(geo, geo_c, scale, selected_columns, lang_query):
         if error_region_table_population(geo_c, default_year, language):
             return error_region_table_population(geo_c, default_year, language)
         table1_c, table1_csd_plot_c = (
-            projections_future_hh_size(geo_c, True)
+            projections_future_hh_size(geo_c, True, language)
         )
 
         for i, c in zip(table1_csd_plot_c['HH Category'].unique(), colors):
@@ -905,10 +909,9 @@ def update_geo_figure_h(geo, geo_c, scale, selected_columns, lang_query):
             modebar_activecolor=modebar_activecolor,
             barmode='relative',
             plot_bgcolor='#F8F9F9',
-            title=f'{(default_year + 10)} '
-                  f'Projected Households by Household Size and Income Category',
+            title=f'{(default_year + 10)} {localization[language]["graphh-title"]}',
             legend=dict(font=dict(size=9)),
-            legend_title="HH Size"
+            legend_title=localization[language]["hh-size"]
         )
         fig_csd.update_yaxes(
             range=[0, max(table1_csd_plot.groupby('Income Category')['value'].sum().max(),
@@ -923,7 +926,7 @@ def update_geo_figure_h(geo, geo_c, scale, selected_columns, lang_query):
             fixedrange=True,
             title='Income Category'
         )
-        fig_csd.update_yaxes(title='Number of Households', row=1, col=1)
+        fig_csd.update_yaxes(title=localization[language]["number-of-households"], row=1, col=1)
 
         # Merging main and comparison table
 
@@ -1000,7 +1003,7 @@ pp_list = ['1pp', '2pp', '3pp', '4pp', '5pp']
 
 # Plot DF/Table Generator
 
-def projections_future_deltas(geo, IsComparison, year: int = default_year):
+def projections_future_deltas(geo, IsComparison, language, year: int = default_year):
     geo_code_clicked = mapped_geo_code.loc[mapped_geo_code['Geography'] == geo, 'Geo_Code'].tolist()[0]
     updated_csd_filtered = updated_csd_year[year].query('Geo_Code ==' + f"{geo_code_clicked}")
     # This predicts 10 years into the future.  I will hardcode the assumption of year + 10
@@ -1017,9 +1020,17 @@ def projections_future_deltas(geo, IsComparison, year: int = default_year):
             pp_l.append(p)
             result_csd_l.append(updated_csd_filtered[col_format].tolist()[0])
 
-    income_l = ['Very Low Income'] * 5 + ['Low Income'] * 5 + ['Moderate Income'] * 5 + ['Median Income'] * 5 + [
-        'High Income'] * 5
-    hh_l = ['1 Person', '2 Person', '3 Person', '4 Person', '5+ Person']
+    # income_l = ['Very Low Income'] * 5 + ['Low Income'] * 5 + ['Moderate Income'] * 5 + ['Median Income'] * 5 + [
+    #     'High Income'] * 5
+    income_l = (
+            [localization[language]["very-low-income"]] * 5 +
+            [localization[language]["low-income"]] * 5 +
+            [localization[language]["moderate-income"]] * 5 +
+            [localization[language]["median-income"]] * 5 +
+            [localization[language]["high-income"]] * 5)
+    # hh_l = ['1 Person', '2 Person', '3 Person', '4 Person', '5+ Person']
+    row_labels = ["1-person", "2-person", "3-person", "4-person", "5+-person"]
+    hh_l = [localization[language][label] for label in row_labels]
 
     table3 = pd.DataFrame({'Income Category': income_l, 'HH Category': hh_l * 5, 'value': np.round(result_csd_l, 0)})
     table3 = table3.fillna(0)
@@ -1078,7 +1089,7 @@ def update_geo_figure8(geo, geo_c, scale, selected_columns, lang_query):
         # Generating plot dataframe/table
         if error_region_table_population(geo, default_year, language):
             return error_region_table_population(geo, default_year, language)
-        table1, table1_csd_plot = projections_future_deltas(geo, False)
+        table1, table1_csd_plot = projections_future_deltas(geo, False, language)
 
         # Generating plot
         fig_csd = go.Figure()
@@ -1101,15 +1112,16 @@ def update_geo_figure8(geo, geo_c, scale, selected_columns, lang_query):
             modebar_activecolor=modebar_activecolor,
             barmode='relative',
             plot_bgcolor='#F8F9F9',
-            title=f'{default_year + 10} Projected Household Gain/Loss ({default_year} to {default_year + 10})<br>{geo}',
+            title=f'{default_year + 10} {localization[language]["graph11-title"]} '
+                  f'({default_year} {localization[language]["to"]} {default_year + 10})<br>{geo}',
             legend=dict(font=dict(size=9)),
-            legend_title="HH Size"
+            legend_title=localization[language]["hh-size"]
         )
         fig_csd.update_xaxes(
             title_font=dict(size=10),
             tickfont=dict(size=9),
             fixedrange=True,
-            title='Income Category'
+            title=localization[language]["income-category"]
         )
         fig_csd.update_yaxes(
             title_font=dict(size=10),
@@ -1160,7 +1172,7 @@ def update_geo_figure8(geo, geo_c, scale, selected_columns, lang_query):
         if error_region_table_population(geo, default_year, language):
             return error_region_table_population(geo, default_year, language)
         table1, table1_csd_plot = (
-            projections_future_deltas(geo, False)
+            projections_future_deltas(geo, False, language)
         )
 
         # Generating main plot
@@ -1184,7 +1196,7 @@ def update_geo_figure8(geo, geo_c, scale, selected_columns, lang_query):
         if error_region_table_population(geo_c, default_year, language):
             return error_region_table_population(geo_c, default_year, language)
         table1_c, table1_csd_plot_c = (
-            projections_future_deltas(geo_c, True)
+            projections_future_deltas(geo_c, True, language)
         )
 
         # Generating comparison plot
@@ -1208,9 +1220,10 @@ def update_geo_figure8(geo, geo_c, scale, selected_columns, lang_query):
             modebar_activecolor=modebar_activecolor,
             barmode='relative',
             plot_bgcolor='#F8F9F9',
-            title=f'{default_year} Projected Household Gain/Loss {default_year} to {default_year + 10}',
+            title=f'{default_year + 10} {localization[language]["graph11-title"]} '
+                  f'({default_year} {localization[language]["to"]} {default_year + 10})',
             legend=dict(font=dict(size=9)),
-            legend_title="HH Size"
+            legend_title=localization[language]["hh-size"]
         )
         fig_csd.update_yaxes(
             range=[min(table1_csd_plot.groupby('Income Category')['value'].sum().min(),
@@ -1225,7 +1238,7 @@ def update_geo_figure8(geo, geo_c, scale, selected_columns, lang_query):
             title_font=dict(size=10),
             tickfont=dict(size=9),
             fixedrange=True,
-            title='Income Category'
+            title=localization[language]["income-category"]
         )
 
         # Merging main and comparison table
@@ -1297,7 +1310,7 @@ def update_geo_figure8(geo, geo_c, scale, selected_columns, lang_query):
 m_r_colors = ['#002145', '#39c0f7']
 
 
-def projections_future_pop_income(geo, IsComparison, year: int = default_year):
+def projections_future_pop_income(geo, IsComparison, language, year: int = default_year):
     geo_code_clicked = mapped_geo_code.loc[mapped_geo_code['Geography'] == geo, 'Geo_Code'].tolist()[0]
     geo_region_code_clicked = mapped_geo_code.loc[mapped_geo_code['Geography'] == geo, 'Region_Code'].tolist()[0]
     # This predicts 10 years into the future.  I will hardcode the assumption of year + 10
@@ -1319,14 +1332,15 @@ def projections_future_pop_income(geo, IsComparison, year: int = default_year):
     tr_cd = []
     delta = []
 
-    i_l = [
-        'Very low Income',
-        'Low Income',
-        'Moderate Income',
-        'Median Income',
-        'High Income'
-    ]
-
+    # i_l = [
+    #     'Very low Income',
+    #     'Low Income',
+    #     'Moderate Income',
+    #     'Median Income',
+    #     'High Income'
+    # ]
+    row_labels = ["very-low-income", "low-income", "moderate-income", "median-income", "high-income"]
+    i_l = [localization[language][label] for label in row_labels]
     for i in income_categories_g11:
         p = updated_csd_filtered[
             f'Total - Private households by household type including census family structure -   Households with {i} - Total - Household size'].tolist()[
@@ -1340,7 +1354,6 @@ def projections_future_pop_income(geo, IsComparison, year: int = default_year):
         gr_cd.append(g_cd)
         tr_cd.append(t_cd)
         delta.append(d)
-
     table = pd.DataFrame(
         {'Income Category': i_l, 'current pop.': pop_original, 'Muni. Growth (%)': gr_csd, 'Regional Growth (%)': gr_cd,
          'Delta(Muni. GR)': np.round(delta, 0)})
@@ -1353,8 +1366,8 @@ def projections_future_pop_income(geo, IsComparison, year: int = default_year):
     table[f'{prediction_year} Pop.(Regional)'] = tr_cd
 
     table_for_plot = table[['Income Category', 'Muni. Growth (%)', 'Regional Growth (%)']]
-    table_for_plot.columns = ['Income Category', 'Municipal', 'Regional']
-    plot_df = table_for_plot.melt(id_vars='Income Category', value_vars=['Municipal', 'Regional'])
+    table_for_plot.columns = ['Income Category', localization[language]["municipal"], localization[language]["regional"]]
+    plot_df = table_for_plot.melt(id_vars='Income Category', value_vars=[localization[language]["municipal"], localization[language]["regional"]])
     plot_df.columns = ['Income Category', 'Category', 'value']
 
     table = table.drop(columns=['Delta(Muni. GR)', 'Delta(Regional GR)'])
@@ -1408,7 +1421,7 @@ def update_geo_figure8(geo, geo_c, scale, selected_columns, lang_query):
         clicked_code_c = clicked_code
     if len(str(clicked_code)) < 7 or len(str(clicked_code_c)) < 7:
 
-        table3_csd = pd.DataFrame({'Not Available in CD/Regional level. Please select CSD/Municipal level': [0]})
+        table3_csd = pd.DataFrame({localization[language]["error-scope"]: [0]})
 
         col_list_csd = []
 
@@ -1429,8 +1442,8 @@ def update_geo_figure8(geo, geo_c, scale, selected_columns, lang_query):
                                          }
                                      ]
 
-        fig_csd = px.line(x=['Not Available in CD/Regional level. Please select CSD/Municipal level'],
-                          y=['Not Available in CD/Regional level. Please select CSD/Municipal level'])
+        fig_csd = px.line(x=[localization[language]["error-scope"]],
+                          y=[localization[language]["error-scope"]])
 
         return col_list_csd, \
             table3_csd.to_dict('record'), \
@@ -1463,9 +1476,9 @@ def update_geo_figure8(geo, geo_c, scale, selected_columns, lang_query):
         geo = area_scale_primary_only(geo, scale)
 
         # Generating plot dataframe/table
-        if error_region_table_population(geo, default_year, True):
-            return error_region_table_population(geo, default_year, True)
-        table1, plot_df = projections_future_pop_income(geo, True)
+        if error_region_table_population(geo, default_year, language, no_cd=True):
+            return error_region_table_population(geo, default_year, language, no_cd=True)
+        table1, plot_df = projections_future_pop_income(geo, True, language)
 
         # Generating plot
         fig_pgr = go.Figure()
@@ -1487,21 +1500,21 @@ def update_geo_figure8(geo, geo_c, scale, selected_columns, lang_query):
             modebar_color=modebar_color,
             modebar_activecolor=modebar_activecolor,
             plot_bgcolor='#F8F9F9',
-            title=f'{default_year+10} Projected Municipal vs Regional Household Growth Rates by Income Category<br>{geo}',
+            title=f'{default_year+10} {localization[language]["graph12-title"]}<br>{geo}',
             legend=dict(font=dict(size=9)),
-            legend_title="Category"
+            legend_title=localization[language]["category"]
         )
         fig_pgr.update_xaxes(
             title_font=dict(size=10),
             tickfont=dict(size=9),
             fixedrange=True,
-            title='Income Category'
+            title=localization[language]["income-category"]
         )
         fig_pgr.update_yaxes(
             title_font=dict(size=10),
             tickfont=dict(size=9),
             fixedrange=True,
-            title='Growth Rate (%)',
+            title=localization[language]["growth-rate"],
             tickformat=',.0%',
             range=[min(0, plot_df['value'].min()), math.ceil(plot_df['value'].max() * 10) / 10]
         )
@@ -1546,10 +1559,10 @@ def update_geo_figure8(geo, geo_c, scale, selected_columns, lang_query):
         # Main Plot/Table
 
         # Generating main plot df/table
-        if error_region_table_population(geo, default_year, True):
-            return error_region_table_population(geo, default_year, True)
+        if error_region_table_population(geo, default_year, language, no_cd=True):
+            return error_region_table_population(geo, default_year, language, no_cd=True)
         table1, plot_df = (
-            projections_future_pop_income(geo, False)
+            projections_future_pop_income(geo, False, language)
         )
 
         # Generating main plot
@@ -1576,7 +1589,7 @@ def update_geo_figure8(geo, geo_c, scale, selected_columns, lang_query):
         if error_region_table_population(geo_c, default_year, language, True):
             return error_region_table_population(geo_c, default_year, language, True)
         table1_c, plot_df_c = (
-            projections_future_pop_income(geo_c, True)
+            projections_future_pop_income(geo_c, True, language)
         )
 
         # Generating comparison plot
@@ -1604,9 +1617,8 @@ def update_geo_figure8(geo, geo_c, scale, selected_columns, lang_query):
             modebar_color=modebar_color,
             modebar_activecolor=modebar_activecolor,
             plot_bgcolor='#F8F9F9',
-            title=f'{int(compared_year)+10} and {int(original_year)+10} Projected Municipal vs Regional Household Growth'
-                  f' Rates by Income Category',
-            legend_title="Category"
+            title=f'{int(original_year)+10} {localization[language]["graph12-title"]}',
+            legend_title=localization[language]["category"]
         )
         fig_pgr.update_yaxes(
             title_font=dict(size=10),
@@ -1616,12 +1628,12 @@ def update_geo_figure8(geo, geo_c, scale, selected_columns, lang_query):
             range=[min(0, min(range_ref.min(), range_ref_c.min())),
                    math.ceil(max(range_ref.max(), range_ref_c.max()) * 10) / 10]
         )
-        fig_pgr.update_yaxes(title='Growth Rate (%)', row=1, col=1)
+        fig_pgr.update_yaxes(title=localization[language]["growth-rate"], row=1, col=1)
         fig_pgr.update_xaxes(
             title_font=dict(size=10),
             tickfont=dict(size=9),
             fixedrange=True,
-            title='Income Category'
+            title=localization[language]["income-category"]
         )
 
         # Merging main and comparison table
@@ -1688,7 +1700,7 @@ def update_geo_figure8(geo, geo_c, scale, selected_columns, lang_query):
 
 # Plot DF/Table Generator
 
-def projections_future_pop_hh(geo, IsComparison: bool, year: int = default_year):
+def projections_future_pop_hh(geo, IsComparison: bool, language, year: int = default_year):
     geo_code_clicked = mapped_geo_code.loc[mapped_geo_code['Geography'] == geo, 'Geo_Code'].tolist()[0]
     geo_region_code_clicked = mapped_geo_code.loc[mapped_geo_code['Geography'] == geo, 'Region_Code'].tolist()[0]
     updated_csd_filtered = updated_csd_year[year].query('Geo_Code ==' + f"{geo_code_clicked}")
@@ -1710,7 +1722,9 @@ def projections_future_pop_hh(geo, IsComparison: bool, year: int = default_year)
     tr_cd = []
     delta = []
 
-    h_l = ['1 Person', '2 People', '3 People', '4 People', '5+ People']
+    # h_l = ['1 Person', '2 People', '3 People', '4 People', '5+ People']
+    row_labels = ["1-person", "2-person", "3-person", "4-person", "5+-person"]
+    h_l = [localization[language][label] for label in row_labels]
 
     for i in hh_category:
         p = updated_csd_filtered[
@@ -1738,8 +1752,8 @@ def projections_future_pop_hh(geo, IsComparison: bool, year: int = default_year)
     table[f'{prediction_year} Pop.(Regional)'] = tr_cd
 
     table_for_plot = table[['HH Category', 'Muni. Growth (%)', 'Regional Growth (%)']]
-    table_for_plot.columns = ['HH Category', 'Municipal', 'Regional']
-    plot_df = table_for_plot.melt(id_vars='HH Category', value_vars=['Municipal', 'Regional'])
+    table_for_plot.columns = ['HH Category', localization[language]["municipal"], localization[language]["regional"]]
+    plot_df = table_for_plot.melt(id_vars='HH Category', value_vars=[localization[language]["municipal"], localization[language]["regional"]])
     plot_df.columns = ['HH Category', 'Category', 'value']
 
     table = table.drop(columns=['Delta(Muni. GR)', 'Delta(Regional GR)'])
@@ -1796,7 +1810,7 @@ def update_geo_figure9(geo, geo_c, scale, selected_columns, lang_query):
         clicked_code_c = clicked_code
     if len(str(clicked_code)) < 7 or len(str(clicked_code_c)) < 7:
 
-        table3_csd = pd.DataFrame({'Not Available in CD/Regional level. Please select CSD/Municipal level': [0]})
+        table3_csd = pd.DataFrame({localization[language]["error-scope"]: [0]})
 
         col_list_csd = []
 
@@ -1817,8 +1831,8 @@ def update_geo_figure9(geo, geo_c, scale, selected_columns, lang_query):
                                          }
                                      ]
 
-        fig_csd = px.line(x=['Not Available in CD/Regional level. Please select CSD/Municipal level'],
-                          y=['Not Available in CD/Regional level. Please select CSD/Municipal level'])
+        fig_csd = px.line(x=[localization[language]["error-scope"]],
+                          y=[localization[language]["error-scope"]])
 
         return col_list_csd, \
             table3_csd.to_dict('record'), \
@@ -1849,16 +1863,16 @@ def update_geo_figure9(geo, geo_c, scale, selected_columns, lang_query):
         geo = area_scale_primary_only(geo, scale)
 
         # Generating plot dataframe/table
-        if error_region_table_population(geo, default_year, True):
-            return error_region_table_population(geo, default_year, True)
-        table1, plot_df = projections_future_pop_hh(geo, False)
+        if error_region_table_population(geo, default_year, language, no_cd=True):
+            return error_region_table_population(geo, default_year, language, no_cd=True)
+        table1, plot_df = projections_future_pop_hh(geo, False, language)
 
         # Generating plot
         fig_pgr = go.Figure()
 
         for s, c in zip(plot_df['Category'].unique(), m_r_colors):
             plot_df_frag = plot_df.loc[plot_df['Category'] == s, :]
-            plot_df_frag['HH Category'] = ['1 Person', '2 Person', '3 Person', '4 Person', '5+ Person']
+            # plot_df_frag['HH Category'] = ['1 Person', '2 Person', '3 Person', '4 Person', '5+ Person']
 
             fig_pgr.add_trace(go.Bar(
                 x=plot_df_frag['HH Category'],
@@ -1873,7 +1887,7 @@ def update_geo_figure9(geo, geo_c, scale, selected_columns, lang_query):
             modebar_color=modebar_color,
             modebar_activecolor=modebar_activecolor,
             plot_bgcolor='#F8F9F9',
-            title=f'2031 Projected Community and Regional Household Growth Rates <br>{geo}',
+            title=f'{default_year+10} {localization[language]["graph13-title"]} <br>{geo}',
             legend=dict(font=dict(size=9)),
             legend_title="Population"
         )
@@ -1881,12 +1895,12 @@ def update_geo_figure9(geo, geo_c, scale, selected_columns, lang_query):
             title_font=dict(size=10),
             tickfont=dict(size=9),
             fixedrange=True,
-            title='Household Size'
+            title=localization[language]["household-size"]
         )
         fig_pgr.update_yaxes(
             title_font=dict(size=10),
             tickfont=dict(size=9),
-            title='Growth Rate (%)',
+            title=localization[language]["growth-rate"],
             fixedrange=True,
             tickformat=',.0%',
             range=[min(0, plot_df['value'].min()), math.ceil(plot_df['value'].max() * 10) / 10]
@@ -1932,10 +1946,10 @@ def update_geo_figure9(geo, geo_c, scale, selected_columns, lang_query):
         # Main Plot/Table
 
         # Generating main plot df/table
-        if error_region_table_population(geo, default_year, True):
-            return error_region_table_population(geo, default_year, True)
+        if error_region_table_population(geo, default_year, language, no_cd=True):
+            return error_region_table_population(geo, default_year, language, no_cd=True)
         table1, plot_df = (
-            projections_future_pop_hh(geo, False)
+            projections_future_pop_hh(geo, False, language)
         )
 
         # Generating main plot
@@ -1945,7 +1959,7 @@ def update_geo_figure9(geo, geo_c, scale, selected_columns, lang_query):
 
         for s, c in zip(plot_df['Category'].unique(), m_r_colors):
             plot_df_frag = plot_df.loc[plot_df['Category'] == s, :]
-            plot_df_frag['HH Category'] = ['1 Person', '2 Person', '3 Person', '4 Person', '5+ Person']
+            # plot_df_frag['HH Category'] = ['1 Person', '2 Person', '3 Person', '4 Person', '5+ Person']
 
             fig_pgr.add_trace(go.Bar(
                 x=plot_df_frag['HH Category'],
@@ -1962,14 +1976,14 @@ def update_geo_figure9(geo, geo_c, scale, selected_columns, lang_query):
         if error_region_table_population(geo_c, default_year, language):
             return error_region_table_population(geo_c, default_year, language)
         table1_c, plot_df_c = (
-            projections_future_pop_hh(geo_c, True)
+            projections_future_pop_hh(geo_c, True, language)
         )
 
         # Generating comparison plot
 
         for s, c in zip(plot_df_c['Category'].unique(), m_r_colors):
             plot_df_frag = plot_df_c.loc[plot_df_c['Category'] == s, :]
-            plot_df_frag['HH Category'] = ['1 Person', '2 Person', '3 Person', '4 Person', '5+ Person']
+            # plot_df_frag['HH Category'] = ['1 Person', '2 Person', '3 Person', '4 Person', '5+ Person']
 
             fig_pgr.add_trace(go.Bar(
                 x=plot_df_frag['HH Category'],
@@ -1990,8 +2004,7 @@ def update_geo_figure9(geo, geo_c, scale, selected_columns, lang_query):
             modebar_color=modebar_color,
             modebar_activecolor=modebar_activecolor,
             plot_bgcolor='#F8F9F9',
-            title=f'{int(compared_year)+10} and {int(original_year)+10} '
-                  f'Projected Community and Regional Household Growth Rates ',
+            title=f'{int(compared_year)+10} and {int(original_year)+10} {localization[language]["graph13-title"]}',
             legend_title="Population"
         )
         fig_pgr.update_yaxes(
@@ -2001,12 +2014,12 @@ def update_geo_figure9(geo, geo_c, scale, selected_columns, lang_query):
             range=[min(0, min(range_ref.min(), range_ref_c.min())),
                    math.ceil(max(range_ref.max(), range_ref_c.max()) * 10) / 10]
         )
-        fig_pgr.update_yaxes(title='Growth Rate (%)', row=1, col=1)
+        fig_pgr.update_yaxes(title=localization[language]["growth-rate"], row=1, col=1)
         fig_pgr.update_xaxes(
             title_font=dict(size=10),
             tickfont=dict(size=9),
             fixedrange=True,
-            title='Household Size'
+            title=localization[language]["household-size"]
         )
 
         # Merging main and comparison table

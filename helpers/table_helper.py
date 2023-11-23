@@ -88,7 +88,7 @@ def error_region_table_population(geo: str, year: int, language: str, no_cd=Fals
     return False
 
 
-def error_indigenous_table(geo: str, year: int, language):
+def error_indigenous_table(geo: str, year: int, language="en"):
     try:
         geo, joined_df_filtered = query_table(geo, year, income_indigenous_year)
     except:
