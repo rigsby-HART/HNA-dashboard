@@ -17,15 +17,16 @@ csv_file = 'data_analysis/2021_Consolidated_trans added.csv'  # Replace with the
 
 # Read the CSV file into a DataFrame
 df = pd.read_csv(csv_file, header=None, encoding='latin-1', dtype=str)
+
 minority_status = [x.strip() for x in df.iloc[0, 1:].unique()]
 housing_type = [x.strip() for x in df.iloc[1, 1:].unique()]
 AMHI = [x.strip() for x in df.iloc[2, 1:].unique()]
 CHN_status = [x.strip() for x in df.iloc[3, 1:].unique()]
+
 numbers = df.iloc[4:, 1:].replace("x", "0").fillna(0).astype(int)
 
 # Total households/Transgender households are the last two types
 groups = len(CHN_status) * len(AMHI) * len(housing_type)
-offset = (len(minority_status) - 2) * groups
 renter_vs_owner_data = numbers.iloc[:, 1:groups+1]
 
 # Create the names of the columns
@@ -37,7 +38,7 @@ for housing in housing_type:
         for status in CHN_status:
             columnName[index] = f"{housing}-{income}-{status}"
             index += 1
-columnName = columnName.rename({x: (x + 2) for x in range(groups * 2)})
+columnName = columnName.rename({x: (x + 1) for x in range(groups * 2)})
 renter_vs_owner_data = renter_vs_owner_data.rename(columns=columnName.to_dict())
 renter_vs_owner_data.insert(0, "Geography", df.iloc[4:, 0])
 renter_vs_owner_data = renter_vs_owner_data.reset_index(drop=True)
@@ -75,48 +76,40 @@ Base = declarative_base()
 
 income_lv_list = ['20% or under', '21% to 50%', '51% to 80%', '81% to 120%', '121% or more']
 
-output_transgender_label = "Percent of Transgender HH in core housing"
-
 # One for percent of the total population, then one for each income
-output_columns = [
-                     output_transgender_label,
-                     f'{output_transgender_label} with income {income_lv_list[0]} of the AMHI'
-                 ] + [
-                     f'{output_transgender_label} with income {i} of AMHI' for i in income_lv_list[1:]
-                 ]
-total_label, transgender_label = minority_status[-2:]
-
-
+label = '{household} Percent HH with income {range} of AMHI in core housing need'
+total = housing_type[0]
+owner = housing_type[1]
+renter = housing_type[2]
+output_columns = [label.format(household = owner, range=income) for income in income_lv_list] + [label.format(
+    household = renter, range=income) for income in income_lv_list]
 def add_columns(row):
     # Match row to transgender row
     geo = row["Geography"]
-    trans_data = renter_vs_owner_data[renter_vs_owner_data["Geography"] == geo]
+    rent_row = renter_vs_owner_data[renter_vs_owner_data["Geography"] == geo]
     # Sometimes it exists in Partners, but not in the other transgender data
-    if trans_data.empty:
+    if rent_row.empty:
         row_output = {x: None for x in output_columns}
         return pd.Series(row_output)
     # Naming scheme produces repeated names, so the query for geo returns two series
-    trans_data = trans_data.iloc[0] if isinstance(trans_data, pd.DataFrame) else trans_data
+    rent_row = rent_row.iloc[0] if isinstance(rent_row, pd.DataFrame) else rent_row
 
-    chn_transgender = trans_data[f"{transgender_label}-{housing_type[0]}-{AMHI[0]}-{CHN_status[1]}"]
-    total_transgender = trans_data[f"{transgender_label}-{housing_type[0]}-{AMHI[0]}-{CHN_status[0]}"]
-    try:
-        percent_chn = chn_transgender.item() / total_transgender.item()
-    except ZeroDivisionError:
-        percent_chn = None
-    row_output = {output_columns[0]: percent_chn}
+    row_output = {}
+
     for index, income_lvl in enumerate(income_lv_list):
         try:
-            if income_lvl == '20% or under':
-                row_output[output_columns[index + 1]] = \
-                    trans_data[f"{transgender_label}-{housing_type[0]}-{AMHI[1]}-{CHN_status[1]}"].item() / \
-                    trans_data[f"{transgender_label}-{housing_type[0]}-{AMHI[0]}-{CHN_status[1]}"].item()
-            else:
-                row_output[output_columns[index + 1]] = \
-                    trans_data[f"{transgender_label}-{housing_type[0]}-{AMHI[index + 1]}-{CHN_status[1]}"].item() / \
-                    trans_data[f"{transgender_label}-{housing_type[0]}-{AMHI[0]}-{CHN_status[1]}"].item()
+            row_output[output_columns[index]] = \
+                rent_row[f"{owner}-{AMHI[index]}-{CHN_status[1]}"].item() / \
+                rent_row[f"{owner}-{AMHI[index]}-{CHN_status[0]}"].item()
         except ZeroDivisionError:
-            row_output[output_columns[index + 1]] = None
+            row_output[output_columns[index]] = None
+    for index, income_lvl in enumerate(income_lv_list):
+        try:
+            row_output[output_columns[index+len(income_lv_list)]] = \
+                rent_row[f"{renter}-{AMHI[index]}-{CHN_status[1]}"].item() / \
+                rent_row[f"{renter}-{AMHI[index]}-{CHN_status[0]}"].item()
+        except ZeroDivisionError:
+            row_output[output_columns[index+len(income_lv_list)]] = None
     return pd.Series(row_output)
 
 
