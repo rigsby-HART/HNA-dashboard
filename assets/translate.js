@@ -11,7 +11,7 @@
 // Set the language based off the URL
 language = new URLSearchParams(window.location.search).get('lang');
 document.cookie = `googtrans=/auto/${language}; path=/`;
-
+performance.measure = null
 document.addEventListener("DOMContentLoaded", () => {
     const script = document.createElement('script');
     script.src = "https://cdn.gtranslate.net/widgets/latest/float.js";
