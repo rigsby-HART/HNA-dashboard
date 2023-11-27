@@ -17,9 +17,9 @@ if (language != null) {
     // Google yaps that performance.measure is negative because we display the page several times due to embeds
     // The performance measure they use returns a negative this way, so here I just disable performance measure builtin
     performance.measure = null
-    document.addEventListener("DOMContentLoaded", () => {
+//    document.addEventListener("DOMContentLoaded", () => {
         const script = document.createElement('script');
         script.src = "https://cdn.gtranslate.net/widgets/latest/float.js";
         document.body.appendChild(script);
-    });
+//    });
 }
