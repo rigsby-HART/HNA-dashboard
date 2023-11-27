@@ -10,10 +10,14 @@
 
 // Set the language based off the URL
 language = new URLSearchParams(window.location.search).get('lang');
-document.cookie = `googtrans=/auto/${language}; path=/`;
-performance.measure = null
-document.addEventListener("DOMContentLoaded", () => {
-    const script = document.createElement('script');
-    script.src = "https://cdn.gtranslate.net/widgets/latest/float.js";
-    document.body.appendChild(script);
-});
+if (language != null) {
+    document.cookie = `googtrans=/auto/${language}`;
+    // Google yaps that performance.measure is negative because we display the page several times due to embeds
+    // The performance measure they use returns a negative this way, so here I just disable performance measure builtin
+    performance.measure = null
+    document.addEventListener("DOMContentLoaded", () => {
+        const script = document.createElement('script');
+        script.src = "https://cdn.gtranslate.net/widgets/latest/float.js";
+        document.body.appendChild(script);
+    });
+}
