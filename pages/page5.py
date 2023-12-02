@@ -9,7 +9,7 @@ from dash import dcc, Input, Output, ctx, callback, State, html
 from dash.dash_table.Format import Format, Scheme, Group
 from plotly.subplots import make_subplots
 from helpers.style_helper import style_header_conditional, style_data_conditional
-from helpers.create_engine import income_partners_year, default_year
+from helpers.create_engine import income_ownership_year, default_year
 from helpers.table_helper import area_scale_comparison, area_scale_primary_only, error_region_table, \
     error_region_figure, \
     query_table, get_language
@@ -35,8 +35,6 @@ x_columns = ['Rent 20% of AMHI',
              'Rent 120% of AMHI'
              ]
 
-hh_p_num_list = [1, 2, 3, 4, '5 or more']
-
 amhi_range = ['20% or under of AMHI', '21% to 50% of AMHI', '51% to 80% of AMHI', '81% to 120% of AMHI',
               '121% and more of AMHI']
 
@@ -59,14 +57,15 @@ default_value = 'Canada'
 
 income_ct = [x + f" ({a})" for x, a in zip(x_base, amhi_range)]
 
-x_list = []
-
 columns = ['Percent HH with income 20% or under of AMHI in core housing need',
            'Percent HH with income 21% to 50% of AMHI in core housing need',
            'Percent HH with income 51% to 80% of AMHI in core housing need',
            'Percent HH with income 81% to 120% of AMHI in core housing need',
            'Percent HH with income 121% or more of AMHI in core housing need'
            ]
+
+renter_columns = ["Renter households " + column for column in columns]
+owner_columns = ["Owner households " + column for column in columns]
 
 # Setting layout for dashboard
 
@@ -79,12 +78,16 @@ layout = layout(default_year)
 
 # Table generator
 def table_amhi_shelter_cost(geo: str, is_second: bool, year: int = default_year):
-    geo, joined_df_filtered = query_table(geo, year, income_partners_year)
+    geo, joined_df_filtered = query_table(geo, year, income_ownership_year)
 
-    portion_of_total_hh = []
+    portion_of_owner_hh = []
     for x in x_base:
-        portion_of_total_hh.append(
-            round(joined_df_filtered[f'Percent of Total HH that are in {x}'].tolist()[0] * 100, 2))
+        portion_of_owner_hh.append(
+            round(joined_df_filtered[f'Percent of Owner households HH that are in {x}'].tolist()[0] * 100, 2))
+    portion_of_renter_hh = []
+    for x in x_base:
+        portion_of_renter_hh.append(
+            round(joined_df_filtered[f'Percent of Renter households HH that are in {x}'].tolist()[0] * 100, 2))
 
     amhi_list = []
     for a in amhi_range:
@@ -104,14 +107,18 @@ def table_amhi_shelter_cost(geo: str, is_second: bool, year: int = default_year)
 
     if not is_second:
         table = pd.DataFrame(
-            {'Income Category': income_ct, '% of Total HHs': portion_of_total_hh, 'Annual HH Income': amhi_list,
+            {'Income Category': income_ct, '% of Owner HHs': portion_of_owner_hh,
+             '% of Rental HHs': portion_of_renter_hh, 'Annual HH Income': amhi_list,
              'Affordable Shelter Cost (2020 CAD$)': shelter_list})
-        table['% of Total HHs'] = table['% of Total HHs'].astype(str) + '%'
+        table['% of Owner HHs'] = table['% of Owner HHs'].astype(str) + '%'
+        table['% of Rental HHs'] = table['% of Rental HHs'].astype(str) + '%'
     else:
         table = pd.DataFrame(
-            {'Income Category': income_ct, '% of Total HHs ': portion_of_total_hh, 'Annual HH Income ': amhi_list,
+            {'Income Category': income_ct, '% of Owner HHs ': portion_of_owner_hh,
+             '% of Rental HHs ': portion_of_renter_hh, 'Annual HH Income ': amhi_list,
              'Affordable Shelter Cost ': shelter_list})
-        table['% of Total HHs '] = table['% of Total HHs '].astype(str) + '%'
+        table['% of Owner HHs '] = table['% of Owner HHs '].astype(str) + '%'
+        table['% of Rental HHs '] = table['% of Rental HHs '].astype(str) + '%'
 
     return table, median_income, median_rent
 
@@ -135,7 +142,7 @@ def update_table1(geo, geo_c, year_comparison: str, selected_columns, scale, lan
     # Single area mode
 
     language = get_language(lang_query)
-    if not year_comparison and (geo == geo_c or geo_c is None or (geo is None and geo_c is not None)):
+    if (geo == geo_c or geo_c is None or (geo is None and geo_c is not None)):  # not year_comparison and :
 
         # When no area is selected
         if geo is None and geo_c is not None:
@@ -154,7 +161,7 @@ def update_table1(geo, geo_c, year_comparison: str, selected_columns, scale, lan
         # Generating callback output to update table
         col_list = []
         #
-        median_row = ['Area Median Household Income', "", median_income, median_rent]
+        median_row = ['Area Median Household Income', "", "", median_income, median_rent]
         for i, j in zip(list(table.columns), median_row):
             col_list.append({"name": [geo, i, j], "id": i})
 
@@ -190,6 +197,7 @@ def update_table1(geo, geo_c, year_comparison: str, selected_columns, scale, lan
 
     # Comparison mode
     else:
+        year_comparison = ""
         if year_comparison:
             geo = area_scale_primary_only(geo, scale)
             original_year, compared_year = year_comparison.split("-")
@@ -234,8 +242,8 @@ def update_table1(geo, geo_c, year_comparison: str, selected_columns, scale, lan
 
         col_list = []
 
-        median_row = ['Area Median Household Income', "", median_income, median_rent]
-        median_row_c = ["", median_income_c, median_rent_c]
+        median_row = ['Area Median Household Income', "", "", median_income, median_rent]
+        median_row_c = ["", "", median_income_c, median_rent_c]
 
         for i, j in zip(list(table.columns), median_row):
             if i == 'Income Category':
@@ -286,8 +294,8 @@ def update_table1(geo, geo_c, year_comparison: str, selected_columns, scale, lan
 # Percentage of Households in Core Housing Need, by Income Category, 2021
 
 # Plot dataframe generator
-def plot_df_core_housing_need_by_income(geo: str, is_second: bool, language, year: int = default_year, ):
-    geo, joined_df_filtered = query_table(geo, year, income_partners_year)
+def plot_df_core_housing_need_by_income(geo: str, is_rental: bool, language, year: int = default_year, ):
+    geo, joined_df_filtered = query_table(geo, year, income_ownership_year)
 
     x_list = []
 
@@ -299,14 +307,14 @@ def plot_df_core_housing_need_by_income(geo: str, is_second: bool, language, yea
         value = str(joined_df_filtered[income_query_string].tolist()[0])
         # print(i, b,c, value, type(value))
         if i < 4:
-            if is_second is False:
+            if is_rental is False:
                 x = localization[language]["price-format-label"].format(b=income_category, value=value)
                 # print(x)
             else:
                 x = localization[language]["price-format-label-comp"].format(b=income_category, value=value)
             x_list.append(x)
         else:
-            if is_second is False:
+            if is_rental is False:
                 x = localization[language]["price-format-label-last"].format(b=income_category, value=value)
             else:
                 x = localization[language]["price-format-label-last-comp"].format(b=income_category, value=value)
@@ -315,7 +323,12 @@ def plot_df_core_housing_need_by_income(geo: str, is_second: bool, language, yea
 
     x_list = [sub.replace('$$', '$') for sub in x_list]
     x_list = [sub.replace('.0', '') for sub in x_list]
-    plot_df = pd.DataFrame({"Income_Category": x_list, 'Percent HH': joined_df_filtered[columns].T.iloc[:, 0].tolist()})
+    if is_rental:
+        plot_df = pd.DataFrame(
+            {"Income_Category": x_list, 'Percent HH': joined_df_filtered[renter_columns].T.iloc[:, 0].tolist()})
+    else:
+        plot_df = pd.DataFrame(
+            {"Income_Category": x_list, 'Percent HH': joined_df_filtered[owner_columns].T.iloc[:, 0].tolist()})
 
     return plot_df
 
@@ -334,7 +347,8 @@ def update_geo_figure(geo: str, geo_c: str, year_comparison: str, scale, refresh
     # Use regex to extract the value of the 'lang' parameter
     language = get_language(lang_query)
     # Single area mode
-    if not year_comparison and (geo == geo_c or geo_c == None or (geo == None and geo_c != None)):
+    # For now, it'll just be owner vs renter no matter what
+    if (geo == geo_c or geo_c == None or (geo == None and geo_c != None)):  # not year_comparison and :
 
         # When no area is selected
         if geo == None and geo_c != None:
@@ -351,7 +365,11 @@ def update_geo_figure(geo: str, geo_c: str, year_comparison: str, scale, refresh
         plot_df = plot_df_core_housing_need_by_income(geo, False, language)
 
         # Generating plot
-        fig = go.Figure()
+        fig = make_subplots(rows=1, cols=2,
+                            subplot_titles=(
+                                f"{geo}, {localization[language]['owner']}",
+                                f"{geo}, {localization[language]['renter']}"),
+                            shared_xaxes=True)
         for i, c in zip(plot_df['Income_Category'], colors):
             plot_df_frag = plot_df.loc[plot_df['Income_Category'] == i, :]
             fig.add_trace(go.Bar(
@@ -362,36 +380,58 @@ def update_geo_figure(geo: str, geo_c: str, year_comparison: str, scale, refresh
                 orientation='h',
                 hovertemplate='%{y} - ' + '%{x: .2%}<extra></extra>'
             ))
+        # Comparison plot
+        plot_df_c = plot_df_core_housing_need_by_income(geo, True, language)
+
+        # Generating comparison plot
+        n = 0
+        for i, c, b in zip(plot_df_c['Income_Category'], colors, x_base):
+            plot_df_frag_c = plot_df_c.loc[plot_df_c['Income_Category'] == i, :]
+            fig.add_trace(go.Bar(
+                y=plot_df_frag_c['Income_Category'],
+                x=plot_df_frag_c['Percent HH'],
+                name=b.replace(" Income", ""),
+                marker_color=c,
+                orientation='h',
+                hovertemplate='%{y} - ' + '%{x: .2%}<extra></extra>',
+                legendgroup=f'{n}',
+                showlegend=False,
+            ), row=1, col=2)
+            n += 1
 
         # Plot layout settings
         fig.update_layout(
-            width=900,
+            title=localization[language]["fig-title"] + f"<br>{geo}" +
+                  (f' {localization[language]["renter"]} {localization[language]["vs"]} '
+                   f'{localization[language]["owner"]}'),
             showlegend=False,
-            legend=dict(font=dict(size=9)),
-            yaxis=dict(autorange="reversed"),
+            width=900,
+            legend=dict(font=dict(size=8)),
             modebar_color=modebar_color,
             modebar_activecolor=modebar_activecolor,
             plot_bgcolor='#F8F9F9',
-            title=localization[language]["fig-title"] + f" {default_year}<br>{geo}",
-            legend_title=localization[language]["income"],
+            legend_title="Income"
+        )
+        fig.update_yaxes(
+            fixedrange=True,
+            autorange="reversed",
+            title_font=dict(size=10),
+            tickfont=dict(size=10)
         )
         fig.update_xaxes(
             fixedrange=True,
             range=[0, 1],
             tickformat=',.0%',
             title=localization[language]["percent-hh"],
+            title_font=dict(size=10),
             tickfont=dict(size=10)
-        )
-        fig.update_yaxes(
-            tickfont=dict(size=10),
-            fixedrange=True,
-            title=localization[language]["income-category"] + '<br>' + localization[language]["affordable-shelter"]
         )
 
         return fig
 
     # Comparison mode
     else:
+        year_comparison = ""
         if year_comparison:
             geo = area_scale_primary_only(geo, scale)
             original_year, compared_year = year_comparison.split("-")
@@ -401,11 +441,18 @@ def update_geo_figure(geo: str, geo_c: str, year_comparison: str, scale, refresh
             original_year, compared_year = default_year, default_year
 
         # Subplot setting for the comparison mode
-        fig = make_subplots(rows=1, cols=2,
+        fig = make_subplots(rows=2, cols=2,
                             subplot_titles=(
-                                f"{geo + ' ' + compared_year if year_comparison else geo}",
-                                f"{geo + ' ' + str(original_year) if year_comparison else geo_c}"),
-                            shared_xaxes=True)
+                                f"{geo}, "
+                                f"{localization[language]['owner']}",
+                                f"{geo if year_comparison else geo_c}, "
+                                f"{localization[language]['owner']}",
+                                f"{geo}, "
+                                f"{localization[language]['renter']}",
+                                f"{geo if year_comparison else geo_c}, "
+                                f"{localization[language]['renter']}"),
+                            shared_xaxes=True,
+                            vertical_spacing=0.1)
 
         # Main Plot
 
@@ -439,19 +486,7 @@ def update_geo_figure(geo: str, geo_c: str, year_comparison: str, scale, refresh
         fig.update_yaxes(title=localization[language]["income-category"] +
                                '<br>' + localization[language]["affordable-shelter"], row=1, col=1)
 
-        # Comparison plot
-
-        # Generating dataframe for comparison plot
-        if year_comparison:
-            if error_region_figure(geo, default_year, language):
-                return error_region_figure(geo, default_year, language)
-        else:
-            if error_region_figure(geo_c, default_year, language):
-                return error_region_figure(geo_c, default_year, language)
-        plot_df_c = (
-            plot_df_core_housing_need_by_income(geo, True, language) if year_comparison else
-            plot_df_core_housing_need_by_income(geo_c, True, language)
-        )
+        plot_df_c = plot_df_core_housing_need_by_income(geo, True, language)
 
         # Generating comparison plot
         n = 0
@@ -468,14 +503,61 @@ def update_geo_figure(geo: str, geo_c: str, year_comparison: str, scale, refresh
                 showlegend=False,
             ), row=1, col=2)
             n += 1
+        # Comparison plot
 
+        # Generating dataframe for comparison plot
+        if year_comparison:
+            if error_region_figure(geo, default_year, language):
+                return error_region_figure(geo, default_year, language)
+        else:
+            if error_region_figure(geo_c, default_year, language):
+                return error_region_figure(geo_c, default_year, language)
+        plot_df_c = (
+            plot_df_core_housing_need_by_income(geo, False, language) if year_comparison else
+            plot_df_core_housing_need_by_income(geo_c, False, language)
+        )
+
+        # Generating comparison plot
+        n = 0
+        for i, c, b in zip(plot_df_c['Income_Category'], colors, x_base):
+            plot_df_frag_c = plot_df_c.loc[plot_df_c['Income_Category'] == i, :]
+            fig.add_trace(go.Bar(
+                y=plot_df_frag_c['Income_Category'],
+                x=plot_df_frag_c['Percent HH'],
+                name=b.replace(" Income", ""),
+                marker_color=c,
+                orientation='h',
+                hovertemplate='%{y} - ' + '%{x: .2%}<extra></extra>',
+                legendgroup=f'{n}',
+                showlegend=False,
+            ), row=2, col=1)
+            n += 1
+        n = 0
+        plot_df_c = (
+            plot_df_core_housing_need_by_income(geo, True, language) if year_comparison else
+            plot_df_core_housing_need_by_income(geo_c, True, language)
+        )
+        for i, c, b in zip(plot_df_c['Income_Category'], colors, x_base):
+            plot_df_frag_c = plot_df_c.loc[plot_df_c['Income_Category'] == i, :]
+            fig.add_trace(go.Bar(
+                y=plot_df_frag_c['Income_Category'],
+                x=plot_df_frag_c['Percent HH'],
+                name=b.replace(" Income", ""),
+                marker_color=c,
+                orientation='h',
+                hovertemplate='%{y} - ' + '%{x: .2%}<extra></extra>',
+                legendgroup=f'{n}',
+                showlegend=False,
+            ), row=2, col=2)
+            n += 1
         # Plot layout settings
         fig.update_layout(
-            title=localization[language]["fig-title"] + f" {geo}" +
+            title=localization[language]["fig-title"] + f"<br>{geo}" +
                   (f' {compared_year} {localization[language]["vs"]} {original_year}' if year_comparison
                    else f" {default_year}"),
             showlegend=False,
             width=900,
+            height=800,
             legend=dict(font=dict(size=8)),
             modebar_color=modebar_color,
             modebar_activecolor=modebar_activecolor,
@@ -503,8 +585,8 @@ def update_geo_figure(geo: str, geo_c: str, year_comparison: str, scale, refresh
 # Percentage of Households in Core Housing Need, by Income Category and HH Size, 2021
 
 # Plot dataframe generator
-def plot_df_core_housing_need_by_amhi(geo: str, IsComparison: bool, language:str,  year: int = default_year):
-    geo, joined_df_filtered = query_table(geo, year, income_partners_year)
+def plot_df_core_housing_need_by_amhi(geo: str, IsComparison: bool, language: str, year: int = default_year):
+    geo, joined_df_filtered = query_table(geo, year, income_ownership_year)
 
     x_list = []
 
@@ -533,14 +615,15 @@ def plot_df_core_housing_need_by_amhi(geo: str, IsComparison: bool, language:str
 
     h_hold_value = []
     hh_p_num_list_full = []
-    hh_column_name = ['1 Person', '2 Person', '3 Person', '4 Person', '5+ Person']
-    for h, hc in zip(hh_p_num_list, hh_column_name):
+    hh_column_name = ['renter', 'owner']
+    hh_labels = [localization[language][hh] for hh in hh_column_name]
+    for h, hc in zip(hh_column_name, hh_labels):
         for i in income_lv_list:
-            column = f'Per HH with income {i} of AMHI in core housing need that are {h} person HH'
+            column = f'Per HH with income {i} of AMHI in core housing need that are {h} HH'
             h_hold_value.append(joined_df_filtered[column].tolist()[0])
             hh_p_num_list_full.append(hc)
 
-    plot_df = pd.DataFrame({'HH_Size': hh_p_num_list_full, 'Income_Category': x_list * 5, 'Percent': h_hold_value})
+    plot_df = pd.DataFrame({'HH_Size': hh_p_num_list_full, 'Income_Category': x_list * 2, 'Percent': h_hold_value})
 
     return plot_df
 
@@ -558,7 +641,7 @@ def plot_df_core_housing_need_by_amhi(geo: str, IsComparison: bool, language:str
 def update_geo_figure2(geo, geo_c, year_comparison: str, scale, refresh, lang_query):
     # Single area mode
     language = get_language(lang_query)
-    if not year_comparison and (geo == geo_c or geo_c == None or (geo == None and geo_c != None)):
+    if (geo == geo_c or geo_c == None or (geo == None and geo_c != None)):  # not year_comparison and :
 
         # When no area is selected
         if geo == None and geo_c != None:
@@ -598,7 +681,7 @@ def update_geo_figure2(geo, geo_c, year_comparison: str, scale, refresh, lang_qu
             yaxis=dict(autorange="reversed"),
             barmode='stack',
             plot_bgcolor='#F8F9F9',
-            title= localization[language]["fig2-title"] + f' {default_year}<br>{geo}',
+            title=localization[language]["fig2-title"] + f'<br>{default_year} {geo}',
             legend_title="Household Size"
         )
         fig2.update_yaxes(
@@ -618,6 +701,7 @@ def update_geo_figure2(geo, geo_c, year_comparison: str, scale, refresh, lang_qu
 
     # Comparison mode
     else:
+        year_comparison = ""
         if year_comparison:
             geo = area_scale_primary_only(geo, scale)
             original_year, compared_year = year_comparison.split("-")
@@ -663,7 +747,7 @@ def update_geo_figure2(geo, geo_c, year_comparison: str, scale, refresh, lang_qu
             n += 1
 
         fig2.update_yaxes(title=localization[language]["income-category"] +
-                               '<br>' + localization[language]["affordable-shelter"], row=1, col=1)
+                                '<br>' + localization[language]["affordable-shelter"], row=1, col=1)
 
         # Comparison plot
 
@@ -727,52 +811,30 @@ def update_geo_figure2(geo, geo_c, year_comparison: str, scale, refresh, lang_qu
 
 
 # 2021 Affordable Housing Deficit
+AMHI = ['Total - Private households by Household income as a proportion to Area Median Household Income (AMHI)_1',
+        'Households with household income 20% or under of area median household income (AMHI)',
+        'Households with household income 21% to 50% of AMHI',
+        'Households with household income 51% to 80% of AMHI',
+        'Households with household income 81% to 120% of AMHI',
+        'Households with household income 121% and over of AMHI']
+renter = 'Renter households'
+owner = 'Owner households'
+status = 'Households in core housing need status'
+
 
 # Table generator
 def table_core_affordable_housing_deficit(geo, is_second, year: int = default_year):
-    geo, joined_df_filtered = query_table(geo, year, income_partners_year)
+    geo, joined_df_filtered = query_table(geo, year, income_ownership_year)
 
     table2 = pd.DataFrame({'Income Category': income_ct})
 
-    hh_p_num_list = [1, 2, 3, 4, '5 or more']
-    income_lv_list = ['20% or under', '21% to 50%', '51% to 80%', '81% to 120%', '121% or more']
-
-    for h in hh_p_num_list:
+    for ownership in [renter, owner]:
         h_hold_value = []
-        if h == 1:
-            h2 = '1 person'
-        elif h == '5 or more':
-            h2 = '5 or more persons household'
-        else:
-            h2 = f'{str(h)} persons'
-        for i in income_lv_list:
-            if i == '20% or under':
-                column = (f'Total - Private households by presence of at least one or of the combined activity '
-                          f'limitations (Q11a, Q11b, Q11c or Q11f or combined)-{h2}-Households with income {i} of '
-                          f'area median household income (AMHI)-Households in core housing need')
-                h_hold_value.append(joined_df_filtered[column].tolist()[0])
+        for index in AMHI[1:]:
+            column = f'{ownership}-{index}-{status}'
+            h_hold_value.append(joined_df_filtered[column].tolist()[0])
 
-            else:
-                column = (f'Total - Private households by presence of at least one or of the combined activity '
-                          f'limitations (Q11a, Q11b, Q11c or Q11f or combined)-{h2}-Households with income {i} of '
-                          f'AMHI-Households in core housing need')
-                h_hold_value.append(joined_df_filtered[column].tolist()[0])
-
-        if is_second is False:
-            if h == 1:
-                table2[f'{h} Person HH'] = h_hold_value
-            elif h == '5 or more':
-                table2[f'5+ Person HH'] = h_hold_value
-            else:
-                table2[f'{h} Person HH'] = h_hold_value
-
-        else:
-            if h == 1:
-                table2[f'{h} Person HH '] = h_hold_value
-            elif h == '5 or more':
-                table2[f'5+ Person HH '] = h_hold_value
-            else:
-                table2[f'{h} Person HH '] = h_hold_value
+        table2[ownership] = h_hold_value
 
     x_list = []
 
@@ -802,8 +864,14 @@ def table_core_affordable_housing_deficit(geo, is_second, year: int = default_ye
     table2.loc[5, 'Income Category (Max. affordable shelter cost)'] = 'Total'
     # pdb.set_trace()
     if is_second is True:
-        table2 = table2.rename(columns={'Total': 'Total ', 'Income Category (Max. affordable shelter cost)':
-            'Income Category (Max. affordable shelter cost) '})
+        # You need unique names for columns
+        table2 = table2.rename(
+            columns={
+                'Total': 'Total ',
+                'Income Category (Max. affordable shelter cost)': 'Income Category (Max. affordable shelter cost) ',
+                renter: renter + " ",
+                owner: owner + " "
+            })
 
     return table2
 
@@ -826,7 +894,7 @@ def table_core_affordable_housing_deficit(geo, is_second, year: int = default_ye
 def update_table2(geo, geo_c, year_comparison: str, selected_columns, scale, lang_query):
     # Single area mode
     language = get_language(lang_query)
-    if not year_comparison and (geo == geo_c or geo_c == None or (geo == None and geo_c != None)):
+    if (geo == geo_c or geo_c == None or (geo == None and geo_c != None)):  # not year_comparison and :
 
         # When no area is selected
         if geo == None and geo_c != None:
@@ -846,8 +914,7 @@ def update_table2(geo, geo_c, year_comparison: str, selected_columns, scale, lan
             table = pd.DataFrame({no_data: [""]})
             return [{"name": no_data, "id": no_data}], table.to_dict("records"), [], [], style_header_conditional
 
-        table2 = table2[['Income Category (Max. affordable shelter cost)', '1 Person HH', '2 Person HH',
-                         '3 Person HH', '4 Person HH', '5+ Person HH', 'Total']]
+        table2 = table2[['Income Category (Max. affordable shelter cost)', owner, renter, 'Total']]
 
         # Generating callback output to update table
         col_list = []
@@ -912,9 +979,7 @@ def update_table2(geo, geo_c, year_comparison: str, selected_columns, scale, lan
             table_core_affordable_housing_deficit(geo, False)
         )
 
-        table2 = table2[['Income Category', 'Income Category (Max. affordable shelter cost)',
-                         '1 Person HH', '2 Person HH', '3 Person HH',
-                         '4 Person HH', '5+ Person HH', 'Total']]
+        table2 = table2[['Income Category', 'Income Category (Max. affordable shelter cost)', owner, renter, 'Total']]
 
         # Generating comparison table
         if year_comparison:
@@ -929,8 +994,7 @@ def update_table2(geo, geo_c, year_comparison: str, selected_columns, scale, lan
         )
 
         table2_c = table2_c[['Income Category', 'Income Category (Max. affordable shelter cost) ',
-                             '1 Person HH ', '2 Person HH ', '3 Person HH ',
-                             '4 Person HH ', '5+ Person HH ', 'Total ']]
+                             owner + " ", renter + " ", 'Total ']]
 
         # Merging main and comparison table
 
@@ -1004,33 +1068,34 @@ def update_table2(geo, geo_c, year_comparison: str, selected_columns, scale, lan
         return col_list, new_table2_j.to_dict(
             'record'), style_data_conditional, style_cell_conditional, style_header_conditional
 
-@callback(
-    Output("income-categories-title-page5", "children"),
-    Output("percent-HH-CHN-title-page5", "children"),
-    Output("percent-IC-HH-CHN-title-page5", "children"),
-    Output("housing-deficit-page5", "children"),
-    State('main-area', 'data'),
-    State('comparison-area', 'data'),
-    Input('year-comparison', 'data'),
-    State('area-scale-store', 'data'),
-    Input('income-category-affordability-table-pg5', 'selected_columns'),
-)
-def change_title_labels(geo, geo_c, year_comparison, scale, refresh):
-    # change based off of url
-    if year_comparison:
-        original_year, compared_year = year_comparison.split("-")
-        return (
-            html.Strong(f'Income Categories and Affordable Shelter Costs, {compared_year} vs {original_year}'),
-            html.Strong(f'Percentage of Households in Core Housing Need, by Income Category, {compared_year} vs {original_year}'),
-            html.Strong(f'Percentage of Households in Core Housing Need, by Income Category and HH Size, {compared_year} vs {original_year}'),
-            html.Strong(f'{compared_year} vs {original_year} Affordable Housing Deficit'),
-        )
-    return (
-        html.Strong(f'Income Categories and Affordable Shelter Costs, {default_year}'),
-        html.Strong(f'Percentage of Households in Core Housing Need, by Income Category, {default_year}'),
-        html.Strong(f'Percentage of Households in Core Housing Need, by Income Category and HH Size, {default_year}'),
-        html.Strong(f'{default_year} Affordable Housing Deficit'),
-    )
+
+# @callback(
+#     Output("income-categories-title-page5", "children"),
+#     Output("percent-HH-CHN-title-page5", "children"),
+#     Output("percent-IC-HH-CHN-title-page5", "children"),
+#     Output("housing-deficit-page5", "children"),
+#     State('main-area', 'data'),
+#     State('comparison-area', 'data'),
+#     Input('year-comparison', 'data'),
+#     State('area-scale-store', 'data'),
+#     Input('income-category-affordability-table-pg5', 'selected_columns'),
+# )
+# def change_title_labels(geo, geo_c, year_comparison, scale, refresh):
+#     # change based off of url
+#     if year_comparison:
+#         original_year, compared_year = year_comparison.split("-")
+#         return (
+#             html.Strong(f'Income Categories and Affordable Shelter Costs, {compared_year} vs {original_year}'),
+#             html.Strong(f'Percentage of Households in Core Housing Need, by Income Category, {compared_year} vs {original_year}'),
+#             html.Strong(f'Percentage of Households in Core Housing Need, by Income Category and HH Size, {compared_year} vs {original_year}'),
+#             html.Strong(f'{compared_year} vs {original_year} Affordable Housing Deficit'),
+#         )
+#     return (
+#         html.Strong(f'Income Categories and Affordable Shelter Costs, {default_year}'),
+#         html.Strong(f'Percentage of Households in Core Housing Need, by Income Category, {default_year}'),
+#         html.Strong(f'Percentage of Households in Core Housing Need, by Income Category and HH Size, {default_year}'),
+#         html.Strong(f'{default_year} Affordable Housing Deficit'),
+#     )
 
 
 @callback(
@@ -1045,19 +1110,17 @@ def func_ov7(n_clicks, geo, geo_c, year_comparison):
         geo = default_value
 
     if "ov7-download-csv" == ctx.triggered_id:
-        if year_comparison:
-            original_year, compared_year = year_comparison.split("-")
-            _, joined_df_geo = query_table(geo, int(original_year), income_partners_year)
-            _, joined_df_geo_c = query_table(geo, int(compared_year), income_partners_year)
-            joined_df_download = pd.concat([joined_df_geo, joined_df_geo_c])
-            joined_df_download = joined_df_download.drop(columns=['pk_x', 'pk_y'])
-            return dcc.send_data_frame(joined_df_download.to_csv, "result.csv")
-        else:
-            _, joined_df_geo = query_table(geo, default_year, income_partners_year)
-            _, joined_df_geo_c = query_table(geo_c, default_year, income_partners_year)
-            joined_df_download = pd.concat([joined_df_geo, joined_df_geo_c])
-            joined_df_download = joined_df_download.drop(columns=['pk_x', 'pk_y'])
+        # if year_comparison:
+        #     original_year, compared_year = year_comparison.split("-")
+        #     _, joined_df_geo = query_table(geo, int(original_year), income_ownership_year)
+        #     _, joined_df_geo_c = query_table(geo, int(compared_year), income_ownership_year)
+        #     joined_df_download = pd.concat([joined_df_geo, joined_df_geo_c])
+        #     joined_df_download = joined_df_download.drop(columns=['pk_x', 'pk_y'])
+        #     return dcc.send_data_frame(joined_df_download.to_csv, "result.csv")
+        # else:
+        _, joined_df_geo = query_table(geo, default_year, income_ownership_year)
+        _, joined_df_geo_c = query_table(geo_c, default_year, income_ownership_year)
+        joined_df_download = pd.concat([joined_df_geo, joined_df_geo_c])
+        joined_df_download = joined_df_download.drop(columns=['pk_x', 'pk_y'])
 
-            return dcc.send_data_frame(joined_df_download.to_csv, "result.csv")
-
-
+        return dcc.send_data_frame(joined_df_download.to_csv, "result.csv")

@@ -75,14 +75,20 @@ Base = declarative_base()
 # Percent of trans HH in CHN
 
 income_lv_list = ['20% or under', '21% to 50%', '51% to 80%', '81% to 120%', '121% or more']
-
+income_labels = ['Very Low Income','Low Income','Moderate Income','Median Income', 'High Income']
 # One for percent of the total population, then one for each income
 label = '{household} Percent HH with income {range} of AMHI in core housing need'
 total = housing_type[0]
 owner = housing_type[1]
 renter = housing_type[2]
-output_columns = [label.format(household = owner, range=income) for income in income_lv_list] + [label.format(
-    household = renter, range=income) for income in income_lv_list]
+output_columns = [label.format(household = owner, range=income) for income in income_lv_list] + \
+    [label.format(household = renter, range=income) for income in income_lv_list] + \
+    [f'Per HH with income {income} of AMHI in core housing need that are renter HH' for income in income_lv_list] + \
+    [f'Per HH with income {income} of AMHI in core housing need that are owner HH' for income in income_lv_list] + \
+    [f'{owner}-{income}-{type}' for income in AMHI for type in CHN_status] + \
+    [f'{renter}-{income}-{type}' for income in AMHI for type in CHN_status] + \
+    [f'Percent of {owner} HH that are in {income}' for income in income_labels] + \
+    [f'Percent of {renter} HH that are in {income}' for income in income_labels]
 def add_columns(row):
     # Match row to transgender row
     geo = row["Geography"]
@@ -95,44 +101,71 @@ def add_columns(row):
     rent_row = rent_row.iloc[0] if isinstance(rent_row, pd.DataFrame) else rent_row
 
     row_output = {}
-
+    label = '{household} Percent HH with income {range} of AMHI in core housing need'
     for index, income_lvl in enumerate(income_lv_list):
         try:
-            row_output[output_columns[index]] = \
+            row_output[label.format(household = owner, range=income_lvl)] = \
                 rent_row[f"{owner}-{AMHI[index]}-{CHN_status[1]}"].item() / \
                 rent_row[f"{owner}-{AMHI[index]}-{CHN_status[0]}"].item()
         except ZeroDivisionError:
             row_output[output_columns[index]] = None
-    for index, income_lvl in enumerate(income_lv_list):
         try:
-            row_output[output_columns[index+len(income_lv_list)]] = \
+            row_output[label.format(household = renter, range=income_lvl)] = \
                 rent_row[f"{renter}-{AMHI[index]}-{CHN_status[1]}"].item() / \
                 rent_row[f"{renter}-{AMHI[index]}-{CHN_status[0]}"].item()
         except ZeroDivisionError:
             row_output[output_columns[index+len(income_lv_list)]] = None
+        try:
+            row_output[f'Per HH with income {income_lvl} of AMHI in core housing need that are owner HH'] = \
+                rent_row[f"{owner}-{AMHI[index]}-{CHN_status[1]}"].item() / \
+                rent_row[f"{total}-{AMHI[index]}-{CHN_status[1]}"].item()
+        except ZeroDivisionError:
+            row_output[f'Per HH with income {income_lvl} of AMHI in core housing need that are owner HH'] = None
+        try:
+            row_output[f'Per HH with income {income_lvl} of AMHI in core housing need that are renter HH'] = \
+                rent_row[f"{renter}-{AMHI[index]}-{CHN_status[1]}"].item() / \
+                rent_row[f"{total}-{AMHI[index]}-{CHN_status[1]}"].item()
+        except ZeroDivisionError:
+            row_output[f'Per HH with income {income_lvl} of AMHI in core housing need that are renter HH'] = None
+    for index, income_lvl in enumerate(AMHI):
+        for status in CHN_status:
+            row_output[f'{renter}-{AMHI[index]}-{status}'] = rent_row[f"{renter}-{AMHI[index]}-{status}"].item()
+            row_output[f'{owner}-{AMHI[index]}-{status}'] = rent_row[f"{owner}-{AMHI[index]}-{status}"].item()
+    for index, label in enumerate(income_labels):
+        try:
+            row_output[f'Percent of {owner} HH that are in {label}'] = \
+                rent_row[f"{owner}-{AMHI[index+1]}-{CHN_status[0]}"].item() / \
+                rent_row[f"{owner}-{AMHI[0]}-{CHN_status[0]}"].item()
+            row_output[f'Percent of {renter} HH that are in {label}'] = \
+                rent_row[f"{renter}-{AMHI[index+1]}-{CHN_status[0]}"].item() / \
+                rent_row[f"{renter}-{AMHI[0]}-{CHN_status[0]}"].item()
+        except ZeroDivisionError:
+            # print(f"division by zero on {geo}")
+            True
+
     return pd.Series(row_output)
 
-
-partners[output_columns] = partners.apply(add_columns, axis=1)
-
-sql = 'DROP TABLE IF EXISTS partners;'
+output_columns.sort()
+ownership = partners["Geography"].to_frame(name="Geography")
+ownership[output_columns] = partners.apply(add_columns, axis=1)
+# partners = pd.concat([partners, partners.apply(add_columns, axis=1)])
+sql = 'DROP TABLE IF EXISTS ownership;'
 result = engine.execute(sql)
-
-
-class Partners(Base):
-    __tablename__ = "partners"
-
-    # define your primary key
-    pk = Column(Integer, primary_key=True, comment='primary key')
-
-    # columns except pk
-    Geography = Column(String)
-    for i in partners.columns[2:]:
-        vars()[f'{i}'] = Column(Float)
-
-
-Partners.__table__.create(bind=engine, checkfirst=True)
-
-for i in range(0, len(partners)):
-    conn.execute(insert(Partners), [partners.loc[i, :].to_dict()])
+ownership.to_sql("ownership", engine)
+# class Ownership(Base):
+#     __tablename__ = "ownership"
+#
+#     # define your primary key
+#     pk = Column(Integer, primary_key=True, comment='primary key')
+#
+#     # columns except pk
+#     Geography = Column(String)
+#     for i in ownership.columns[1:]:
+#         vars()[f'{i}'] = Column(Float)
+#
+#
+# Ownership.__table__.create(bind=engine, checkfirst=True)
+#
+# for i in range(0, len(ownership)):
+#     conn.execute(insert(Ownership), [ownership.loc[i, :].to_dict()])
 conn.close()

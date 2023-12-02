@@ -41,6 +41,7 @@ mapped_geo_code = pd.read_sql_table('geocodes_integrated', engine_current.connec
 # Repeat the data processing for each year
 income_partners_year: Dict[int, pd.DataFrame] = {}
 income_indigenous_year: Dict[int, pd.DataFrame] = {}
+income_ownership_year: Dict[int, pd.DataFrame] = {}
 updated_csd_year: Dict[int, pd.DataFrame] = {}
 updated_cd_year: Dict[int, pd.DataFrame] = {}
 mapped_geo_code_year: Dict[int, pd.DataFrame] = {}
@@ -50,10 +51,16 @@ for year in engine_list.keys():
     income_category = income_category.rename(columns={'Formatted Name': 'Geography'})
 
     df_partners = pd.read_sql_table('partners', engine_list[year].connect())
-    df_ind = pd.read_sql_table('indigenous', engine_list[year].connect())
-
     income_partners_year[year] = income_category.merge(df_partners, how='left', on='Geography')
+
+    df_ind = pd.read_sql_table('indigenous', engine_list[year].connect())
     income_indigenous_year[year] = income_category.merge(df_ind, how='left', on='Geography')
+
+    # I don't have 2016 data :(
+    if year == 2021:
+        df_ownership = pd.read_sql_table('ownership', engine_list[year].connect())
+        income_ownership_year[year] = income_category.merge(df_ownership, how='left', on='Geography')
+
     updated_csd_year[year] = pd.read_sql_table('csd_hh_projections', engine_list[year].connect())
     updated_cd_year[year] = pd.read_sql_table('cd_hh_projections', engine_list[year].connect())
     mapped_geo_code_year[year] = pd.read_sql_table('geocodes_integrated', engine_list[year].connect())
