@@ -103,6 +103,7 @@ def add_columns(row):
     row_output = {}
     label = '{household} Percent HH with income {range} of AMHI in core housing need'
     for index, income_lvl in enumerate(income_lv_list):
+        index += 1 # Because our income level doesn't have a total as the first index, unlike our AMHI list
         try:
             row_output[label.format(household = owner, range=income_lvl)] = \
                 rent_row[f"{owner}-{AMHI[index]}-{CHN_status[1]}"].item() / \
@@ -115,6 +116,7 @@ def add_columns(row):
                 rent_row[f"{renter}-{AMHI[index]}-{CHN_status[0]}"].item()
         except ZeroDivisionError:
             row_output[output_columns[index+len(income_lv_list)]] = None
+        # Info for Percentage of Households in Core Housing Need, by Income Category and HH Size
         try:
             row_output[f'Per HH with income {income_lvl} of AMHI in core housing need that are owner HH'] = \
                 rent_row[f"{owner}-{AMHI[index]}-{CHN_status[1]}"].item() / \
@@ -127,10 +129,12 @@ def add_columns(row):
                 rent_row[f"{total}-{AMHI[index]}-{CHN_status[1]}"].item()
         except ZeroDivisionError:
             row_output[f'Per HH with income {income_lvl} of AMHI in core housing need that are renter HH'] = None
+    # Info for affordable Housing Deficit
     for index, income_lvl in enumerate(AMHI):
         for status in CHN_status:
             row_output[f'{renter}-{AMHI[index]}-{status}'] = rent_row[f"{renter}-{AMHI[index]}-{status}"].item()
             row_output[f'{owner}-{AMHI[index]}-{status}'] = rent_row[f"{owner}-{AMHI[index]}-{status}"].item()
+    # Info for Income Categories and Affordable Shelter Costs table
     for index, label in enumerate(income_labels):
         try:
             row_output[f'Percent of {owner} HH that are in {label}'] = \

@@ -792,7 +792,7 @@ def update_geo_figure2(geo, geo_c, year_comparison: str, scale, refresh, lang_qu
             modebar_activecolor=modebar_activecolor,
             barmode='stack',
             plot_bgcolor='#F8F9F9',
-            legend_title="Household Size",
+            legend_title="Household Type",
             legend=dict(font=dict(size=8))
         )
         fig2.update_yaxes(
