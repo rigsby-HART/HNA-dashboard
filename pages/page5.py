@@ -401,22 +401,24 @@ def update_geo_figure(geo: str, geo_c: str, year_comparison: str, scale, refresh
 
         # Plot layout settings
         fig.update_layout(
-            title=localization[language]["fig-title"] + f"<br>{geo}" +
+            title=localization[language]["fig-title"] + f"{'<br>' if language == 'en' else ' '}{geo}" +
                   (f' {localization[language]["renter"]} {localization[language]["vs"]} '
                    f'{localization[language]["owner"]}'),
             showlegend=False,
             width=900,
+            height=450,
             legend=dict(font=dict(size=8)),
             modebar_color=modebar_color,
             modebar_activecolor=modebar_activecolor,
             plot_bgcolor='#F8F9F9',
-            legend_title="Income"
+            legend_title="Income",
         )
         fig.update_yaxes(
             fixedrange=True,
             autorange="reversed",
             title_font=dict(size=10),
-            tickfont=dict(size=10)
+            tickfont=dict(size=10),
+            automargin="top"
         )
         fig.update_xaxes(
             fixedrange=True,
@@ -445,10 +447,10 @@ def update_geo_figure(geo: str, geo_c: str, year_comparison: str, scale, refresh
                             subplot_titles=(
                                 f"{geo}, "
                                 f"{localization[language]['owner']}",
-                                f"{geo if year_comparison else geo_c}, "
-                                f"{localization[language]['owner']}",
                                 f"{geo}, "
                                 f"{localization[language]['renter']}",
+                                f"{geo if year_comparison else geo_c}, "
+                                f"{localization[language]['owner']}",
                                 f"{geo if year_comparison else geo_c}, "
                                 f"{localization[language]['renter']}"),
                             shared_xaxes=True,
@@ -682,7 +684,7 @@ def update_geo_figure2(geo, geo_c, year_comparison: str, scale, refresh, lang_qu
             barmode='stack',
             plot_bgcolor='#F8F9F9',
             title=localization[language]["fig2-title"] + f'<br>{default_year} {geo}',
-            legend_title="Household Size"
+            legend_title="Household Type"
         )
         fig2.update_yaxes(
             tickfont=dict(size=10),
