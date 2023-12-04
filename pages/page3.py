@@ -13,6 +13,7 @@ from dash.dash_table.Format import Format, Scheme, Group
 from plotly.subplots import make_subplots
 from dash import Input, Output, callback, html, State
 
+from app_file import cache
 from helpers.style_helper import style_data_conditional, style_header_conditional
 from helpers.create_engine import engine_current, default_year, df_geo_list, df_region_list, df_province_list, \
     mapped_geo_code, updated_csd_year, updated_csd_current, updated_cd_current, updated_cd_year
@@ -120,6 +121,7 @@ def plot1_new_projection(geo, is_comparison, language, year=default_year):
 
 # Callback logic for the table/plot update
 
+
 @callback(
     Output('datatable5-interactivity', 'columns'),
     Output('datatable5-interactivity', 'data'),
@@ -132,7 +134,9 @@ def plot1_new_projection(geo, is_comparison, language, year=default_year):
     Input('area-scale-store', 'data'),
     Input('datatable5-interactivity', 'selected_columns'),
     State('url', 'search'),
+    cache_args_to_ignore=[3]
 )
+@cache.memoize()
 def update_geo_figure6(geo, geo_c, scale, selected_columns, lang_query):
     language = get_language(lang_query)
     # Single area mode
@@ -430,6 +434,7 @@ def plot2_new_projection(geo, IsComparison, language, year: int = default_year):
 
 # Callback logic for the table/plot update
 
+
 @callback(
     Output('datatable6-interactivity', 'columns'),
     Output('datatable6-interactivity', 'data'),
@@ -442,7 +447,9 @@ def plot2_new_projection(geo, IsComparison, language, year: int = default_year):
     Input('area-scale-store', 'data'),
     Input('datatable6-interactivity', 'selected_columns'),
     State('url', 'search'),
+    cache_args_to_ignore=[3]
 )
+@cache.memoize()
 def update_geo_figure7(geo, geo_c, scale, selected_columns, lang_query):
     language = get_language(lang_query)
     # Single area mode
@@ -744,6 +751,7 @@ def projections_future_hh_size(geo, IsComparison, language, year: int = default_
 
 # Callback logic for the table/plot update
 
+
 @callback(
     Output('datatable-h-interactivity', 'columns'),
     Output('datatable-h-interactivity', 'data'),
@@ -755,8 +763,10 @@ def projections_future_hh_size(geo, IsComparison, language, year: int = default_
     Input('comparison-area', 'data'),
     Input('area-scale-store', 'data'),
     Input('datatable-h-interactivity', 'selected_columns'),
-    State('url', 'search')
+    State('url', 'search'),
+    cache_args_to_ignore=[3]
 )
+@cache.memoize()
 def update_geo_figure_h(geo, geo_c, scale, selected_columns, lang_query):
     language = get_language(lang_query)
     # Single area mode
@@ -1058,6 +1068,7 @@ def projections_future_deltas(geo, IsComparison, language, year: int = default_y
 
 # Callback logic for the table/plot update
 
+
 @callback(
     Output('datatable7-interactivity', 'columns'),
     Output('datatable7-interactivity', 'data'),
@@ -1069,8 +1080,10 @@ def projections_future_deltas(geo, IsComparison, language, year: int = default_y
     Input('comparison-area', 'data'),
     Input('area-scale-store', 'data'),
     Input('datatable7-interactivity', 'selected_columns'),
-    State('url', 'search')
+    State('url', 'search'),
+    cache_args_to_ignore=[3]
 )
+@cache.memoize()
 def update_geo_figure8(geo, geo_c, scale, selected_columns, lang_query):
     language = get_language(lang_query)
     # Single area mode
@@ -1386,6 +1399,7 @@ def projections_future_pop_income(geo, IsComparison, language, year: int = defau
 
 # Callback logic for the table/plot update
 
+
 @callback(
     Output('datatable8-interactivity', 'columns'),
     Output('datatable8-interactivity', 'data'),
@@ -1399,6 +1413,7 @@ def projections_future_pop_income(geo, IsComparison, language, year: int = defau
     Input('datatable8-interactivity', 'selected_columns'),
     State('url', 'search'),
 )
+@cache.memoize()
 def update_geo_figure8(geo, geo_c, scale, selected_columns, lang_query):
     language = get_language(lang_query)
     # If selected area is None
@@ -1775,6 +1790,7 @@ def projections_future_pop_hh(geo, IsComparison: bool, language, year: int = def
 
 # Callback logic for the table/plot update
 
+
 @callback(
     Output('datatable9-interactivity', 'columns'),
     Output('datatable9-interactivity', 'data'),
@@ -1788,6 +1804,7 @@ def projections_future_pop_hh(geo, IsComparison: bool, language, year: int = def
     Input('datatable9-interactivity', 'selected_columns'),
     State('url', 'search'),
 )
+@cache.memoize()
 def update_geo_figure9(geo, geo_c, scale, selected_columns, lang_query):
     language = get_language(lang_query)
     # If selected area is None
@@ -2081,6 +2098,7 @@ def update_geo_figure9(geo, geo_c, scale, selected_columns, lang_query):
         return col_list, table1_j.to_dict(
             'record'), style_data_conditional, style_cell_conditional, style_header_conditional, fig_pgr
 
+# 
 # @callback(
 #     Output("HH-IC-page3", "children"),
 #     Output("HH-size-page3", "children"),
@@ -2116,6 +2134,7 @@ def update_geo_figure9(geo, geo_c, scale, selected_columns, lang_query):
 #         html.Strong(f'{prediction_year} Projected Municipal vs Regional Household Growth Rates by Income Category')
 #     )
 #
+# 
 # @callback(
 #     Output("HH-IC-description-page3", "children"),
 #     Output("HH-IC-graph-description-page3", "children"),
@@ -2231,6 +2250,7 @@ def update_geo_figure9(geo, geo_c, scale, selected_columns, lang_query):
 #     )
 #
 # # Split into two for easier debugging and reading
+# 
 # @callback(
 #     Output("growth-IC-description-page3", "children"),
 #     Output("growth-IC-description2-page3", "children"),

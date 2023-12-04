@@ -8,12 +8,13 @@ import json
 import geopandas as gpd
 import plotly.graph_objects as go
 from dash import dcc, html, Input, Output, ctx, callback, State
+
+from app_file import cache
 # Importing Geo Code Information
 from helpers.create_engine import engine_current, mapped_geo_code, df_province_list, df_region_list
 from helpers.table_helper import storage_variables
 
 warnings.filterwarnings("ignore")
-
 
 gdf_p_code_added = gpd.read_file('./sources/mapdata_simplified/province.shp')
 gdf_p_code_added = gdf_p_code_added.set_index('Geo_Code')
@@ -185,6 +186,7 @@ layout = html.Div(children=
 
 # Callback for storing selected areas and area scale level
 
+
 @callback(
     Output('main-area', 'data'),
     Output('comparison-area', 'data'),
@@ -194,8 +196,10 @@ layout = html.Div(children=
     Input('comparison-geo-dropdown-parent', 'n_clicks'),
     Input('to-geography-1', 'n_clicks'),
     Input('to-region-1', 'n_clicks'),
-    Input('to-province-1', 'n_clicks')
+    Input('to-province-1', 'n_clicks'),
+    cache_args_to_ignore=[2, 3, 4, 5]
 )
+@cache.memoize()
 def store_geo(geo, geo_c, *args):
     id_name = str(ctx.triggered_id)
     return geo, geo_c, id_name
@@ -350,6 +354,7 @@ def subregion_map(value, random_color, clicked_code):
 
 # Callback logic for the map picker
 
+
 @callback(
     Output('canada_map', 'figure'),
     Output('primary-geo-dropdown', 'value'),
@@ -361,8 +366,10 @@ def subregion_map(value, random_color, clicked_code):
     # Input('primary-geo-dropdown', 'n_clicks'),
     Input('to-geography-1', 'n_clicks'),
     Input('to-region-1', 'n_clicks'),
-    Input('to-province-1', 'n_clicks')
+    Input('to-province-1', 'n_clicks'),
+    cache_args_to_ignore=[1, 4, 5, 6]
 )
+@cache.memoize()
 def update_map(clickData, reset_map, select_region, comparison_region, *args):
     # If no area is selected, then map will show Canada Map
 
@@ -504,7 +511,9 @@ def update_map(clickData, reset_map, select_region, comparison_region, *args):
     State('year-comparison', 'data'),
     Input("year-comparison-button", "n_clicks"),
     Input('reset-map', 'n_clicks'),
+    cache_args_to_ignore=[1, 2]
 )
+@cache.memoize()
 def toggle_year_comparison(year_comparison, *args):
     if ctx.triggered_id == "year-comparison-button":
         if year_comparison is not None:

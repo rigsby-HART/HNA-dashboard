@@ -1,5 +1,6 @@
 # Importing Libraries
 import copy
+import time
 
 import pandas as pd
 import plotly.graph_objects as go
@@ -8,6 +9,8 @@ import warnings
 from dash import dcc, Input, Output, ctx, callback, State, html
 from dash.dash_table.Format import Format, Scheme, Group
 from plotly.subplots import make_subplots
+
+from app_file import cache
 from helpers.style_helper import style_header_conditional, style_data_conditional
 from helpers.create_engine import income_ownership_year, default_year
 from helpers.table_helper import area_scale_comparison, area_scale_primary_only, error_region_table, \
@@ -125,6 +128,7 @@ def table_amhi_shelter_cost(geo: str, is_second: bool, year: int = default_year)
 
 # Callback logic for the table update
 
+
 @callback(
     Output('income-category-affordability-table-pg5', 'columns'),
     Output('income-category-affordability-table-pg5', 'data'),
@@ -137,10 +141,11 @@ def table_amhi_shelter_cost(geo: str, is_second: bool, year: int = default_year)
     Input('income-category-affordability-table-pg5', 'selected_columns'),
     Input('area-scale-store', 'data'),
     State('url', 'search'),
+    cache_args_to_ignore=[3]
 )
+@cache.memoize()
 def update_table1(geo, geo_c, year_comparison: str, selected_columns, scale, lang_query):
     # Single area mode
-
     language = get_language(lang_query)
     if (geo == geo_c or geo_c is None or (geo is None and geo_c is not None)):  # not year_comparison and :
 
@@ -334,6 +339,8 @@ def plot_df_core_housing_need_by_income(geo: str, is_rental: bool, language, yea
 
 
 # Callback logic for the plot update
+
+
 @callback(
     Output('graph-pg5', 'figure'),
     Input('main-area', 'data'),
@@ -341,8 +348,10 @@ def plot_df_core_housing_need_by_income(geo: str, is_rental: bool, language, yea
     Input('year-comparison', 'data'),
     Input('area-scale-store', 'data'),
     Input('income-category-affordability-table-pg5', 'selected_columns'),
-    State('url', 'search')
+    State('url', 'search'),
+    cache_args_to_ignore=[4]
 )
+@cache.memoize()
 def update_geo_figure(geo: str, geo_c: str, year_comparison: str, scale, refresh, lang_query):
     # Use regex to extract the value of the 'lang' parameter
     language = get_language(lang_query)
@@ -631,6 +640,7 @@ def plot_df_core_housing_need_by_amhi(geo: str, IsComparison: bool, language: st
 
 
 # Callback logic for the plot update
+
 @callback(
     Output('graph2-pg5', 'figure'),
     Input('main-area', 'data'),
@@ -638,8 +648,10 @@ def plot_df_core_housing_need_by_amhi(geo: str, IsComparison: bool, language: st
     Input('year-comparison', 'data'),
     Input('area-scale-store', 'data'),
     Input('income-category-affordability-table-pg5', 'selected_columns'),
-    State('url', 'search')
+    State('url', 'search'),
+    cache_args_to_ignore=[4]
 )
+@cache.memoize()
 def update_geo_figure2(geo, geo_c, year_comparison: str, scale, refresh, lang_query):
     # Single area mode
     language = get_language(lang_query)
@@ -880,6 +892,7 @@ def table_core_affordable_housing_deficit(geo, is_second, year: int = default_ye
 
 # Callback logic for the table update
 
+
 @callback(
     Output('datatable2-interactivity-pg5', 'columns'),
     Output('datatable2-interactivity-pg5', 'data'),
@@ -891,8 +904,10 @@ def table_core_affordable_housing_deficit(geo, is_second, year: int = default_ye
     Input('year-comparison', 'data'),
     Input('datatable2-interactivity-pg5', 'selected_columns'),
     Input('area-scale-store', 'data'),
-    State('url', 'search')
+    State('url', 'search'),
+    cache_args_to_ignore=[3]
 )
+@cache.memoize()
 def update_table2(geo, geo_c, year_comparison: str, selected_columns, scale, lang_query):
     # Single area mode
     language = get_language(lang_query)
@@ -1071,6 +1086,7 @@ def update_table2(geo, geo_c, year_comparison: str, selected_columns, scale, lan
             'record'), style_data_conditional, style_cell_conditional, style_header_conditional
 
 
+# 
 # @callback(
 #     Output("income-categories-title-page5", "children"),
 #     Output("percent-HH-CHN-title-page5", "children"),
@@ -1100,13 +1116,16 @@ def update_table2(geo, geo_c, year_comparison: str, selected_columns, scale, lan
 #     )
 
 
+
 @callback(
     Output("ov7-download-text-pg5", "data"),
     Input("ov7-download-csv-pg5", "n_clicks"),
     Input('main-area', 'data'),
     Input('comparison-area', 'data'),
     State('year-comparison', 'data'),
+    cache_args_to_ignore=[0]
 )
+@cache.memoize()
 def func_ov7(n_clicks, geo, geo_c, year_comparison):
     if geo == None:
         geo = default_value
