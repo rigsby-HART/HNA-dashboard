@@ -139,7 +139,6 @@ def table_amhi_shelter_cost(geo: str, is_second: bool, year: int = default_year)
 @cache.memoize()
 def update_table1(geo, geo_c, year_comparison: str, scale, lang_query, refresh):
     # Single area mode
-    print("update table 1")
     language = get_language(lang_query)
     if not year_comparison and (geo == geo_c or geo_c is None or (geo is None and geo_c is not None)):
 

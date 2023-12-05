@@ -148,7 +148,7 @@ def table_amhi_shelter_cost(geo: str, is_second: bool, year: int = default_year)
 def update_table1(geo, geo_c, year_comparison: str, selected_columns, scale, lang_query):
     # Single area mode
     language = get_language(lang_query)
-    if (geo == geo_c or geo_c is None or (geo is None and geo_c is not None)):  # not year_comparison and :
+    if not year_comparison and (geo == geo_c or geo_c is None or (geo is None and geo_c is not None)):
 
         # When no area is selected
         if geo is None and geo_c is not None:
@@ -203,7 +203,6 @@ def update_table1(geo, geo_c, year_comparison: str, selected_columns, scale, lan
 
     # Comparison mode
     else:
-        year_comparison = ""
         if year_comparison:
             geo = area_scale_primary_only(geo, scale)
             original_year, compared_year = year_comparison.split("-")
@@ -358,7 +357,7 @@ def update_geo_figure(geo: str, geo_c: str, year_comparison: str, scale, refresh
     language = get_language(lang_query)
     # Single area mode
     # For now, it'll just be owner vs renter no matter what
-    if (geo == geo_c or geo_c == None or (geo == None and geo_c != None)):  # not year_comparison and :
+    if not year_comparison and (geo == geo_c or geo_c == None or (geo == None and geo_c != None)):
 
         # When no area is selected
         if geo == None and geo_c != None:
@@ -443,7 +442,6 @@ def update_geo_figure(geo: str, geo_c: str, year_comparison: str, scale, refresh
 
     # Comparison mode
     else:
-        year_comparison = ""
         if year_comparison:
             geo = area_scale_primary_only(geo, scale)
             original_year, compared_year = year_comparison.split("-")
@@ -455,13 +453,13 @@ def update_geo_figure(geo: str, geo_c: str, year_comparison: str, scale, refresh
         # Subplot setting for the comparison mode
         fig = make_subplots(rows=2, cols=2,
                             subplot_titles=(
-                                f"{geo}, "
+                                f"{compared_year if year_comparison else geo}, "
                                 f"{localization[language]['owner']}",
-                                f"{geo}, "
+                                f"{compared_year if year_comparison else geo}, "
                                 f"{localization[language]['renter']}",
-                                f"{geo if year_comparison else geo_c}, "
+                                f"{original_year if year_comparison else geo_c}, "
                                 f"{localization[language]['owner']}",
-                                f"{geo if year_comparison else geo_c}, "
+                                f"{original_year if year_comparison else geo_c}, "
                                 f"{localization[language]['renter']}"),
                             shared_xaxes=True,
                             vertical_spacing=0.1)
@@ -480,7 +478,7 @@ def update_geo_figure(geo: str, geo_c: str, year_comparison: str, scale, refresh
             plot_df_core_housing_need_by_income(geo, False, language)
         )
 
-        # Generating main plot
+        # Generating owner old plot
         n = 0
         for i, c, b in zip(plot_df['Income_Category'], colors, x_base):
             plot_df_frag = plot_df.loc[plot_df['Income_Category'] == i, :]
@@ -498,9 +496,12 @@ def update_geo_figure(geo: str, geo_c: str, year_comparison: str, scale, refresh
         fig.update_yaxes(title=localization[language]["income-category"] +
                                '<br>' + localization[language]["affordable-shelter"], row=1, col=1)
 
-        plot_df_c = plot_df_core_housing_need_by_income(geo, True, language)
+        plot_df_c = (
+            plot_df_core_housing_need_by_income(geo, True, language, int(compared_year)) if year_comparison else
+            plot_df_core_housing_need_by_income(geo, True, language)
+        )
 
-        # Generating comparison plot
+        # Generating renter old plot
         n = 0
         for i, c, b in zip(plot_df_c['Income_Category'], colors, x_base):
             plot_df_frag_c = plot_df_c.loc[plot_df_c['Income_Category'] == i, :]
@@ -517,7 +518,7 @@ def update_geo_figure(geo: str, geo_c: str, year_comparison: str, scale, refresh
             n += 1
         # Comparison plot
 
-        # Generating dataframe for comparison plot
+        # Generating dataframe for owner newplot
         if year_comparison:
             if error_region_figure(geo, default_year, language):
                 return error_region_figure(geo, default_year, language)
@@ -529,7 +530,7 @@ def update_geo_figure(geo: str, geo_c: str, year_comparison: str, scale, refresh
             plot_df_core_housing_need_by_income(geo_c, False, language)
         )
 
-        # Generating comparison plot
+        # Generating owner new plot
         n = 0
         for i, c, b in zip(plot_df_c['Income_Category'], colors, x_base):
             plot_df_frag_c = plot_df_c.loc[plot_df_c['Income_Category'] == i, :]
@@ -627,7 +628,7 @@ def plot_df_core_housing_need_by_amhi(geo: str, IsComparison: bool, language: st
 
     h_hold_value = []
     hh_p_num_list_full = []
-    hh_column_name = ['renter', 'owner']
+    hh_column_name = ['owner', 'renter']
     hh_labels = [localization[language][hh] for hh in hh_column_name]
     for h, hc in zip(hh_column_name, hh_labels):
         for i in income_lv_list:
@@ -656,7 +657,7 @@ def plot_df_core_housing_need_by_amhi(geo: str, IsComparison: bool, language: st
 def update_geo_figure2(geo, geo_c, year_comparison: str, scale, refresh, lang_query):
     # Single area mode
     language = get_language(lang_query)
-    if (geo == geo_c or geo_c == None or (geo == None and geo_c != None)):  # not year_comparison and :
+    if not year_comparison and (geo == geo_c or geo_c == None or (geo == None and geo_c != None)):
 
         # When no area is selected
         if geo == None and geo_c != None:
@@ -716,7 +717,6 @@ def update_geo_figure2(geo, geo_c, year_comparison: str, scale, refresh, lang_qu
 
     # Comparison mode
     else:
-        year_comparison = ""
         if year_comparison:
             geo = area_scale_primary_only(geo, scale)
             original_year, compared_year = year_comparison.split("-")
@@ -912,7 +912,7 @@ def table_core_affordable_housing_deficit(geo, is_second, year: int = default_ye
 def update_table2(geo, geo_c, year_comparison: str, selected_columns, scale, lang_query):
     # Single area mode
     language = get_language(lang_query)
-    if (geo == geo_c or geo_c == None or (geo == None and geo_c != None)):  # not year_comparison and :
+    if not year_comparison and (geo == geo_c or geo_c == None or (geo == None and geo_c != None)):
 
         # When no area is selected
         if geo == None and geo_c != None:

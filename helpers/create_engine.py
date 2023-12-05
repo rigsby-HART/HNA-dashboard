@@ -56,10 +56,8 @@ for year in engine_list.keys():
     df_ind = pd.read_sql_table('indigenous', engine_list[year].connect())
     income_indigenous_year[year] = income_category.merge(df_ind, how='left', on='Geography')
 
-    # I don't have 2016 data :(
-    if year == 2021:
-        df_ownership = pd.read_sql_table('ownership', engine_list[year].connect())
-        income_ownership_year[year] = income_category.merge(df_ownership, how='left', on='Geography')
+    df_ownership = pd.read_sql_table('ownership', engine_list[year].connect())
+    income_ownership_year[year] = income_category.merge(df_ownership, how='left', on='Geography')
 
     updated_csd_year[year] = pd.read_sql_table('csd_hh_projections', engine_list[year].connect())
     updated_cd_year[year] = pd.read_sql_table('cd_hh_projections', engine_list[year].connect())
