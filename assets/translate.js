@@ -9,17 +9,17 @@
 //document.body.appendChild(div);
 
 // Set the language based off the URL
-language = new URLSearchParams(window.location.search).get('lang');
-if (language != null) {
-    // For some reason cookies must be set on domain and subdomain
-    document.cookie = `googtrans=/auto/${language};`;
-    document.cookie = `googtrans=/auto/${language}; domain=koyeb.app`;
-    // Google yaps that performance.measure is negative because we display the page several times due to embeds
-    // The performance measure they use returns a negative this way, so here I just disable performance measure builtin
-    performance.measure = null
-//    document.addEventListener("DOMContentLoaded", () => {
-        const script = document.createElement('script');
-        script.src = "https://cdn.gtranslate.net/widgets/latest/float.js";
-        document.body.appendChild(script);
-//    });
-}
+//language = new URLSearchParams(window.location.search).get('lang');
+//if (language != null) {
+//    // For some reason cookies must be set on domain and subdomain
+//    document.cookie = `googtrans=/auto/${language};`;
+//    document.cookie = `googtrans=/auto/${language}; domain=koyeb.app`;
+//    // Google yaps that performance.measure is negative because we display the page several times due to embeds
+//    // The performance measure they use returns a negative this way, so here I just disable performance measure builtin
+//    performance.measure = null
+////    document.addEventListener("DOMContentLoaded", () => {
+//        const script = document.createElement('script');
+//        script.src = "https://cdn.gtranslate.net/widgets/latest/float.js";
+//        document.body.appendChild(script);
+////    });
+//}

@@ -4,7 +4,7 @@ import pandas as pd
 import numpy as np
 import plotly.graph_objects as go
 import warnings
-from dash import dcc, dash_table, html, Input, Output, ctx, callback, State
+from dash import dcc, dash_table, html, Input, Output, ctx, callback, State, register_page
 from dash.dash_table.Format import Format, Scheme, Group
 from plotly.subplots import make_subplots
 
@@ -17,6 +17,7 @@ from pages.page4_helpers.page4_localization import localization
 
 from pages.page4_helpers.page4_main import layout
 
+register_page(__name__)
 warnings.filterwarnings("ignore")
 
 # Preprocessing - Preparing main dataset and categories being used for plots

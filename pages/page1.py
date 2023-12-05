@@ -81,7 +81,7 @@ fig_m.update_layout(mapbox_style="carto-positron",
 
 # Setting layout for dashboard
 
-
+dash.register_page(__name__)
 layout = html.Div(children=
                   # Fetching Area/Comparison Area/Clicked area scale info in local storage
                   storage_variables()
@@ -360,22 +360,22 @@ def subregion_map(value, random_color, clicked_code):
     Output('primary-geo-dropdown', 'value'),
     Output('comparison-geo-dropdown', 'value'),
     [Input('canada_map', 'clickData')],
-    Input('reset-map', 'n_clicks'),
     Input('primary-geo-dropdown', 'value'),
     Input('comparison-geo-dropdown', 'value'),
-    # Input('primary-geo-dropdown', 'n_clicks'),
+    Input('reset-map', 'n_clicks'),
     Input('to-geography-1', 'n_clicks'),
     Input('to-region-1', 'n_clicks'),
     Input('to-province-1', 'n_clicks'),
-    cache_args_to_ignore=[1, 4, 5, 6]
 )
 @cache.memoize()
-def update_map(clickData, reset_map, select_region, comparison_region, *args):
+# 
+def update_map(clickData, select_region, comparison_region, *args):
     # If no area is selected, then map will show Canada Map
-
     if select_region is None:
         select_region = default_value
     # Make the logic below zoom to the correct level even during comparison
+
+    # User clicked on comparison dropdown
     if ctx.triggered_id == "comparison-geo-dropdown" or ctx.triggered_id == "comparison-geo-dropdown-parent":
         if comparison_region is None:
             return dash.no_update, select_region, None
@@ -407,8 +407,12 @@ def update_map(clickData, reset_map, select_region, comparison_region, *args):
     if (len(clicked_code) == 4 and selectedDropDown) or "to-region-1" == ctx.triggered_id:
 
         # When users click 'View Census Division' button after selecting Province on dropbox menu
-        # -> Show map for Province
+        # Canada is the current focus
+        if len(clicked_code) == 1:
+            fig_m = province_map(default_value, True)
 
+            return fig_m, select_region, comparison_region
+        # -> Show map for Province
         if len(clicked_code) == 2:
             fig_m = province_map(region_in_focus, False)
 
@@ -499,10 +503,9 @@ def update_map(clickData, reset_map, select_region, comparison_region, *args):
 
     # default map (show provinces) before clicking anything on the map
 
-    else:
-        fig_m = province_map(select_region, True)
+    fig_m = province_map(select_region, True)
 
-        return fig_m, select_region, comparison_region
+    return fig_m, select_region, comparison_region
 
 
 @callback(

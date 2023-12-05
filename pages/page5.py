@@ -6,7 +6,7 @@ import pandas as pd
 import plotly.graph_objects as go
 import math as math
 import warnings
-from dash import dcc, Input, Output, ctx, callback, State, html
+from dash import dcc, Input, Output, ctx, callback, State, html, register_page
 from dash.dash_table.Format import Format, Scheme, Group
 from plotly.subplots import make_subplots
 
@@ -19,6 +19,7 @@ from helpers.table_helper import area_scale_comparison, area_scale_primary_only,
 from pages.page5_helpers.page5_localization import localization
 from pages.page5_helpers.page5_main import layout
 
+register_page(__name__)
 warnings.filterwarnings("ignore")
 
 # Preprocessing - Preparing main dataset and categories being used for plots

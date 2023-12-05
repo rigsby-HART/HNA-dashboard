@@ -11,7 +11,7 @@ import warnings
 
 from dash.dash_table.Format import Format, Scheme, Group
 from plotly.subplots import make_subplots
-from dash import Input, Output, callback, html, State
+from dash import Input, Output, callback, html, State, register_page
 
 from app_file import cache
 from helpers.style_helper import style_data_conditional, style_header_conditional
@@ -23,6 +23,7 @@ from pages.page3_helpers.page3_localization import localization
 from pages.page3_helpers.page3_main import layout
 
 warnings.filterwarnings("ignore")
+register_page(__name__)
 # Configuration for plot icons
 
 config = {'displayModeBar': True, 'displaylogo': False,

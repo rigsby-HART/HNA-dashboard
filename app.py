@@ -1,41 +1,22 @@
 # Import necessary libraries
 import dash
 from dash import html, dcc
-from dash.dependencies import Input, Output
 
 
 # Connect to main app_file.py file
 from app_file import app
 from helpers.table_helper import storage_variables
-# Connect to app pages
-from pages import page1, page2, page3, page4, page5
 
 # Define the index page layout
 
 app.layout = html.Div(
     storage_variables() + [
         dcc.Location(id='url', refresh=False),
-        html.Div(id='page-content', children=[]),
+        dash.page_container
     ])
 server = app.server
 
 
-# Create the callback to handle mutlipage inputs
-@app.callback(Output('page-content', 'children'),
-              Input('url', 'pathname'))
-def display_page(pathname):
-    if pathname == '/page1':
-        return page1.layout
-    elif pathname == '/page2':
-        return page2.layout
-    elif pathname == '/page3':
-        return page3.layout
-    elif pathname == '/page4':
-        return page4.layout
-    elif pathname == '/page5':
-        return page5.layout
-    else:  # if redirected to unknown link
-        return "404 Page Error! Please choose a link"
 
 
 # Run the app on localhost:8050

@@ -5,6 +5,7 @@ import pandas as pd
 import plotly.graph_objects as go
 import math as math
 import warnings
+from dash import register_page
 from dash import dcc, Input, Output, ctx, callback, State, html
 from dash.dash_table.Format import Format, Scheme, Group
 from plotly.subplots import make_subplots
@@ -17,7 +18,7 @@ from helpers.table_helper import area_scale_comparison, area_scale_primary_only,
     query_table, get_language
 from pages.page2_helpers.page2_main import layout
 from pages.page2_helpers.page2_localization import localization
-
+register_page(__name__)
 warnings.filterwarnings("ignore")
 
 # Preprocessing - Preparing main dataset and categories being used for plots
@@ -130,15 +131,15 @@ def table_amhi_shelter_cost(geo: str, is_second: bool, year: int = default_year)
     Input('main-area', 'data'),
     Input('comparison-area', 'data'),
     Input('year-comparison', 'data'),
-    Input('income-category-affordability-table', 'selected_columns'),
     Input('area-scale-store', 'data'),
     State('url', 'search'),
-    cache_args_to_ignore=[3]
+    Input('income-category-affordability-table', 'selected_columns'),
+    cache_args_to_ignore=[-1]
 )
 @cache.memoize()
-def update_table1(geo, geo_c, year_comparison: str, selected_columns, scale, lang_query):
+def update_table1(geo, geo_c, year_comparison: str, scale, lang_query, refresh):
     # Single area mode
-
+    print("update table 1")
     language = get_language(lang_query)
     if not year_comparison and (geo == geo_c or geo_c is None or (geo is None and geo_c is not None)):
 
@@ -333,12 +334,12 @@ def plot_df_core_housing_need_by_income(geo: str, is_second: bool, language, yea
     Input('comparison-area', 'data'),
     Input('year-comparison', 'data'),
     Input('area-scale-store', 'data'),
-    Input('income-category-affordability-table', 'selected_columns'),
     State('url', 'search'),
-    cache_args_to_ignore=[4]
+    Input('income-category-affordability-table', 'selected_columns'),
+    cache_args_to_ignore=[-1]
 )
 @cache.memoize()
-def update_geo_figure(geo: str, geo_c: str, year_comparison: str, scale, refresh, lang_query):
+def update_geo_figure(geo: str, geo_c: str, year_comparison: str, scale, lang_query, refresh):
     # Use regex to extract the value of the 'lang' parameter
     language = get_language(lang_query)
     # Single area mode
@@ -562,12 +563,12 @@ def plot_df_core_housing_need_by_amhi(geo: str, IsComparison: bool, language: st
     Input('comparison-area', 'data'),
     Input('year-comparison', 'data'),
     Input('area-scale-store', 'data'),
-    Input('income-category-affordability-table', 'selected_columns'),
     State('url', 'search'),
-    cache_args_to_ignore=[4]
+    Input('income-category-affordability-table', 'selected_columns'),
+    cache_args_to_ignore=[-1]
 )
 @cache.memoize()
-def update_geo_figure2(geo, geo_c, year_comparison: str, scale, refresh, lang_query):
+def update_geo_figure2(geo, geo_c, year_comparison: str, scale, lang_query, refresh):
     # Single area mode
     language = get_language(lang_query)
     if not year_comparison and (geo == geo_c or geo_c == None or (geo == None and geo_c != None)):
@@ -832,13 +833,13 @@ def table_core_affordable_housing_deficit(geo, is_second, year: int = default_ye
     Input('main-area', 'data'),
     Input('comparison-area', 'data'),
     Input('year-comparison', 'data'),
-    Input('datatable2-interactivity', 'selected_columns'),
     Input('area-scale-store', 'data'),
     State('url', 'search'),
-    cache_args_to_ignore=[3]
+    Input('income-category-affordability-table', 'selected_columns'),
+    cache_args_to_ignore=[-1]
 )
 @cache.memoize()
-def update_table2(geo, geo_c, year_comparison: str, selected_columns, scale, lang_query):
+def update_table2(geo, geo_c, year_comparison: str, scale, lang_query, refresh):
     # Single area mode
     language = get_language(lang_query)
     if not year_comparison and (geo == geo_c or geo_c == None or (geo == None and geo_c != None)):
@@ -1095,12 +1096,12 @@ def color_dict_core_housing_need_by_priority_population(plot_df):
     Input('comparison-area', 'data'),
     Input('year-comparison', 'data'),
     Input('area-scale-store', 'data'),
-    Input('income-category-affordability-table', 'selected_columns'),
     State('url', 'search'),
-    cache_args_to_ignore=[4]
+    Input('income-category-affordability-table', 'selected_columns'),
+    cache_args_to_ignore=[-1]
 )
 @cache.memoize()
-def update_geo_figure5(geo, geo_c, year_comparison: str, scale, refresh, lang_query):
+def update_geo_figure5(geo, geo_c, year_comparison: str, scale, lang_query, refresh):
     language = get_language(lang_query)
 
     if (geo == geo_c or geo_c == None or (geo == None and geo_c != None)) and not year_comparison:
@@ -1381,12 +1382,12 @@ def plot_df_core_housing_need_by_priority_population_income(geo: str, language: 
     Input('comparison-area', 'data'),
     Input('year-comparison', 'data'),
     Input('area-scale-store', 'data'),
-    Input('income-category-affordability-table', 'selected_columns'),
     State('url', 'search'),
-    cache_args_to_ignore=[4]
+    Input('income-category-affordability-table', 'selected_columns'),
+    cache_args_to_ignore=[-1]
 )
 @cache.memoize()
-def update_geo_figure6(geo, geo_c, year_comparison, scale, refresh, lang_query):
+def update_geo_figure6(geo, geo_c, year_comparison, scale, lang_query, refresh):
     # Overried income category values
     income_category_override = ['Very Low', 'Low', 'Moderate', 'Median', 'High']
 
@@ -1566,15 +1567,12 @@ def update_geo_figure6(geo, geo_c, year_comparison, scale, refresh, lang_query):
     Output("housing-deficit-pg2", "children"),
     Output("pct-pp-hh-chn-pg2", "children"),
     Output("pct-pp-ic-chn-pg2", "children"),
-    State('main-area', 'data'),
-    State('comparison-area', 'data'),
     Input('year-comparison', 'data'),
-    State('area-scale-store', 'data'),
     Input('income-category-affordability-table', 'selected_columns'),
-    cache_args_to_ignore=[0, 1, 3, 4]
+    cache_args_to_ignore=[-1]
 )
 @cache.memoize()
-def change_title_labels(geo, geo_c, year_comparison, scale, refresh):
+def change_title_labels(year_comparison, refresh):
     # change based off of url
     if year_comparison:
         original_year, compared_year = year_comparison.split("-")
