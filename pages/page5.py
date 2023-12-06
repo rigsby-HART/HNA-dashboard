@@ -1088,33 +1088,36 @@ def update_table2(geo, geo_c, year_comparison: str, selected_columns, scale, lan
 
 
 # 
-# @callback(
-#     Output("income-categories-title-page5", "children"),
-#     Output("percent-HH-CHN-title-page5", "children"),
-#     Output("percent-IC-HH-CHN-title-page5", "children"),
-#     Output("housing-deficit-page5", "children"),
-#     State('main-area', 'data'),
-#     State('comparison-area', 'data'),
-#     Input('year-comparison', 'data'),
-#     State('area-scale-store', 'data'),
-#     Input('income-category-affordability-table-pg5', 'selected_columns'),
-# )
-# def change_title_labels(geo, geo_c, year_comparison, scale, refresh):
-#     # change based off of url
-#     if year_comparison:
-#         original_year, compared_year = year_comparison.split("-")
-#         return (
-#             html.Strong(f'Income Categories and Affordable Shelter Costs, {compared_year} vs {original_year}'),
-#             html.Strong(f'Percentage of Households in Core Housing Need, by Income Category, {compared_year} vs {original_year}'),
-#             html.Strong(f'Percentage of Households in Core Housing Need, by Income Category and HH Size, {compared_year} vs {original_year}'),
-#             html.Strong(f'{compared_year} vs {original_year} Affordable Housing Deficit'),
-#         )
-#     return (
-#         html.Strong(f'Income Categories and Affordable Shelter Costs, {default_year}'),
-#         html.Strong(f'Percentage of Households in Core Housing Need, by Income Category, {default_year}'),
-#         html.Strong(f'Percentage of Households in Core Housing Need, by Income Category and HH Size, {default_year}'),
-#         html.Strong(f'{default_year} Affordable Housing Deficit'),
-#     )
+@callback(
+    Output("income-categories-title-page5", "children"),
+    Output("percent-HH-CHN-title-page5", "children"),
+    Output("percent-IC-HH-CHN-title-page5", "children"),
+    Output("housing-deficit-page5", "children"),
+    State('main-area', 'data'),
+    State('comparison-area', 'data'),
+    Input('year-comparison', 'data'),
+    State('area-scale-store', 'data'),
+    Input('income-category-affordability-table-pg5', 'selected_columns'),
+    State('url', 'search'),
+    cache_args_to_ignore=[0, 1, 3, 4]
+)
+def change_title_labels(geo, geo_c, year_comparison, scale, refresh, lang_query):
+    language = get_language(lang_query)
+    # change based off of url
+    if year_comparison:
+        original_year, compared_year = year_comparison.split("-")
+        return (
+            html.Strong(f'Income Categories and Affordable Shelter Costs, {compared_year} vs {original_year}'),
+            html.Strong(f'Percentage of Households in Core Housing Need, by Income Category, {compared_year} vs {original_year}'),
+            html.Strong(f'Percentage of Households in Core Housing Need, by Income Category and HH Size, {compared_year} vs {original_year}'),
+            html.Strong(f'{compared_year} vs {original_year} Affordable Housing Deficit'),
+        )
+    return (
+        html.Strong(f'Income Categories and Affordable Shelter Costs, {default_year}'),
+        html.Strong(f'Percentage of Households in Core Housing Need, by Income Category, {default_year}'),
+        html.Strong(f'Percentage of Households in Core Housing Need, by Income Category and HH Size, {default_year}'),
+        html.Strong(f'{default_year} Affordable Housing Deficit'),
+    )
 
 
 
