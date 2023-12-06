@@ -1,6 +1,7 @@
 from dash import html, dash_table, dcc
 from plotly import express as px
 
+from app_file import cache
 from helpers.create_engine import income_partners_year, default_year
 from helpers.table_helper import storage_variables
 
@@ -15,6 +16,9 @@ config = {'displayModeBar': True, 'displaylogo': False,
 
 
 # TODO: Make the table actually select by year
+
+
+@cache.memoize()
 def layout(year:int=default_year):
     return html.Div(children=
                     # Fetching Area/Comparison Area/Clicked area scale info in local storage

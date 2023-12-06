@@ -2,6 +2,7 @@ from dash import html, dash_table, dcc
 import plotly.express as px
 import pandas as pd
 
+from app_file import cache
 from helpers.create_engine import default_year
 from helpers.table_helper import storage_variables
 
@@ -18,6 +19,7 @@ config = {'displayModeBar': True, 'displaylogo': False,
                                      'resetScale']}
 
 
+@cache.memoize()
 def layout(year=default_year):
     prediction_year = year + 10
     year_minus_15 = year - 15

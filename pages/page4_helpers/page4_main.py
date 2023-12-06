@@ -2,6 +2,7 @@ from dash import html, dash_table, dcc
 import plotly.express as px
 import pandas as pd
 
+from app_file import cache
 from helpers.table_helper import storage_variables
 
 # Setting a default plot and table which renders before the dashboard is fully loaded
@@ -17,6 +18,7 @@ config = {'displayModeBar': True, 'displaylogo': False,
 table = pd.DataFrame({'Loading': [0]})
 
 
+@cache.memoize()
 def layout(year):
     return html.Div(children=
                     # Fetching Area/Comparison Area/Clicked area scale info in local storage

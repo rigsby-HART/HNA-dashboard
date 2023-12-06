@@ -1,6 +1,7 @@
 from dash import html, dash_table, dcc
 from plotly import express as px
 
+from app_file import cache
 from helpers.create_engine import income_partners_year, default_year
 from helpers.table_helper import storage_variables
 
@@ -13,7 +14,9 @@ config = {'displayModeBar': True, 'displaylogo': False,
           'modeBarButtonsToRemove': ['zoom', 'lasso2d', 'pan', 'select', 'zoomIn', 'zoomOut', 'autoScale',
                                      'resetScale']}
 
-def layout(year:int=default_year):
+
+@cache.memoize()
+def layout(year: int = default_year):
     return html.Div(children=
                     # Fetching Area/Comparison Area/Clicked area scale info in local storage
                     storage_variables()
@@ -193,9 +196,6 @@ def layout(year:int=default_year):
                                     ]
                                     ),
                                 ], className='pg5-table-plot-box-lgeo'),
-
-
-
 
                                 # Raw data download button
 

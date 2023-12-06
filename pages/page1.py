@@ -82,6 +82,7 @@ fig_m.update_layout(mapbox_style="carto-positron",
 # Setting layout for dashboard
 
 dash.register_page(__name__)
+
 layout = html.Div(children=
                   # Fetching Area/Comparison Area/Clicked area scale info in local storage
                   storage_variables()
