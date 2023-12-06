@@ -9,7 +9,7 @@ import geopandas as gpd
 import plotly.graph_objects as go
 from dash import dcc, html, Input, Output, ctx, callback, State
 
-# from app_file import cache
+from app_file import cache
 # Importing Geo Code Information
 from helpers.create_engine import engine_current, mapped_geo_code, df_province_list, df_region_list
 from helpers.table_helper import storage_variables
@@ -199,7 +199,7 @@ layout = html.Div(children=
     Input('to-province-1', 'n_clicks'),
     cache_args_to_ignore=[2, 3, 4, 5]
 )
-# @cache.memoize()
+@cache.memoize()
 def store_geo(geo, geo_c, *args):
     id_name = str(ctx.triggered_id)
     return geo, geo_c, id_name
@@ -367,7 +367,7 @@ def subregion_map(value, random_color, clicked_code):
     Input('to-region-1', 'n_clicks'),
     Input('to-province-1', 'n_clicks'),
 )
-# @cache.memoize()
+@cache.memoize()
 # 
 def update_map(clickData, select_region, comparison_region, *args):
     # If no area is selected, then map will show Canada Map
@@ -516,7 +516,7 @@ def update_map(clickData, select_region, comparison_region, *args):
     Input('reset-map', 'n_clicks'),
     cache_args_to_ignore=[1, 2]
 )
-# @cache.memoize()
+@cache.memoize()
 def toggle_year_comparison(year_comparison, *args):
     if ctx.triggered_id == "year-comparison-button":
         if year_comparison is not None:

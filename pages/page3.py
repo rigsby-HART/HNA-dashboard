@@ -13,7 +13,7 @@ from dash.dash_table.Format import Format, Scheme, Group
 from plotly.subplots import make_subplots
 from dash import Input, Output, callback, html, State, register_page
 
-# from app_file import cache
+from app_file import cache
 from helpers.style_helper import style_data_conditional, style_header_conditional
 from helpers.create_engine import engine_current, default_year, df_geo_list, df_region_list, df_province_list, \
     mapped_geo_code, updated_csd_year, updated_csd_current, updated_cd_current, updated_cd_year
@@ -137,7 +137,7 @@ def plot1_new_projection(geo, is_comparison, language, year=default_year):
     State('url', 'search'),
     cache_args_to_ignore=[3]
 )
-# @cache.memoize()
+@cache.memoize()
 def update_geo_figure6(geo, geo_c, scale, selected_columns, lang_query):
     language = get_language(lang_query)
     # Single area mode
@@ -450,7 +450,7 @@ def plot2_new_projection(geo, IsComparison, language, year: int = default_year):
     State('url', 'search'),
     cache_args_to_ignore=[3]
 )
-# @cache.memoize()
+@cache.memoize()
 def update_geo_figure7(geo, geo_c, scale, selected_columns, lang_query):
     language = get_language(lang_query)
     # Single area mode
@@ -767,7 +767,7 @@ def projections_future_hh_size(geo, IsComparison, language, year: int = default_
     State('url', 'search'),
     cache_args_to_ignore=[3]
 )
-# @cache.memoize()
+@cache.memoize()
 def update_geo_figure_h(geo, geo_c, scale, selected_columns, lang_query):
     language = get_language(lang_query)
     # Single area mode
@@ -1084,7 +1084,7 @@ def projections_future_deltas(geo, IsComparison, language, year: int = default_y
     State('url', 'search'),
     cache_args_to_ignore=[3]
 )
-# @cache.memoize()
+@cache.memoize()
 def update_geo_figure8(geo, geo_c, scale, selected_columns, lang_query):
     language = get_language(lang_query)
     # Single area mode
@@ -1414,7 +1414,7 @@ def projections_future_pop_income(geo, IsComparison, language, year: int = defau
     Input('datatable8-interactivity', 'selected_columns'),
     State('url', 'search'),
 )
-# @cache.memoize()
+@cache.memoize()
 def update_geo_figure8(geo, geo_c, scale, selected_columns, lang_query):
     language = get_language(lang_query)
     # If selected area is None
@@ -1805,7 +1805,7 @@ def projections_future_pop_hh(geo, IsComparison: bool, language, year: int = def
     Input('datatable9-interactivity', 'selected_columns'),
     State('url', 'search'),
 )
-# @cache.memoize()
+@cache.memoize()
 def update_geo_figure9(geo, geo_c, scale, selected_columns, lang_query):
     language = get_language(lang_query)
     # If selected area is None

@@ -10,7 +10,7 @@ from dash import dcc, Input, Output, ctx, callback, State, html
 from dash.dash_table.Format import Format, Scheme, Group
 from plotly.subplots import make_subplots
 
-# from app_file import cache
+from app_file import cache
 from helpers.style_helper import style_header_conditional, style_data_conditional
 from helpers.create_engine import income_partners_year, default_year
 from helpers.table_helper import area_scale_comparison, area_scale_primary_only, error_region_table, \
@@ -136,7 +136,7 @@ def table_amhi_shelter_cost(geo: str, is_second: bool, year: int = default_year)
     Input('income-category-affordability-table', 'selected_columns'),
     cache_args_to_ignore=[-1]
 )
-# @cache.memoize()
+@cache.memoize()
 def update_table1(geo, geo_c, year_comparison: str, scale, lang_query, refresh):
     # Single area mode
     language = get_language(lang_query)
@@ -337,7 +337,7 @@ def plot_df_core_housing_need_by_income(geo: str, is_second: bool, language, yea
     Input('income-category-affordability-table', 'selected_columns'),
     cache_args_to_ignore=[-1]
 )
-# @cache.memoize()
+@cache.memoize()
 def update_geo_figure(geo: str, geo_c: str, year_comparison: str, scale, lang_query, refresh):
     # Use regex to extract the value of the 'lang' parameter
     language = get_language(lang_query)
@@ -566,7 +566,7 @@ def plot_df_core_housing_need_by_amhi(geo: str, IsComparison: bool, language: st
     Input('income-category-affordability-table', 'selected_columns'),
     cache_args_to_ignore=[-1]
 )
-# @cache.memoize()
+@cache.memoize()
 def update_geo_figure2(geo, geo_c, year_comparison: str, scale, lang_query, refresh):
     # Single area mode
     language = get_language(lang_query)
@@ -837,7 +837,7 @@ def table_core_affordable_housing_deficit(geo, is_second, year: int = default_ye
     Input('income-category-affordability-table', 'selected_columns'),
     cache_args_to_ignore=[-1]
 )
-# @cache.memoize()
+@cache.memoize()
 def update_table2(geo, geo_c, year_comparison: str, scale, lang_query, refresh):
     # Single area mode
     language = get_language(lang_query)
@@ -1099,7 +1099,7 @@ def color_dict_core_housing_need_by_priority_population(plot_df):
     Input('income-category-affordability-table', 'selected_columns'),
     cache_args_to_ignore=[-1]
 )
-# @cache.memoize()
+@cache.memoize()
 def update_geo_figure5(geo, geo_c, year_comparison: str, scale, lang_query, refresh):
     language = get_language(lang_query)
 
@@ -1385,7 +1385,7 @@ def plot_df_core_housing_need_by_priority_population_income(geo: str, language: 
     Input('income-category-affordability-table', 'selected_columns'),
     cache_args_to_ignore=[-1]
 )
-# @cache.memoize()
+@cache.memoize()
 def update_geo_figure6(geo, geo_c, year_comparison, scale, lang_query, refresh):
     # Overried income category values
     income_category_override = ['Very Low', 'Low', 'Moderate', 'Median', 'High']
@@ -1570,7 +1570,7 @@ def update_geo_figure6(geo, geo_c, year_comparison, scale, lang_query, refresh):
     Input('income-category-affordability-table', 'selected_columns'),
     cache_args_to_ignore=[-1]
 )
-# @cache.memoize()
+@cache.memoize()
 def change_title_labels(year_comparison, refresh):
     # change based off of url
     if year_comparison:
@@ -1606,7 +1606,7 @@ def change_title_labels(year_comparison, refresh):
     State('year-comparison', 'data'),
     cache_args_to_ignore=[0]
 )
-# @cache.memoize()
+@cache.memoize()
 def func_ov7(n_clicks, geo, geo_c, year_comparison):
     if geo == None:
         geo = default_value

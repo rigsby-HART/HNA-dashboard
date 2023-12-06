@@ -3,9 +3,9 @@
 
 import dash
 import dash_bootstrap_components as dbc
-# import diskcache
+import diskcache
 from dash import DiskcacheManager
-# cache = diskcache.Cache("./cache")
+cache = diskcache.Cache("./cache")
 # background_callback_manager = DiskcacheManager(
 #     cache, expire=300,
 # )

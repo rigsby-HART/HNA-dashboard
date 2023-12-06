@@ -8,7 +8,7 @@ from dash import dcc, dash_table, html, Input, Output, ctx, callback, State, reg
 from dash.dash_table.Format import Format, Scheme, Group
 from plotly.subplots import make_subplots
 
-# from app_file import cache
+from app_file import cache
 from helpers.create_engine import income_indigenous_year, default_year
 from helpers.style_helper import style_data_conditional, style_header_conditional
 from helpers.table_helper import area_scale_comparison, area_scale_primary_only, storage_variables, \
@@ -149,7 +149,7 @@ def table_amhi_shelter_cost_ind(geo, IsComparison, language, year: int = default
     State('url', 'search'),
     cache_args_to_ignore=[3]
 )
-# @cache.memoize()
+@cache.memoize()
 def update_table1(geo, geo_c, year_comparison, selected_columns, scale, lang_query):
     language = get_language(lang_query)
     # Single area mode
@@ -371,7 +371,7 @@ def plot_df_core_housing_need_by_income(geo, IsComparison, language, year: int =
     State('url', 'search'),
     cache_args_to_ignore=[4]
 )
-# @cache.memoize()
+@cache.memoize()
 def update_geo_figure(geo, geo_c, year_comparison, scale, refresh, lang_query):
     language = get_language(lang_query)
     # Single area mode
@@ -661,7 +661,7 @@ def plot_df_core_housing_need_by_amhi(geo, IsComparison, language, year: int = d
     State('url', 'search'),
     cache_args_to_ignore=[4]
 )
-# @cache.memoize()
+@cache.memoize()
 def update_geo_figure34(geo, geo_c, year_comparison, scale, refresh, lang_query):
     language = get_language(lang_query)
     # Single area mode
@@ -952,7 +952,7 @@ def update_geo_figure34(geo, geo_c, year_comparison, scale, refresh, lang_query)
     prevent_initial_call=True,
     cache_args_to_ignore=[0,2]
 )
-# @cache.memoize()
+@cache.memoize()
 def func_ov7(n_clicks, geo, geo_c, year_comparison):
     if geo == None:
         geo = default_value
@@ -989,7 +989,7 @@ def func_ov7(n_clicks, geo, geo_c, year_comparison):
     State('url', 'search'),
     cache_args_to_ignore=[0, 1, 3, 4]
 )
-# @cache.memoize()
+@cache.memoize()
 def change_title_labels(geo, geo_c, year_comparison, scale, refresh, lang_query):
     language = get_language(lang_query)
     # change based off of url
