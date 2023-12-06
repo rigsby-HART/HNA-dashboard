@@ -423,11 +423,12 @@ def update_geo_figure(geo: str, geo_c: str, year_comparison: str, scale, refresh
             legend_title="Income",
         )
         fig.update_yaxes(
+            row=1, col=1,
+            title=localization[language]["income-category"] + '<br>' + localization[language]["affordable-shelter"],
             fixedrange=True,
             autorange="reversed",
             title_font=dict(size=10),
-            tickfont=dict(size=10),
-            automargin="top"
+            tickfont=dict(size=10)
         )
         fig.update_xaxes(
             fixedrange=True,
@@ -1108,8 +1109,10 @@ def change_title_labels(geo, geo_c, year_comparison, scale, refresh, lang_query)
         original_year, compared_year = year_comparison.split("-")
         return (
             html.Strong(f'Income Categories and Affordable Shelter Costs, {compared_year} vs {original_year}'),
-            html.Strong(f'Percentage of Households in Core Housing Need, by Income Category, {compared_year} vs {original_year}'),
-            html.Strong(f'Percentage of Households in Core Housing Need, by Income Category and HH Size, {compared_year} vs {original_year}'),
+            html.Strong(
+                f'Percentage of Households in Core Housing Need, by Income Category, {compared_year} vs {original_year}'),
+            html.Strong(
+                f'Percentage of Households in Core Housing Need, by Income Category and HH Size, {compared_year} vs {original_year}'),
             html.Strong(f'{compared_year} vs {original_year} Affordable Housing Deficit'),
         )
     return (
@@ -1118,7 +1121,6 @@ def change_title_labels(geo, geo_c, year_comparison, scale, refresh, lang_query)
         html.Strong(f'Percentage of Households in Core Housing Need, by Income Category and HH Size, {default_year}'),
         html.Strong(f'{default_year} Affordable Housing Deficit'),
     )
-
 
 
 @callback(
