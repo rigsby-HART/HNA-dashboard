@@ -8,7 +8,7 @@ from dash import dcc, dash_table, html, Input, Output, ctx, callback, State, reg
 from dash.dash_table.Format import Format, Scheme, Group
 from plotly.subplots import make_subplots
 
-from app_file import cache
+# from app_file import cache
 from helpers.create_engine import income_indigenous_year, default_year
 from helpers.style_helper import style_data_conditional, style_header_conditional
 from helpers.table_helper import area_scale_comparison, area_scale_primary_only, storage_variables, \

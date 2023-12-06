@@ -13,7 +13,7 @@ from dash.dash_table.Format import Format, Scheme, Group
 from plotly.subplots import make_subplots
 from dash import Input, Output, callback, html, State, register_page
 
-from app_file import cache
+# from app_file import cache
 from helpers.style_helper import style_data_conditional, style_header_conditional
 from helpers.create_engine import engine_current, default_year, df_geo_list, df_region_list, df_province_list, \
     mapped_geo_code, updated_csd_year, updated_csd_current, updated_cd_current, updated_cd_year

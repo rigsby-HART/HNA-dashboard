@@ -10,7 +10,7 @@ from dash import dcc, Input, Output, ctx, callback, State, html, register_page
 from dash.dash_table.Format import Format, Scheme, Group
 from plotly.subplots import make_subplots
 
-from app_file import cache
+# from app_file import cache
 from helpers.style_helper import style_header_conditional, style_data_conditional
 from helpers.create_engine import income_ownership_year, default_year
 from helpers.table_helper import area_scale_comparison, area_scale_primary_only, error_region_table, \

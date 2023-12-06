@@ -9,7 +9,7 @@ import geopandas as gpd
 import plotly.graph_objects as go
 from dash import dcc, html, Input, Output, ctx, callback, State
 
-from app_file import cache
+# from app_file import cache
 # Importing Geo Code Information
 from helpers.create_engine import engine_current, mapped_geo_code, df_province_list, df_region_list
 from helpers.table_helper import storage_variables
