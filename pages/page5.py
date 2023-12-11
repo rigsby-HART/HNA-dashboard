@@ -423,7 +423,6 @@ def update_geo_figure(geo: str, geo_c: str, year_comparison: str, scale, refresh
             legend_title="Income",
         )
         fig.update_yaxes(
-            row=1, col=1,
             title=localization[language]["income-category"] + '<br>' + localization[language]["affordable-shelter"],
             fixedrange=True,
             autorange="reversed",
@@ -432,7 +431,6 @@ def update_geo_figure(geo: str, geo_c: str, year_comparison: str, scale, refresh
         )
         fig.update_xaxes(
             fixedrange=True,
-            range=[0, 1],
             tickformat=',.0%',
             title=localization[language]["percent-hh"],
             title_font=dict(size=10),
