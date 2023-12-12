@@ -62,7 +62,7 @@ def convert_to_name(original_name):
     return geo
 
 
-predictions_2031.iloc[:, 0] = predictions_2031.iloc[:, 0].apply(geo_code_to_name)
+predictions_2031 = pd.merge(predictions_2031, geo_codes, on="Geo_Code", how="left")
 bedroom_predictions.iat[0, 0] = "Canada"
 bedroom_predictions.iloc[1:, 0] = bedroom_predictions.iloc[1:, 0].apply(convert_to_name)
 condition = bedroom_predictions.iloc[:, 0].notna()
@@ -90,7 +90,7 @@ def bedroom_map(type, hh_size):
 beds = [1, 2, 3, 4, 5]
 income_lv_list = ['20% or under', '21% to 50%', '51% to 80%', '81% to 120%', '121% or more']
 # One for percent of the total population, then one for each income
-output_columns = [f"2031 Projected bedroom need {type} bed {income}" for bed in beds for income in income_lv_list]
+output_columns = [f"2031 Projected bedroom need {bed} bed {income}" for bed in beds for income in income_lv_list]
 income_map = {
     'Households with household income 20% or under of area median household income (AMHI)': "20% or under of area median household income (AMHI)",
     'Households with household income 21% to 50% of AMHI': "21% to 50% of AMHI",
@@ -100,28 +100,56 @@ income_map = {
 }
 hh_pp_map = {
     '1 person HH': "1pp HH",
-    '2 person HH': "2pp HH",
-    '3 person HH': "3pp HH",
-    '4 person HH': "4pp HH",
+    '2 persons HH': "2pp HH",
+    '3 persons HH': "3pp HH",
+    '4 persons HH': "4pp HH",
     '5 or more persons HH': "5pp HH",
 }
 
 
 def add_columns(row):
     geo = row["Geography"]
-    projection_row = predictions_2031[predictions_2031["Geography"] == geo]
+    projection_row = predictions_2031[predictions_2031["Geography"] == geo].squeeze()
     if projection_row.empty:
         return pd.Series(dict([(None, val) for val in output_columns]))
-    for income in AMHI:
+    output = dict([(val, 0) for val in output_columns])
+    for i, income in enumerate(AMHI):
         _df = pd.DataFrame(columns=hh_size)
         for size in hh_size:
             for type in hh_type:
-                _df.at[type, size] = row[f"{size}-{type}-{income}-{'Households in core housing need status'}"]
+                _df.at[type, size] = row[
+                    f"{size}-{type}-{income}-{'Total - Private Households by core housing need status'}"]
+
         # Percent of each hh size @ that income level
-        _df = _df.apply((lambda x: x / x.sum()))
+        def get_percentage(column: pd.Series):
+            _sum = column.sum()
+            if _sum == 0:
+                return column
+            return column / _sum
+
+        _df = _df.apply(get_percentage)
         for hh in _df.columns:
-            _df[hh] = projection_row[f"2031 Projected {income_map[income]} with income {hh_pp_map[hh]}"] * _df[hh]
-        income
+            _df[hh] = projection_row[f"2031 Projected {hh_pp_map[hh]} with income {income_map[income]}"] * _df[hh]
+        for y in range(len(_df.index)):
+            for x in range(len(_df.columns)):
+                if _df.iat[y, x] == 0:
+                    continue
+                bed = bedroom_map(_df.index[y], int(_df.columns[x][0]))
+                short_income = income_lv_list[i]
+                output[f"2031 Projected bedroom need {bed} bed {short_income}"] += _df.iat[y, x]
+
+        print()
+    output = pd.Series(output)
+    output = output.round()
+    return output
 
 
-bedroom_predictions.apply(add_columns, axis=1)
+# If they already are in the database, replace them
+if all(column in predictions_2031.columns for column in output_columns):
+    predictions_2031 = predictions_2031.drop(output_columns, axis=1)
+predictions_2031[output_columns] = bedroom_predictions.apply(add_columns, axis=1)
+
+predictions_2031 = predictions_2031.drop(["Region_Code", "Province_Code", "Geography", "Region", "Province"], axis=1)
+sql = 'DROP TABLE IF EXISTS csd_hh_projections;'
+result = engine.execute(sql)
+predictions_2031.to_sql("csd_hh_projections", engine, index=False)
