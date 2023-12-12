@@ -1,10 +1,7 @@
 # Importing Libraries
-import copy
-import time
 
 import pandas as pd
 import plotly.graph_objects as go
-import math as math
 import warnings
 from dash import dcc, Input, Output, ctx, callback, State, html, register_page
 from dash.dash_table.Format import Format, Scheme, Group
@@ -16,7 +13,7 @@ from helpers.create_engine import income_ownership_year, default_year
 from helpers.table_helper import area_scale_comparison, area_scale_primary_only, error_region_table, \
     error_region_figure, \
     query_table, get_language
-from pages.page5_helpers.page5_localization import localization
+from helpers.localization import localization
 from pages.page5_helpers.page5_main import layout
 
 register_page(__name__)
@@ -306,23 +303,23 @@ def plot_df_core_housing_need_by_income(geo: str, is_rental: bool, language, yea
 
     # Adds labels to first four groups
     i = 0
-    row_labels = ["very-low-income", "low-income", "moderate-income", "median-income", "high-income"]
+    row_labels = ["Very Low Income", "Low Income", "Moderate Income", "Median Income", "High Income"]
     base = [localization[language][label] for label in row_labels]
     for income_category, income_query_string in zip(base, x_columns):
         value = str(joined_df_filtered[income_query_string].tolist()[0])
         # print(i, b,c, value, type(value))
         if i < 4:
             if is_rental is False:
-                x = localization[language]["price-format-label"].format(b=income_category, value=value)
+                x = localization[language]["{b}<br> (${value})"].format(b=income_category, value=value)
                 # print(x)
             else:
-                x = localization[language]["price-format-label-comp"].format(b=income_category, value=value)
+                x = localization[language][" (${value}) "].format(b=income_category, value=value)
             x_list.append(x)
         else:
             if is_rental is False:
-                x = localization[language]["price-format-label-last"].format(b=income_category, value=value)
+                x = localization[language]["{b}<br> (>${value})"].format(b=income_category, value=value)
             else:
-                x = localization[language]["price-format-label-last-comp"].format(b=income_category, value=value)
+                x = localization[language][" (>${value}) "].format(b=income_category, value=value)
             x_list.append(x)
         i += 1
 
@@ -410,9 +407,9 @@ def update_geo_figure(geo: str, geo_c: str, year_comparison: str, scale, refresh
 
         # Plot layout settings
         fig.update_layout(
-            title=localization[language]["fig-title"] + f"{'<br>' if language == 'en' else ' '}{geo}" +
-                  (f' {localization[language]["renter"]} {localization[language]["vs"]} '
-                   f'{localization[language]["owner"]}'),
+            title=localization[language]['Percentage of Households in Core Housing Need, by Income Category,'] + f"{'<br>' if language == 'en' else ' '}{geo}" +
+                  (f' {localization[language]["Renter Households"]} {localization[language]["vs"]} '
+                   f'{localization[language]["Owner Households"]}'),
             showlegend=False,
             width=900,
             height=450,
@@ -423,17 +420,16 @@ def update_geo_figure(geo: str, geo_c: str, year_comparison: str, scale, refresh
             legend_title="Income",
         )
         fig.update_yaxes(
+            title=localization[language]["income-category"] + '<br>' + localization[language]["(Max. affordable shelter costs)"],
             fixedrange=True,
             autorange="reversed",
             title_font=dict(size=10),
-            tickfont=dict(size=10),
-            automargin="top"
+            tickfont=dict(size=10)
         )
         fig.update_xaxes(
             fixedrange=True,
-            range=[0, 1],
             tickformat=',.0%',
-            title=localization[language]["percent-hh"],
+            title=localization[language]["% of HH"],
             title_font=dict(size=10),
             tickfont=dict(size=10)
         )
@@ -494,7 +490,7 @@ def update_geo_figure(geo: str, geo_c: str, year_comparison: str, scale, refresh
             n += 1
 
         fig.update_yaxes(title=localization[language]["income-category"] +
-                               '<br>' + localization[language]["affordable-shelter"], row=1, col=1)
+                               '<br>' + localization[language]["(Max. affordable shelter costs)"], row=1, col=1)
 
         plot_df_c = (
             plot_df_core_housing_need_by_income(geo, True, language, int(compared_year)) if year_comparison else
@@ -565,7 +561,7 @@ def update_geo_figure(geo: str, geo_c: str, year_comparison: str, scale, refresh
             n += 1
         # Plot layout settings
         fig.update_layout(
-            title=localization[language]["fig-title"] + f"<br>{geo}" +
+            title=localization[language]['Percentage of Households in Core Housing Need, by Income Category,'] + f"<br>{geo}" +
                   (f' {compared_year} {localization[language]["vs"]} {original_year}' if year_comparison
                    else f" {default_year}"),
             showlegend=False,
@@ -587,7 +583,7 @@ def update_geo_figure(geo: str, geo_c: str, year_comparison: str, scale, refresh
             fixedrange=True,
             range=[0, 1],
             tickformat=',.0%',
-            title=localization[language]["percent-hh"],
+            title=localization[language]["% of HH"],
             title_font=dict(size=10),
             tickfont=dict(size=10)
         )
@@ -604,21 +600,21 @@ def plot_df_core_housing_need_by_amhi(geo: str, IsComparison: bool, language: st
     x_list = []
 
     i = 0
-    row_labels = ["very-low-income", "low-income", "moderate-income", "median-income", "high-income"]
+    row_labels = ["Very Low Income", "Low Income", "Moderate Income", "Median Income", "High Income"]
     base = [localization[language][label] for label in row_labels]
     for b, c in zip(base, x_columns):
         value = str(joined_df_filtered[c].tolist()[0])
         if i < 4:
             if IsComparison is False:
-                x = localization[language]["price-format-label"].format(b=b, value=value)
+                x = localization[language]["{b}<br> (${value})"].format(b=b, value=value)
             else:
-                x = localization[language]["price-format-label-comp"].format(b=b, value=value)
+                x = localization[language][" (${value}) "].format(b=b, value=value)
             x_list.append(x)
         else:
             if IsComparison is False:
-                x = localization[language]["price-format-label-last"].format(b=b, value=value)
+                x = localization[language]["{b}<br> (>${value})"].format(b=b, value=value)
             else:
-                x = localization[language]["price-format-label-last-comp"].format(b=b, value=value)
+                x = localization[language][" (>${value}) "].format(b=b, value=value)
             x_list.append(x)
         i += 1
 
@@ -697,18 +693,18 @@ def update_geo_figure2(geo, geo_c, year_comparison: str, scale, refresh, lang_qu
             yaxis=dict(autorange="reversed"),
             barmode='stack',
             plot_bgcolor='#F8F9F9',
-            title=localization[language]["fig2-title"] + f'<br>{default_year} {geo}',
+            title=localization[language]['Percentage of Households in Core Housing Need, by Income Category and HH Size,'] + f'<br>{default_year} {geo}',
             legend_title="Household Type"
         )
         fig2.update_yaxes(
             tickfont=dict(size=10),
             fixedrange=True,
-            title=localization[language]["income-category"] + '<br>' + localization[language]["affordable-shelter"]
+            title=localization[language]["income-category"] + '<br>' + localization[language]["(Max. affordable shelter costs)"]
         )
         fig2.update_xaxes(
             fixedrange=True,
             tickformat=',.0%',
-            title=localization[language]["percent-hh"],
+            title=localization[language]["% of HH"],
             tickfont=dict(size=10)
         )
 
@@ -762,7 +758,7 @@ def update_geo_figure2(geo, geo_c, year_comparison: str, scale, refresh, lang_qu
             n += 1
 
         fig2.update_yaxes(title=localization[language]["income-category"] +
-                                '<br>' + localization[language]["affordable-shelter"], row=1, col=1)
+                                '<br>' + localization[language]["(Max. affordable shelter costs)"], row=1, col=1)
 
         # Comparison plot
 
@@ -797,7 +793,7 @@ def update_geo_figure2(geo, geo_c, year_comparison: str, scale, refresh, lang_qu
         # Plot layout settings
         fig2.update_layout(
             font=dict(size=10),
-            title=localization[language]["fig2-title"] + f" {geo}" +
+            title=localization[language]['Percentage of Households in Core Housing Need, by Income Category and HH Size,'] + f" {geo}" +
                   (f' {compared_year} {localization[language]["vs"]} {original_year}' if year_comparison
                    else f" {default_year}"),
             legend_traceorder='normal',
@@ -818,7 +814,7 @@ def update_geo_figure2(geo, geo_c, year_comparison: str, scale, refresh, lang_qu
             title_font=dict(size=10),
             fixedrange=True,
             tickformat=',.0%',
-            title=localization[language]["percent-hh"],
+            title=localization[language]["% of HH"],
             tickfont=dict(size=10)
         )
 
@@ -1108,8 +1104,10 @@ def change_title_labels(geo, geo_c, year_comparison, scale, refresh, lang_query)
         original_year, compared_year = year_comparison.split("-")
         return (
             html.Strong(f'Income Categories and Affordable Shelter Costs, {compared_year} vs {original_year}'),
-            html.Strong(f'Percentage of Households in Core Housing Need, by Income Category, {compared_year} vs {original_year}'),
-            html.Strong(f'Percentage of Households in Core Housing Need, by Income Category and HH Size, {compared_year} vs {original_year}'),
+            html.Strong(
+                f'Percentage of Households in Core Housing Need, by Income Category, {compared_year} vs {original_year}'),
+            html.Strong(
+                f'Percentage of Households in Core Housing Need, by Income Category and HH Size, {compared_year} vs {original_year}'),
             html.Strong(f'{compared_year} vs {original_year} Affordable Housing Deficit'),
         )
     return (
@@ -1118,7 +1116,6 @@ def change_title_labels(geo, geo_c, year_comparison, scale, refresh, lang_query)
         html.Strong(f'Percentage of Households in Core Housing Need, by Income Category and HH Size, {default_year}'),
         html.Strong(f'{default_year} Affordable Housing Deficit'),
     )
-
 
 
 @callback(
