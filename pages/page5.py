@@ -373,8 +373,8 @@ def update_geo_figure(geo: str, geo_c: str, year_comparison: str, scale, refresh
         # Generating plot
         fig = make_subplots(rows=1, cols=2,
                             subplot_titles=(
-                                f"{geo}, {localization[language]['owner']}",
-                                f"{geo}, {localization[language]['renter']}"),
+                                f"{geo}, {localization[language]['Owner Households']}",
+                                f"{geo}, {localization[language]['Renter Households']}"),
                             shared_xaxes=True)
         for i, c in zip(plot_df['Income_Category'], colors):
             plot_df_frag = plot_df.loc[plot_df['Income_Category'] == i, :]
@@ -420,7 +420,7 @@ def update_geo_figure(geo: str, geo_c: str, year_comparison: str, scale, refresh
             legend_title="Income",
         )
         fig.update_yaxes(
-            title=localization[language]["income-category"] + '<br>' + localization[language]["(Max. affordable shelter costs)"],
+            title=localization[language]["Income Category"] + '<br>' + localization[language]["(Max. affordable shelter costs)"],
             fixedrange=True,
             autorange="reversed",
             title_font=dict(size=10),
@@ -489,7 +489,7 @@ def update_geo_figure(geo: str, geo_c: str, year_comparison: str, scale, refresh
             ), row=1, col=1)
             n += 1
 
-        fig.update_yaxes(title=localization[language]["income-category"] +
+        fig.update_yaxes(title=localization[language]["Income Category"] +
                                '<br>' + localization[language]["(Max. affordable shelter costs)"], row=1, col=1)
 
         plot_df_c = (
@@ -625,7 +625,7 @@ def plot_df_core_housing_need_by_amhi(geo: str, IsComparison: bool, language: st
     h_hold_value = []
     hh_p_num_list_full = []
     hh_column_name = ['owner', 'renter']
-    hh_labels = [localization[language][hh] for hh in hh_column_name]
+    hh_labels = [localization[language][hh] for hh in ["Owner Households", "Renter Households"]]
     for h, hc in zip(hh_column_name, hh_labels):
         for i in income_lv_list:
             column = f'Per HH with income {i} of AMHI in core housing need that are {h} HH'
@@ -699,7 +699,7 @@ def update_geo_figure2(geo, geo_c, year_comparison: str, scale, refresh, lang_qu
         fig2.update_yaxes(
             tickfont=dict(size=10),
             fixedrange=True,
-            title=localization[language]["income-category"] + '<br>' + localization[language]["(Max. affordable shelter costs)"]
+            title=localization[language]["Income Category"] + '<br>' + localization[language]["(Max. affordable shelter costs)"]
         )
         fig2.update_xaxes(
             fixedrange=True,
@@ -757,7 +757,7 @@ def update_geo_figure2(geo, geo_c, year_comparison: str, scale, refresh, lang_qu
             ), row=1, col=1)
             n += 1
 
-        fig2.update_yaxes(title=localization[language]["income-category"] +
+        fig2.update_yaxes(title=localization[language]["Income Category"] +
                                 '<br>' + localization[language]["(Max. affordable shelter costs)"], row=1, col=1)
 
         # Comparison plot

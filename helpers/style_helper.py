@@ -47,3 +47,16 @@ style_header_conditional = [
         'color': '#000000'
     }
 ]
+colors = ['#D7F3FD', '#88D9FA', '#39C0F7', '#099DD7', '#044762']
+bar_colors = ['#39C0F7', '#002145']
+hh_colors = ['#D8EBD4', '#93CD8A', '#3DB54A', '#297A32', '#143D19']
+hh_type_color = ['#3949CE', '#3EB549', '#39C0F7']
+columns_color_fill = ['#F3F4F5', '#EBF9FE', '#F0FAF1']
+modebar_color = '#099DD7'
+modebar_activecolor = '#044762'
+
+
+# Font size for tables when they are displayed on the comparison mode
+
+comparison_font_size = '0.7em'
+comparison_font_size2 = '0.6em'

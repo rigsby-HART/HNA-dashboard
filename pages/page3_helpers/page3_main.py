@@ -221,7 +221,7 @@ def layout(year=default_year):
 
                                         html.Div([
                                             dash_table.DataTable(
-                                                id='datatable-h-interactivity',
+                                                id='projected-hh-by-hh-size-income',
                                                 columns=[
                                                     {"name": i, "id": i, "deletable": False, "selectable": False} for i
                                                     in
@@ -247,7 +247,7 @@ def layout(year=default_year):
                                         ], className='pg3-table-lgeo'
                                         ),
 
-                                        html.Div(id='datatable-h-interactivity-container'),
+                                        html.Div(id='projected-hh-by-hh-size-income-container'),
 
                                         # Graph Description
 

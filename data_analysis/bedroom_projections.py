@@ -107,40 +107,43 @@ hh_pp_map = {
 }
 
 
+def get_percentage(column: pd.Series):
+    _sum = column.sum()
+    if _sum == 0:
+        return column
+    return column / _sum
+
+
+
+
+
 def add_columns(row):
     geo = row["Geography"]
-    projection_row = predictions_2031[predictions_2031["Geography"] == geo].squeeze()
-    if projection_row.empty:
-        return pd.Series(dict([(None, val) for val in output_columns]))
+    projection_row = predictions_2031[predictions_2031["Geography"] == geo].head(1).squeeze()
+    if projection_row.empty or np.isnan(projection_row.iat[0]):
+        return pd.Series(dict([(val, 0) for val in output_columns]))
     output = dict([(val, 0) for val in output_columns])
+    _df = pd.DataFrame(columns=hh_size)
     for i, income in enumerate(AMHI):
-        _df = pd.DataFrame(columns=hh_size)
         for size in hh_size:
             for type in hh_type:
                 _df.at[type, size] = row[
                     f"{size}-{type}-{income}-{'Total - Private Households by core housing need status'}"]
 
         # Percent of each hh size @ that income level
-        def get_percentage(column: pd.Series):
-            _sum = column.sum()
-            if _sum == 0:
-                return column
-            return column / _sum
 
-        _df = _df.apply(get_percentage)
+        _df = _df.apply(get_percentage).round()
         for hh in _df.columns:
             _df[hh] = projection_row[f"2031 Projected {hh_pp_map[hh]} with income {income_map[income]}"] * _df[hh]
         for y in range(len(_df.index)):
             for x in range(len(_df.columns)):
-                if _df.iat[y, x] == 0:
+                if _df.iat[y, x] == 0 or np.isnan(_df.iat[y, x]):
                     continue
                 bed = bedroom_map(_df.index[y], int(_df.columns[x][0]))
                 short_income = income_lv_list[i]
                 output[f"2031 Projected bedroom need {bed} bed {short_income}"] += _df.iat[y, x]
 
-        print()
     output = pd.Series(output)
-    output = output.round()
     return output
 
 
