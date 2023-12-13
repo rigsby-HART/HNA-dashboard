@@ -1,25 +1,35 @@
-
 # Defining the Dash App and it's attributes
-
 import dash
 import dash_bootstrap_components as dbc
 import diskcache
-from dash import DiskcacheManager
-cache = diskcache.Cache("./cache")
-# background_callback_manager = DiskcacheManager(
-#     cache, expire=300,
-# )
+import sys
+from os import path as path
 
-# Adding in translation
-# external_scripts = [
-#     "https://cdn.gtranslate.net/widgets/latest/float.js",
-# ]
+
+
+
+# Diskcache for non-production apps when developing locally
+
+# Disable cache if we're doing local development.  This creates a class that mimics our cache decorator
+# However, this one doesn't do anything to memoize
+if path.basename(sys.argv[0]) == "app.py":
+    class Cache:
+        def memoize(self, *args):
+            return lambda func: func
+    cache = Cache()
+# In prod, the server is hosted by a Gunicorn WSGI which means the originally called python file is no longer our app.py
+else:
+    cache = diskcache.Cache("./cache")
+# from uuid import uuid4
+# from dash import DiskcacheManager
+# launch_uid = uuid4()
+# background_callback_manager = DiskcacheManager(
+#     cache, cache_by=[lambda: launch_uid], expire=6000
+# )
 
 app = dash.Dash(__name__, 
                 external_stylesheets=[dbc.themes.BOOTSTRAP], 
                 meta_tags=[{"name": "viewport", "content": "width=device-width"}],
-                # suppress_callback_exceptions=True,
-                # external_scripts=external_scripts,
                 # background_callback_manager=background_callback_manager,
                 use_pages=True
                 )

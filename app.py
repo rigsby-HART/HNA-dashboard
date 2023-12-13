@@ -2,7 +2,6 @@
 import dash
 from dash import html, dcc
 
-
 # Connect to main app_file.py file
 from app_file import app
 from helpers.table_helper import storage_variables
@@ -15,9 +14,6 @@ app.layout = html.Div(
         dash.page_container
     ])
 server = app.server
-
-
-
 
 # Run the app on localhost:8050
 if __name__ == '__main__':

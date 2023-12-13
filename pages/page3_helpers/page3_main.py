@@ -359,6 +359,156 @@ def layout(year=default_year):
                                         ),
                                     ], className='pg3-table-plot-box-lgeo'),
 
+                                    # 2031 Bedroom Projections by Income Category
+
+                                    html.Div([
+                                        # Title
+                                        html.H3(children=html.Strong(
+                                            f'{prediction_year} Projected Bedroom Count by Income Category'),
+                                            className='subtitle-lgeo',
+                                            id="bedroom-title-page3"),
+
+                                        # Table Description
+                                        html.Div([
+                                            html.H6(
+                                                f'The following table shows the projected total number of households in'
+                                                f' {prediction_year} by bedroom count and income category.')
+                                        ], className='muni-reg-text-lgeo',
+                                            id="bedroom-description-page3"
+                                        ),
+
+                                        # Table
+
+                                        html.Div(children=[
+
+                                            dash_table.DataTable(
+                                                id='bedroom-projection-table',
+                                                columns=[
+                                                    {"name": i, "id": i, "deletable": False, "selectable": False} for i
+                                                    in
+                                                    table.columns
+                                                ],
+                                                data=table.to_dict('records'),
+                                                editable=True,
+                                                sort_action="native",
+                                                sort_mode="multi",
+                                                column_selectable=False,
+                                                row_selectable=False,
+                                                row_deletable=False,
+                                                selected_columns=[],
+                                                selected_rows=[],
+                                                page_action="native",
+                                                page_current=0,
+                                                page_size=10,
+                                                style_cell={'font-family': 'Bahnschrift'},
+                                                merge_duplicate_headers=True,
+                                                export_format="xlsx",
+                                                style_header={'text-align': 'middle', 'fontWeight': 'bold'}
+                                            ),
+                                        ], className='pg3-table-lgeo'
+                                        ),
+
+                                        # Graph Description
+
+                                        html.Div([
+                                            html.H6(
+                                                f'The following graph illustrates the above table, displaying the '
+                                                f'projected total number of households in {prediction_year} by '
+                                                f'household size and bedroom count. Each bar is broken out by the '
+                                                f'projected number of households within each income category.'
+                                            )
+                                        ],
+                                            id="HH-gain-graph-description-page3",
+                                            className='muni-reg-text-lgeo'),
+
+                                        # Graph
+
+                                        html.Div(children=[
+
+                                            dcc.Graph(
+                                                id='bedroom-projection-graph',
+                                                figure=fig,
+                                                config=config,
+                                            )
+                                        ]),
+
+                                    ], className='pg3-table-plot-box-lgeo'),
+                                    # 2031 Bedroom Projections Delta by Income Category
+
+                                    html.Div([
+                                        # Title
+                                        html.H3(children=html.Strong(
+                                            f'{prediction_year} Projected Household Gain/Loss'),
+                                            className='subtitle-lgeo',
+                                            id="bedroom-delta-title-page3"),
+
+                                        # Table Description
+                                        html.Div([
+                                            html.H6(
+                                                f'The following table shows the projected gain or loss of households '
+                                                f'by bedroom count and income. These values represent projections '
+                                                f'for the period between {year} and {prediction_year}.')
+                                        ], className='muni-reg-text-lgeo',
+                                            id="bedroom-delta-description-page3"
+                                        ),
+
+                                        # Table
+
+                                        html.Div(children=[
+
+                                            dash_table.DataTable(
+                                                id='bedroom-projection-delta-table',
+                                                columns=[
+                                                    {"name": i, "id": i, "deletable": False, "selectable": False} for i
+                                                    in
+                                                    table.columns
+                                                ],
+                                                data=table.to_dict('records'),
+                                                editable=True,
+                                                sort_action="native",
+                                                sort_mode="multi",
+                                                column_selectable=False,
+                                                row_selectable=False,
+                                                row_deletable=False,
+                                                selected_columns=[],
+                                                selected_rows=[],
+                                                page_action="native",
+                                                page_current=0,
+                                                page_size=10,
+                                                style_cell={'font-family': 'Bahnschrift'},
+                                                merge_duplicate_headers=True,
+                                                export_format="xlsx",
+                                                style_header={'text-align': 'middle', 'fontWeight': 'bold'}
+                                            ),
+                                        ], className='pg3-table-lgeo'
+                                        ),
+
+                                        # Graph Description
+
+                                        html.Div([
+                                            html.H6(
+                                                f'The following graph illustrates the above table, displaying the '
+                                                f'projected gain or loss of households between {year} and '
+                                                f'{prediction_year} for each size of household. Each bar is broken '
+                                                f'out by the projected number of households within each income '
+                                                f'category. Projected loss of households are stacked underneath.')
+                                        ],
+                                            id="HH-gain-graph-description-page3",
+                                            className='muni-reg-text-lgeo'),
+
+                                        # Graph
+
+                                        html.Div(children=[
+
+                                            dcc.Graph(
+                                                id='bedroom-projection-delta-graph',
+                                                figure=fig,
+                                                config=config,
+                                            )
+                                        ], className='pg3-plot-lgeo'
+                                        ),
+
+                                    ], className='pg3-table-plot-box-lgeo'),
                                     # Municipal vs Regional Growth Rates
 
                                     html.Div([

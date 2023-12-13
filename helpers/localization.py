@@ -51,6 +51,8 @@ localization: Dict[str, Dict[str, str]] = {
         "Household Projections by Household Size": "Household Projections by Household Size",
         "Projected Households by Household Size and Income Category":
             "Projected Households by Household Size and Income Category",
+        "Projected Households by Bedroom Count and Income Category":
+            "Projected Households by Bedroom Count and Income Category",
         "Household Size": "Household Size",
         "Number of Households": "Number of Households",
         "1 Person": "1 Person",
@@ -58,6 +60,11 @@ localization: Dict[str, Dict[str, str]] = {
         "3 Person": "3 Person",
         "4 Person": "4 Person",
         "5+ Person": "5+ Person",
+        "1 Bedroom": "1 Bedroom",
+        "2 Bedroom": "2 Bedroom",
+        "3 Bedroom": "3 Bedroom",
+        "4 Bedroom": "4 Bedroom",
+        "5+ Bedroom": "5+ Bedroom",
         "HH Size": "HH Size",
         "Projected Household Gain/Loss": "Projected Household Gain/Loss",
         "Projected Municipal vs Regional Household Growth Rates by Income Category":
@@ -133,6 +140,8 @@ localization: Dict[str, Dict[str, str]] = {
         "Household Projections by Household Size": "Projections des ménages par taille de ménage",
         "Projected Households by Household Size and Income Category":
             "Ménages projetés par taille du ménage et catégorie de revenu",
+        "Projected Households by Bedroom Count and Income Category":
+            "Projected Households by Bedroom Count and Income Category",
         "Household Size": "La taille du ménage",
         "Number of Households": "Nombre de ménages",
         "1 Person": "1 personne",
