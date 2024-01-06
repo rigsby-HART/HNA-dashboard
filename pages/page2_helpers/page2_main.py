@@ -19,7 +19,7 @@ config = {'displayModeBar': True, 'displaylogo': False,
 
 
 @cache.memoize()
-def layout(year:int=default_year):
+def layout(year: int = default_year):
     return html.Div(children=
                     # Fetching Area/Comparison Area/Clicked area scale info in local storage
                     storage_variables()

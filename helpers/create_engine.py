@@ -21,6 +21,9 @@ for year, file_name in year_data:
 
 # Importing income data
 default_year = 2021
+# Default selected area
+default_value = 'Canada'
+
 # This stuff should be the same every year (unless places change which I cannot think of a good idea to fix it)
 engine_current = engine_list[default_year] # Current Year
 
