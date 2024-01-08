@@ -191,13 +191,13 @@ def update_geo_figure(geo: str, geo_c: str, year_comparison: str, scale, refresh
         fig = make_subplots(rows=2, cols=2,
                             subplot_titles=(
                                 f"{compared_year if year_comparison else geo}, "
-                                f"{localization[language]['owner']}",
+                                f"{localization[language]['Owner Households']}",
                                 f"{compared_year if year_comparison else geo}, "
-                                f"{localization[language]['renter']}",
+                                f"{localization[language]['Renter Households']}",
                                 f"{original_year if year_comparison else geo_c}, "
-                                f"{localization[language]['owner']}",
+                                f"{localization[language]['Owner Households']}",
                                 f"{original_year if year_comparison else geo_c}, "
-                                f"{localization[language]['renter']}"),
+                                f"{localization[language]['Renter Households']}"),
                             shared_xaxes=True,
                             vertical_spacing=0.1)
 

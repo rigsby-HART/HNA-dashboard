@@ -20,12 +20,7 @@ if path.basename(sys.argv[0]) == "app.py":
 # In prod, the server is hosted by a Gunicorn WSGI which means the originally called python file is no longer our app.py
 else:
     cache = diskcache.Cache("./cache")
-# from uuid import uuid4
-# from dash import DiskcacheManager
-# launch_uid = uuid4()
-# background_callback_manager = DiskcacheManager(
-#     cache, cache_by=[lambda: launch_uid], expire=6000
-# )
+
 
 app = dash.Dash(__name__, 
                 external_stylesheets=[dbc.themes.BOOTSTRAP], 

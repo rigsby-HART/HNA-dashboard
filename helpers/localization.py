@@ -88,6 +88,7 @@ localization: Dict[str, Dict[str, str]] = {
         "No Data for {geo}, in the {year} dataset": "No Data for {geo}, in the {year} dataset",
         "No Data for {geo}, please try CD/Provincial level": "No Data for {geo}, please try CD/Provincial level",
         "No Data for {geo}, please try another CSD": "No Data for {geo}, please try another CSD",
+        "Bedroom Count": "Bedroom Count",
     },
     "fr": {
         "Very Low Income": "Très faible revenu",
@@ -175,5 +176,6 @@ localization: Dict[str, Dict[str, str]] = {
         "No Data for {geo}, please try CD/Provincial level":
             "Aucune donnée pour {geo}, veuillez essayer au niveau CD/Provincial",
         "No Data for {geo}, please try another CSD": "Aucune donnée pour {geo}, veuillez essayer un autre CSD",
+        "Bedroom Count": "Bedroom Count",
     }
 }

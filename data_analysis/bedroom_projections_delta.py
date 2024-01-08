@@ -4,7 +4,7 @@ import pandas as pd
 from sqlalchemy import create_engine
 
 # Specify the file path of the CSV file
-csv_file = 'data_analysis/2021_Unit_Mix_Consolidated.csv'  # Replace with the actual file path
+csv_file = 'data_analysis/2021_Unit_Mix_Consolidated_sub.csv'  # Replace with the actual file path
 
 # Read the CSV file into a DataFrame
 df = pd.read_csv(csv_file, header=None, encoding='latin-1', dtype=str)
@@ -112,9 +112,6 @@ def get_percentage(column: pd.Series):
     if _sum == 0:
         return column
     return column / _sum
-
-
-
 
 
 def add_columns(row):

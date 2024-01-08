@@ -68,11 +68,11 @@ def projections_future_hh_size(geo, IsComparison, language, year: int = default_
     table3_csd.loc[5, :] = row_total_csd
 
     if IsComparison != True:
-        table3_csd.columns = ['HH Income Category'] + hh_l
+        table3_csd.columns = ['Bedroom Count'] + hh_l
         table3_csd['Total'] = table3_csd.sum(axis=1)
 
     else:
-        table3_csd.columns = ['HH Income Category'] + [label + " " for label in hh_l]
+        table3_csd.columns = ['Bedroom Count'] + [label + " " for label in hh_l]
         table3_csd['Total '] = table3_csd.sum(axis=1)
 
     return table3_csd , table3_csd_plot
@@ -142,7 +142,7 @@ def update_geo_figure_h(geo, geo_c, scale, update, lang_query):
             plot_bgcolor='#F8F9F9',
             title=f'{default_year + 10} {localization[language]["Projected Households by Bedroom Count and Income Category"]}<br>{geo}',
             legend=dict(font=dict(size=9)),
-            legend_title=localization[language]["HH Size"]
+            legend_title=localization[language]["Bedroom Count"]
         )
         fig_csd.update_xaxes(
             title_font=dict(size=10),
@@ -268,14 +268,14 @@ def update_geo_figure_h(geo, geo_c, scale, update, lang_query):
 
         # Merging main and comparison table
 
-        table1_j = table1.merge(table1_c, how='left', on='HH Income Category')
+        table1_j = table1.merge(table1_c, how='left', on='Bedroom Count')
 
         # Generating Table Callback output
 
         col_list = []
 
         for i in table1.columns:
-            if i == 'HH Income Category':
+            if i == 'Bedroom Count':
                 col_list.append({"name": ["Areas", i], "id": i})
             else:
                 col_list.append({"name": [geo, i],
@@ -288,7 +288,7 @@ def update_geo_figure_h(geo, geo_c, scale, update, lang_query):
                                  )})
 
         for i in table1_c.columns[1:]:
-            if i == 'HH Income Category':
+            if i == 'Bedroom Count':
                 col_list.append({"name": ["Areas", i], "id": i})
             else:
                 col_list.append({"name": [geo_c, i],
