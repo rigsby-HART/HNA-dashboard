@@ -22,7 +22,7 @@ import pages.page2_helpers.housing_deficit                       # noqa
 import pages.page2_helpers.income_categories                     # noqa
 import pages.page2_helpers.percentage_CHN_by_pp_income           # noqa
 import pages.page2_helpers.percentage_CHN_by_priority_population # noqa
-import pages.page2_helpers.percentage_CHN_by_HH_size  # noqa
+import pages.page2_helpers.percentage_CHN_by_income_and_HH_size  # noqa
 import pages.page2_helpers.percentage_CHN_by_income   # noqa
 
 

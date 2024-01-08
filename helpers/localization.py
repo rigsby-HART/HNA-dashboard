@@ -26,8 +26,8 @@ localization: Dict[str, Dict[str, str]] = {
             'Percentage of Households in Core Housing Need, by Income Category,',
         'Percentage of Households in Core Housing Need, by Income Category and HH Size,':
             'Percentage of Households in Core Housing Need, by Income Category and HH Size,',
-        'Percentage of Households in Core Housing Need by Priority Population, ':
-            'Percentage of Households in Core Housing Need by Priority Population, ',
+        'Percentage of Households in Core Housing Need by Priority Population,':
+            'Percentage of Households in Core Housing Need by Priority Population,',
         "Income": "Income",
         "vs": "vs",
         'Single mother-led HH': 'Single mother-led HH',
@@ -117,8 +117,8 @@ localization: Dict[str, Dict[str, str]] = {
         'Percentage of Households in Core Housing Need, by Income Category and HH Size,':
             'Pourcentage de ménages ayant des besoins impérieux en matière de logement, '
             '<br>par catégorie de revenu et taille du ménage,',
-        'Percentage of Households in Core Housing Need by Priority Population, ':
-            'Pourcentage de ménages ayant des besoins impérieux en matière de logement par population prioritaire, ',
+        'Percentage of Households in Core Housing Need by Priority Population,':
+            'Pourcentage de ménages ayant des besoins impérieux en matière de logement par population prioritaire,',
         "Income": "Revenu",
         "vs": "contre",
         'Single mother-led HH': 'Ménages ayant à leur tête une mère seule',

@@ -279,7 +279,9 @@ def update_geo_figure6(geo, geo_c, year_comparison, scale, lang_query, refresh):
 
         fig6.update_layout(
             title=localization[language][
-                "Percentage of Households in Core Housing Need by Priority Population and Income Category,"],
+                      "Percentage of Households in Core Housing Need by Priority Population and Income Category,"] +
+                  (f'<br>{geo} 2016 {localization[language]["vs"]} 2021' if year_comparison
+                   else f'{geo} {localization[language]["vs"]} {geo_c}'),
             width=900,
             height=500,
             font=dict(size=10),
