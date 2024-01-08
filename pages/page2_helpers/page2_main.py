@@ -128,8 +128,14 @@ def layout(year: int = default_year):
                                     # Description
                                     html.Div([
                                         html.H6(
-                                            'The following chart looks at those households in Core Housing Need and shows their relative distribution by household size (i.e. the number of individuals in a given household) for each household income category. When there is no bar for an income category, it means that either there are no households in Core Housing Need within an income category, or that there are too few households to report.')
-                                    ], className='muni-reg-text-lgeo'),
+                                            'The following chart looks at those households in Core Housing Need and '
+                                            'shows their relative distribution by household size (i.e. the number of '
+                                            'individuals in a given household) for each household income category. '
+                                            'When there is no bar for an income category, it means that either there '
+                                            'are no households in Core Housing Need within an income category, '
+                                            'or that there are too few households to report.')
+                                    ],  id='percent-IC-HH-CHN-description-pg2',
+                                        className='muni-reg-text-lgeo'),
 
                                     # Graph
 
@@ -211,7 +217,15 @@ def layout(year: int = default_year):
                                     # Description
                                     html.Div([
                                         html.H6(
-                                            'The following chart compares the rates of Core Housing Need across populations that are at high risk of experiencing housing need. The "Community (all HH)" bar represents the rate of Core Housing Need for all households in the selected community to act as a point of reference. The population with the greatest rate of Core Housing Need is highlighted in dark blue. When there is no bar for a priority population, it means that either there are no households in Core Housing Need within that priority population, or that there are too few households to report.')
+                                            'The following chart compares the rates of Core Housing Need across '
+                                            'populations that are at high risk of experiencing housing need. The '
+                                            '"Community (all HH)" bar represents the rate of Core Housing Need for '
+                                            'all households in the selected community to act as a point of reference. '
+                                            'The population with the greatest rate of Core Housing Need is '
+                                            'highlighted in dark blue. When there is no bar for a priority '
+                                            'population, it means that either there are no households in Core Housing '
+                                            'Need within that priority population, or that there are too few '
+                                            'households to report.')
                                     ], className='muni-reg-text-lgeo'),
 
                                     # Graphs

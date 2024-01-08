@@ -7,7 +7,7 @@ import warnings
 import json
 import geopandas as gpd
 import plotly.graph_objects as go
-from dash import dcc, html, Input, Output, ctx, callback, State
+from dash import dcc, html, Input, Output, ctx, callback, State, clientside_callback
 
 from app_file import cache
 # Importing Geo Code Information
@@ -509,9 +509,28 @@ def update_map(clickData, select_region, comparison_region, *args):
     return fig_m, select_region, comparison_region
 
 
+# Add custom CSS to change the color of the disabled input
+clientside_callback(
+    """
+    function updateDisabledColor(isDisabled) {
+        if (isDisabled) {
+            // Change the color of the disabled input
+            return { backgroundColor: 'lightgray', color: 'darkgray' };
+        } else {
+            // Reset styles when the input is not disabled
+            return { backgroundColor: 'white', color: 'black' };
+        }
+    }
+    """,
+    Output('comparison-geo-dropdown', 'style'),
+    [Input('comparison-geo-dropdown', 'disabled')]
+)
+
+
 @callback(
     Output('year-comparison', 'data'),
-    Output("comparison-geo-dropdown-parent", "style"),
+    Output("comparison-geo-dropdown", "disabled"),
+    Output("year-comparison-button", "style"),
     State('year-comparison', 'data'),
     Input("year-comparison-button", "n_clicks"),
     Input('reset-map', 'n_clicks'),
@@ -522,8 +541,12 @@ def toggle_year_comparison(year_comparison, *args):
     if ctx.triggered_id == "year-comparison-button":
         if year_comparison is not None:
             year_comparison = None
+            return year_comparison, False, {}
         else:
             year_comparison = "2021-2016"
-        return year_comparison, {"visibility": "hidden" if year_comparison else "visible"}
+            return year_comparison, True, {
+                "color": "#FFFFFF",
+                "background-color": "#3EB549"
+            }
     # return dash.no_update, dash.no_update
-    return None, {"visibility": "visible"}
+    return None, False, {}

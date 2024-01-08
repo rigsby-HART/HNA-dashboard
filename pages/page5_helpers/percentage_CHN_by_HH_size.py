@@ -19,13 +19,14 @@ x_columns = ['Rent 20% of AMHI',
              'Rent 120% of AMHI'
              ]
 
-
 x_base = ['Very Low Income',
           'Low Income',
           'Moderate Income',
           'Median Income',
           'High Income',
           ]
+
+
 # Plot dataframe generator
 def plot_df_core_housing_need_by_amhi(geo: str, IsComparison: bool, language: str, year: int = default_year):
     geo, joined_df_filtered = query_table(geo, year, income_ownership_year)
@@ -126,13 +127,15 @@ def update_geo_figure2(geo, geo_c, year_comparison: str, scale, refresh, lang_qu
             yaxis=dict(autorange="reversed"),
             barmode='stack',
             plot_bgcolor='#F8F9F9',
-            title=localization[language]['Percentage of Households in Core Housing Need, by Income Category and HH Size,'] + f'<br>{default_year} {geo}',
+            title=localization[language][
+                      'Percentage of Households in Core Housing Need, by Income Category and HH Size,'] + f'<br>{default_year} {geo}',
             legend_title="Household Type"
         )
         fig2.update_yaxes(
             tickfont=dict(size=10),
             fixedrange=True,
-            title=localization[language]["Income Category"] + '<br>' + localization[language]["(Max. affordable shelter costs)"]
+            title=localization[language]["Income Category"] + '<br>' + localization[language][
+                "(Max. affordable shelter costs)"]
         )
         fig2.update_xaxes(
             fixedrange=True,
@@ -226,7 +229,8 @@ def update_geo_figure2(geo, geo_c, year_comparison: str, scale, refresh, lang_qu
         # Plot layout settings
         fig2.update_layout(
             font=dict(size=10),
-            title=localization[language]['Percentage of Households in Core Housing Need, by Income Category and HH Size,'] + f" {geo}" +
+            title=localization[language][
+                      'Percentage of Households in Core Housing Need, by Income Category and HH Size,'] + f" {geo}" +
                   (f' {compared_year} {localization[language]["vs"]} {original_year}' if year_comparison
                    else f" {default_year}"),
             legend_traceorder='normal',

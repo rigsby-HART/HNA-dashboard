@@ -67,7 +67,7 @@ def table_amhi_shelter_cost_ind(geo, IsComparison, language, year: int = default
         table['% of Total Indigenous HHs'] = table['% of Total Indigenous HHs'].astype(str) + '%'
     else:
         table = pd.DataFrame({'Income Category': income_ct, '% of Total Indigenous HHs ': portion_of_total_hh,
-                              'Annual HH Income ': amhi_list, 'Affordable Shelter Cost ': shelter_list})
+                              'Annual HH Income ': amhi_list, 'Affordable Shelter Cost (2020 CAD$) ': shelter_list})
         table['% of Total Indigenous HHs '] = table['% of Total Indigenous HHs '].astype(str) + '%'
 
     return table, median_income, median_rent

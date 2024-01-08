@@ -71,7 +71,7 @@ def table_amhi_shelter_cost(geo: str, is_second: bool, year: int = default_year)
         table = pd.DataFrame(
             {'Income Category': income_ct, '% of Owner HHs ': portion_of_owner_hh,
              '% of Rental HHs ': portion_of_renter_hh, 'Annual HH Income ': amhi_list,
-             'Affordable Shelter Cost ': shelter_list})
+             'Affordable Shelter Cost (2020 CAD$) ': shelter_list})
         table['% of Owner HHs '] = table['% of Owner HHs '].astype(str) + '%'
         table['% of Rental HHs '] = table['% of Rental HHs '].astype(str) + '%'
 

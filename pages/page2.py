@@ -2,7 +2,7 @@
 import warnings
 
 import pandas as pd
-from dash import dcc, Input, Output, ctx, callback, State, html
+from dash import dcc, Input, Output, ctx, callback, State, html, clientside_callback
 from dash import register_page
 
 from app_file import cache
@@ -18,12 +18,12 @@ warnings.filterwarnings("ignore")
 layout = layout(default_year)
 
 # Import helpers
-import pages.page2_helpers.housing_deficit                       # noqa
-import pages.page2_helpers.income_categories                     # noqa
-import pages.page2_helpers.percentage_CHN_by_pp_income           # noqa
-import pages.page2_helpers.percentage_CHN_by_priority_population # noqa
+import pages.page2_helpers.housing_deficit  # noqa
+import pages.page2_helpers.income_categories  # noqa
+import pages.page2_helpers.percentage_CHN_by_pp_income  # noqa
+import pages.page2_helpers.percentage_CHN_by_priority_population  # noqa
 import pages.page2_helpers.percentage_CHN_by_income_and_HH_size  # noqa
-import pages.page2_helpers.percentage_CHN_by_income   # noqa
+import pages.page2_helpers.percentage_CHN_by_income  # noqa
 
 
 @callback(
@@ -62,6 +62,58 @@ def change_title_labels(year_comparison, refresh):
         html.Strong(f'Percentage of Households in Core Housing Need by Priority Population, {default_year}'),
         html.Strong(
             f'Percentage of Households in Core Housing Need by Priority Population and Income Category, {default_year}')
+    )
+
+
+@callback(
+    Output("percent-IC-HH-CHN-description-pg2", "children"),
+    Input('year-comparison', 'data'),
+    Input('income-category-affordability-table', 'selected_columns'),
+    cache_args_to_ignore=[-1]
+)
+@cache.memoize()
+def change_descriptions(year_comparison, refresh):
+    # change based off of url
+    if year_comparison:
+        return (
+            html.H6(
+                'The following chart looks at those households in Core Housing Need and '
+                'shows their relative distribution by household size (i.e. the number of '
+                'individuals in a given household) for each household income category. '
+                'When there is no bar for an income category, it means that either there '
+                'are no households in Core Housing Need within an income category, '
+                'or that there are too few households to report. Census Canada didn\'t '
+                'collect data on transgender or non-binary households in 2016'),
+            html.H6(
+                'The following chart compares the rates of Core Housing Need across '
+                'populations that are at high risk of experiencing housing need. The '
+                '"Community (all HH)" bar represents the rate of Core Housing Need for '
+                'all households in the selected community to act as a point of reference. '
+                'The population with the greatest rate of Core Housing Need is '
+                'highlighted in dark blue. When there is no bar for a priority '
+                'population, it means that either there are no households in Core Housing '
+                'Need within that priority population, or that there are too few '
+                'households to report.Census Canada didn\'t collect data on transgender '
+                'or non-binary households in 2016')
+        )
+    return (
+        html.H6(
+            'The following chart looks at those households in Core Housing Need and '
+            'shows their relative distribution by household size (i.e. the number of '
+            'individuals in a given household) for each household income category. '
+            'When there is no bar for an income category, it means that either there '
+            'are no households in Core Housing Need within an income category, '
+            'or that there are too few households to report.'),
+        html.H6(
+            'The following chart compares the rates of Core Housing Need across '
+            'populations that are at high risk of experiencing housing need. The '
+            '"Community (all HH)" bar represents the rate of Core Housing Need for '
+            'all households in the selected community to act as a point of reference. '
+            'The population with the greatest rate of Core Housing Need is '
+            'highlighted in dark blue. When there is no bar for a priority '
+            'population, it means that either there are no households in Core Housing '
+            'Need within that priority population, or that there are too few '
+            'households to report.')
     )
 
 
