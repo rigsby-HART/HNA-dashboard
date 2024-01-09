@@ -1,7 +1,7 @@
 # Importing Libraries
 from dash import register_page
 from helpers.create_engine import default_year
-from pages.page3_helpers.page3_main import layout
+from pages.projection_helpers.page3_main import layout
 
 register_page(__name__)
 # Default selected area
@@ -13,14 +13,14 @@ layout = layout(default_year)
 # Import all callbacks for table updates and generation
 # Callbacks are used w/o us calling them explicitly
 # noqa pervents pycharm from marking these as unused
-import pages.page3_helpers.municipal_vs_regional_hh # noqa
-import pages.page3_helpers.municipal_vs_regional_income # noqa
-import pages.page3_helpers.projectioned_hh_delta # noqa
-import pages.page3_helpers.projections_by_hh_size_and_IC # noqa
-import pages.page3_helpers.bedroom_projections # noqa
-import pages.page3_helpers.bedroom_projections_delta # noqa
-import pages.page3_helpers.projections_by_household_size # noqa
-import pages.page3_helpers.projections_by_income_category # noqa
+import pages.projection_helpers.municipal_vs_regional_hh # noqa
+import pages.projection_helpers.municipal_vs_regional_income # noqa
+import pages.projection_helpers.projectioned_hh_delta # noqa
+import pages.projection_helpers.projections_by_hh_size_and_IC # noqa
+import pages.projection_helpers.bedroom_projections # noqa
+import pages.projection_helpers.bedroom_projections_delta # noqa
+import pages.projection_helpers.projections_by_household_size # noqa
+import pages.projection_helpers.projections_by_income_category # noqa
 
 
 # 

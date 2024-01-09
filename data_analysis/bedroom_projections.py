@@ -4,7 +4,7 @@ import pandas as pd
 from sqlalchemy import create_engine
 
 # Specify the file path of the CSV file
-csv_file = 'data_analysis/2021_Unit_Mix_Consolidated.csv'  # Replace with the actual file path
+csv_file = 'data_analysis/2021_Unit_Mix_Consolidated_canada.csv'  # Replace with the actual file path
 
 # Read the CSV file into a DataFrame
 df = pd.read_csv(csv_file, header=None, encoding='latin-1', dtype=str)
@@ -93,11 +93,11 @@ income_lv_list = ['20% or under', '21% to 50%', '51% to 80%', '81% to 120%', '12
 output_columns = [f"2031 Projected bedroom need {bed} bed {income}" for bed in beds for income in income_lv_list] + \
     [f"2031 Projected bedroom need delta {bed} bed {income}" for bed in beds for income in income_lv_list]
 income_map = {
-    'Households with household income 20% or under of area median household income (AMHI)': "20% or under of area median household income (AMHI)",
-    'Households with household income 21% to 50% of AMHI': "21% to 50% of AMHI",
-    'Households with household income 51% to 80% of AMHI': "51% to 80% of AMHI",
-    'Households with household income 81% to 120% of AMHI': "81% to 120% of AMHI",
-    'Households with household income 121% and over of AMHI': "121% or over of AMHI"
+    'Households with  income 20% or under of area median household income (AMHI)': "20% or under of area median household income (AMHI)",
+    'Households with income 21% to 50% of AMHI': "21% to 50% of AMHI",
+    'Households with income 51%  to 80% of AMHI': "51% to 80% of AMHI",
+    'Households with income 81% to 120% of AMHI': "81% to 120% of AMHI",
+    'Households with income 121% or over of AMHI': "121% or over of AMHI"
 }
 hh_pp_map = {
     '1 person HH': "1pp HH",
@@ -114,7 +114,10 @@ def get_percentage(column: pd.Series):
         return column
     return column / _sum
 
-
+# Applies the methodology outlined by the HART page.
+# Basically first calculate the percentage split by housing type, then assume that the percentage of current HHs
+# extend to the future hhs as well.  As we already do a linear prediction on the population from 2016->2026, we have
+# future population data.  Then multiply that value in.
 def add_columns(row):
     geo = row["Geography"]
     projection_row = predictions_2031[predictions_2031["Geography"] == geo].head(1).squeeze()
@@ -127,7 +130,8 @@ def add_columns(row):
         for size in hh_size:
             for type in hh_type:
                 df_2031.at[type, size] = row[
-                    f"{size}-{type}-{income}-{'Total - Private Households by core housing need status'}"]
+                    f"{size}-{type}-{income}-{CHN_status[0]}"]
+                # We're only interested in the total here, since we're trying to calculate
 
         # Percent of each hh size @ that income level
 
@@ -145,7 +149,7 @@ def add_columns(row):
                 if not (df_2031.iat[y, x] == 0 or np.isnan(df_2031.iat[y, x])):
                     output[f"2031 Projected bedroom need {bed} bed {short_income}"] += df_2031.iat[y, x]
                 # We don't have 2021 bedroom count, so I calculate it here, then do 2031 - the value we get
-                bedrooms_2021[f"2021 bedroom need {bed} bed {short_income}"] += row[f"{df_2031.columns[x]}-{df_2031.index[y]}-{income}-{'Total - Private Households by core housing need status'}"]
+                bedrooms_2021[f"2021 bedroom need {bed} bed {short_income}"] += row[f"{df_2031.columns[x]}-{df_2031.index[y]}-{income}-{CHN_status[0]}"]
     for bed in beds:
         for income in income_lv_list:
             output[f"2031 Projected bedroom need delta {bed} bed {income}"] = \

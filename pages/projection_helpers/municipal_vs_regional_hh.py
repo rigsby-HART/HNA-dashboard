@@ -17,7 +17,7 @@ from helpers.style_helper import colors, modebar_color, modebar_activecolor, col
 from helpers.table_helper import get_language, area_scale_primary_only, error_region_table_population, \
     area_scale_comparison
 from pages.page3 import default_value
-from pages.page3_helpers.municipal_vs_regional_income import m_r_colors
+from pages.projection_helpers.municipal_vs_regional_income import m_r_colors
 
 
 # Municipal vs Regional Growth Rates by Household Size

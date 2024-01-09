@@ -14,7 +14,7 @@ from helpers.style_helper import style_data_conditional, style_header_conditiona
 from helpers.table_helper import area_scale_comparison, area_scale_primary_only, error_indigenous_table, error_indigenous_figure, query_table, get_language
 from helpers.localization import localization
 
-from pages.page4_helpers.page4_main import layout
+from pages.indigenous_helpers.page4_main import layout
 
 register_page(__name__)
 
@@ -25,9 +25,9 @@ layout = layout(default_year)
 
 # Plot/table generators and callbacks
 # Import helpers
-import pages.page4_helpers.income_categories                     # noqa
-import pages.page4_helpers.percentage_CHN_by_income_and_HH_size              # noqa
-import pages.page4_helpers.housing_deficit             # noqa
+import pages.indigenous_helpers.income_categories                     # noqa
+import pages.indigenous_helpers.percentage_CHN_by_income_and_HH_size              # noqa
+import pages.indigenous_helpers.housing_deficit             # noqa
 
 
 # Download This Community

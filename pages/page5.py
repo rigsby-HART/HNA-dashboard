@@ -14,16 +14,16 @@ from helpers.table_helper import area_scale_comparison, area_scale_primary_only,
     error_region_figure, \
     query_table, get_language
 from helpers.localization import localization
-from pages.page5_helpers.page5_main import layout
+from pages.renter_owner_helpers.page5_main import layout
 
 register_page(__name__)
 warnings.filterwarnings("ignore")
 
 # Import helpers
-import pages.page5_helpers.income_categories                     # noqa
-import pages.page5_helpers.percentage_CHN_by_income              # noqa
-import pages.page5_helpers.percentage_CHN_by_HH_type             # noqa
-import pages.page5_helpers.housing_deficit                       # noqa
+import pages.renter_owner_helpers.income_categories                     # noqa
+import pages.renter_owner_helpers.percentage_CHN_by_income              # noqa
+import pages.renter_owner_helpers.percentage_CHN_by_HH_type             # noqa
+import pages.renter_owner_helpers.housing_deficit                       # noqa
 
 
 # Setting layout for dashboard
