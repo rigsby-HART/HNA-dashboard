@@ -8,7 +8,7 @@ from plotly.subplots import make_subplots
 from app_file import cache
 from helpers.create_engine import default_year, default_value, income_ownership_year
 from helpers.localization import localization
-from helpers.style_helper import modebar_color, modebar_activecolor, hh_colors
+from helpers.style_helper import modebar_color, modebar_activecolor, hh_colors, colors
 from helpers.table_helper import query_table, get_language, area_scale_primary_only, area_scale_comparison, \
     error_region_figure
 
@@ -26,6 +26,7 @@ x_base = ['Very Low Income',
           'High Income',
           ]
 
+hh_type_colors = [colors[1], hh_colors[1]]
 
 # Plot dataframe generator
 def plot_df_core_housing_need_by_amhi(geo: str, IsComparison: bool, language: str, year: int = default_year):
@@ -106,7 +107,7 @@ def update_geo_figure2(geo, geo_c, year_comparison: str, scale, refresh, lang_qu
         # Generating plot
         fig2 = go.Figure()
 
-        for h, c in zip(plot_df['HH_Size'].unique(), hh_colors):
+        for h, c in zip(plot_df['HH_Size'].unique(), hh_type_colors):
             plot_df_frag = plot_df.loc[plot_df['HH_Size'] == h, :]
             fig2.add_trace(go.Bar(
                 y=plot_df_frag['Income_Category'],
@@ -114,7 +115,7 @@ def update_geo_figure2(geo, geo_c, year_comparison: str, scale, refresh, lang_qu
                 name=h,
                 marker_color=c,
                 orientation='h',
-                hovertemplate='%{y}, ' + f'HH Size: {h} - ' + '%{x: .2%}<extra></extra>',
+                hovertemplate='%{y}, ' + f'HH Type: {h} - ' + '%{x: .2%}<extra></extra>',
             ))
 
         # Plot layout settings
@@ -129,7 +130,7 @@ def update_geo_figure2(geo, geo_c, year_comparison: str, scale, refresh, lang_qu
             plot_bgcolor='#F8F9F9',
             title=localization[language][
                       'Percentage of Households in Core Housing Need, by Income Category and HH Size,'] + f'<br>{default_year} {geo}',
-            legend_title="Household Type"
+            legend_title=localization[language]["Housing Type"]
         )
         fig2.update_yaxes(
             tickfont=dict(size=10),
@@ -180,7 +181,7 @@ def update_geo_figure2(geo, geo_c, year_comparison: str, scale, refresh, lang_qu
 
         # Generating main plot
         n = 0
-        for h, c in zip(plot_df['HH_Size'].unique(), hh_colors):
+        for h, c in zip(plot_df['HH_Size'].unique(), hh_type_colors):
             plot_df_frag = plot_df.loc[plot_df['HH_Size'] == h, :]
             fig2.add_trace(go.Bar(
                 y=plot_df_frag['Income_Category'],
@@ -212,7 +213,7 @@ def update_geo_figure2(geo, geo_c, year_comparison: str, scale, refresh, lang_qu
 
         # Generating comparison plot
         n = 0
-        for h, c in zip(plot_df_c['HH_Size'].unique(), hh_colors):
+        for h, c in zip(plot_df_c['HH_Size'].unique(), hh_type_colors):
             plot_df_frag_c = plot_df_c.loc[plot_df_c['HH_Size'] == h, :]
             fig2.add_trace(go.Bar(
                 y=plot_df_frag_c['Income_Category'],
@@ -230,7 +231,7 @@ def update_geo_figure2(geo, geo_c, year_comparison: str, scale, refresh, lang_qu
         fig2.update_layout(
             font=dict(size=10),
             title=localization[language][
-                      'Percentage of Households in Core Housing Need, by Income Category and HH Size,'] + f" {geo}" +
+                      'Percentage of Households in Core Housing Need, by Income Category and HH Type,'] + f" {geo}" +
                   (f' {compared_year} {localization[language]["vs"]} {original_year}' if year_comparison
                    else f" {default_year}"),
             legend_traceorder='normal',
@@ -238,7 +239,7 @@ def update_geo_figure2(geo, geo_c, year_comparison: str, scale, refresh, lang_qu
             modebar_activecolor=modebar_activecolor,
             barmode='stack',
             plot_bgcolor='#F8F9F9',
-            legend_title="Household Type",
+            legend_title=localization[language]["Housing Type"],
             legend=dict(font=dict(size=8))
         )
         fig2.update_yaxes(

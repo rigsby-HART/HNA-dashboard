@@ -120,12 +120,12 @@ def layout(year: int = default_year):
                                 html.Div([
                                     # Title
                                     html.H3(children=html.Strong(
-                                        f'Percentage of Households in Core Housing Need, by Income Category and HH Size, {year}'),
+                                        f'Percentage of Households in Core Housing Need, by Income Category and Housing Type, {year}'),
                                         id='percent-IC-HH-CHN-title-page5'),
                                     # Description
                                     html.Div([
                                         html.H6(
-                                            'The following chart looks at those households in Core Housing Need and shows their relative distribution by household size (i.e. the number of individuals in a given household) for each household income category. When there is no bar for an income category, it means that either there are no households in Core Housing Need within an income category, or that there are too few households to report.')
+                                            'The following chart looks at those households in Core Housing Need and shows their relative distribution by housing type for each household income category. When there is no bar for an income category, it means that either there are no households in Core Housing Need within an income category, or that there are too few households to report.')
                                     ], className='muni-reg-text-lgeo'),
 
                                     # Graph
@@ -200,19 +200,13 @@ def layout(year: int = default_year):
                                 # Raw data download button
 
                                 html.Div([
-                                    html.Button("Download This Community", id="ov7-download-csv-pg5"),
-                                    dcc.Download(id="ov7-download-text-pg5")
-                                ],
+                                        html.Button("Download This Community", id="ov7-download-csv-pg5"),
+                                        dcc.Download(id="ov7-download-text-pg5")
+                                    ],
                                     className='region-button-lgeo'
                                 ),
 
-                                # LGEO
-
-                                html.Div([
-                                    'This dashboard was created in collaboration with ',
-                                    html.A('Licker Geospatial', href='https://www.lgeo.co/', target="_blank"),
-                                    ' using Plotly.'
-                                ], className='lgeo-credit-text'),
+                                # Hee hee it's only me jack this time
 
                             ], className='dashboard-pg2-lgeo'
                         ),

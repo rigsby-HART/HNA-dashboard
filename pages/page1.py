@@ -146,8 +146,8 @@ layout = html.Div(children=
                                   ], className='region-button-box-lgeo'
                                   ),
                                   html.Div(children=[
-                                      html.Button('Compare 2021 vs 2016',
-                                                  title="Toggle a comparison between 2021 and 2016",
+                                      html.Button('Compare 2016 vs 2021',
+                                                  title="Toggle a comparison between 2016 and 2021",
                                                   id='year-comparison-button', n_clicks=0,
                                                   className='region-button-lgeo'),
                                   ], className='region-button-box-lgeo'

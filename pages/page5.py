@@ -22,7 +22,7 @@ warnings.filterwarnings("ignore")
 # Import helpers
 import pages.page5_helpers.income_categories                     # noqa
 import pages.page5_helpers.percentage_CHN_by_income              # noqa
-import pages.page5_helpers.percentage_CHN_by_HH_size             # noqa
+import pages.page5_helpers.percentage_CHN_by_HH_type             # noqa
 import pages.page5_helpers.housing_deficit                       # noqa
 
 
@@ -57,13 +57,13 @@ def change_title_labels(geo, geo_c, year_comparison, scale, refresh, lang_query)
             html.Strong(
                 f'Percentage of Households in Core Housing Need, by Income Category, {compared_year} vs {original_year}'),
             html.Strong(
-                f'Percentage of Households in Core Housing Need, by Income Category and HH Size, {compared_year} vs {original_year}'),
+                f'Percentage of Households in Core Housing Need, by Income Category and Housing Type, {compared_year} vs {original_year}'),
             html.Strong(f'{compared_year} vs {original_year} Affordable Housing Deficit'),
         )
     return (
         html.Strong(f'Income Categories and Affordable Shelter Costs, {default_year}'),
         html.Strong(f'Percentage of Households in Core Housing Need, by Income Category, {default_year}'),
-        html.Strong(f'Percentage of Households in Core Housing Need, by Income Category and HH Size, {default_year}'),
+        html.Strong(f'Percentage of Households in Core Housing Need, by Income Category and Housing Type, {default_year}'),
         html.Strong(f'{default_year} Affordable Housing Deficit'),
     )
 
@@ -74,14 +74,12 @@ def change_title_labels(geo, geo_c, year_comparison, scale, refresh, lang_query)
     Input('main-area', 'data'),
     Input('comparison-area', 'data'),
     State('year-comparison', 'data'),
-    cache_args_to_ignore=[0]
 )
-@cache.memoize()
 def func_ov7(n_clicks, geo, geo_c, year_comparison):
     if geo == None:
         geo = default_value
 
-    if "ov7-download-csv" == ctx.triggered_id:
+    if "ov7-download-csv-pg5" == ctx.triggered_id:
         # if year_comparison:
         #     original_year, compared_year = year_comparison.split("-")
         #     _, joined_df_geo = query_table(geo, int(original_year), income_ownership_year)
@@ -93,6 +91,5 @@ def func_ov7(n_clicks, geo, geo_c, year_comparison):
         _, joined_df_geo = query_table(geo, default_year, income_ownership_year)
         _, joined_df_geo_c = query_table(geo_c, default_year, income_ownership_year)
         joined_df_download = pd.concat([joined_df_geo, joined_df_geo_c])
-        joined_df_download = joined_df_download.drop(columns=['pk_x', 'pk_y'])
 
         return dcc.send_data_frame(joined_df_download.to_csv, "result.csv")

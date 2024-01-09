@@ -7,7 +7,7 @@ from plotly.subplots import make_subplots
 from app_file import cache
 from helpers.create_engine import default_year, default_value, income_ownership_year
 from helpers.localization import localization
-from helpers.style_helper import colors, modebar_color, modebar_activecolor
+from helpers.style_helper import colors, modebar_color, modebar_activecolor, hh_colors
 from helpers.table_helper import query_table, get_language, area_scale_primary_only, area_scale_comparison, \
     error_region_figure
 
@@ -37,7 +37,7 @@ owner_columns = ["Owner households " + column for column in columns]
 
 
 # Plot dataframe generator
-def plot_df_core_housing_need_by_income(geo: str, is_rental: bool, language, year: int = default_year, ):
+def plot_df_core_housing_need_by_income(geo: str, rental: bool, right_side: bool, language, year: int = default_year, ):
     geo, joined_df_filtered = query_table(geo, year, income_ownership_year)
 
     x_list = []
@@ -50,14 +50,13 @@ def plot_df_core_housing_need_by_income(geo: str, is_rental: bool, language, yea
         value = str(joined_df_filtered[income_query_string].tolist()[0])
         # print(i, b,c, value, type(value))
         if i < 4:
-            if is_rental is False:
+            if right_side is False:
                 x = localization[language]["{b}<br> (${value})"].format(b=income_category, value=value)
-                # print(x)
             else:
                 x = localization[language][" (${value}) "].format(b=income_category, value=value)
             x_list.append(x)
         else:
-            if is_rental is False:
+            if right_side is False:
                 x = localization[language]["{b}<br> (>${value})"].format(b=income_category, value=value)
             else:
                 x = localization[language][" (>${value}) "].format(b=income_category, value=value)
@@ -66,7 +65,7 @@ def plot_df_core_housing_need_by_income(geo: str, is_rental: bool, language, yea
 
     x_list = [sub.replace('$$', '$') for sub in x_list]
     x_list = [sub.replace('.0', '') for sub in x_list]
-    if is_rental:
+    if rental:
         plot_df = pd.DataFrame(
             {"Income_Category": x_list, 'Percent HH': joined_df_filtered[renter_columns].T.iloc[:, 0].tolist()})
     else:
@@ -109,56 +108,61 @@ def update_geo_figure(geo: str, geo_c: str, year_comparison: str, scale, refresh
         # Generating dataframe for plot
         if error_region_figure(geo, default_year, language):
             return error_region_figure(geo, default_year, language)
-        plot_df = plot_df_core_housing_need_by_income(geo, False, language)
+        plot_df = plot_df_core_housing_need_by_income(geo, False, False, language)
+        plot_df_c = plot_df_core_housing_need_by_income(geo, True, False, language)
 
         # Generating plot
-        fig = make_subplots(rows=1, cols=2,
-                            subplot_titles=(
-                                f"{geo}, {localization[language]['Owner Households']}",
-                                f"{geo}, {localization[language]['Renter Households']}"),
-                            shared_xaxes=True)
-        for i, c in zip(plot_df['Income_Category'], colors):
-            plot_df_frag = plot_df.loc[plot_df['Income_Category'] == i, :]
-            fig.add_trace(go.Bar(
-                y=plot_df_frag['Income_Category'],
-                x=plot_df_frag['Percent HH'],
-                name=i,
-                marker_color=c,
-                orientation='h',
-                hovertemplate='%{y} - ' + '%{x: .2%}<extra></extra>'
-            ))
-        # Comparison plot
-        plot_df_c = plot_df_core_housing_need_by_income(geo, True, language)
+        data = []
+        data.append(go.Bar(
+            y=plot_df['Income_Category'],
+            x=plot_df['Percent HH'],
+            name=localization[language]["Owner Households"],
+            marker_color=colors,
+            orientation='h',
+            hovertemplate='%{y}, ' + f'HH Type: {localization[language]["Owner Households"]} - ' + '%{x: .2%}<extra></extra>',
+            showlegend=False,
+        ))
+        data.append(go.Bar(
+            y=plot_df_c['Income_Category'],
+            x=plot_df_c['Percent HH'],
+            name=localization[language]["Renter Households"],
+            marker_color=hh_colors,
+            orientation='h',
+            hovertemplate='%{y}, ' + f'HH Type: {localization[language]["Renter Households"]} - ' + '%{x: .2%}<extra></extra>',
+            showlegend=False,
+        ))
+        fig = go.Figure(data=data)
+        # Create a separate trace for the custom legend
+        legend_trace = go.Bar(
+            x=[None],
+            y=[None],
+            marker_color=colors[1],  # Customize marker color
+            # showlegend=True,  # Show legend only for this trace
+            name=localization[language]["Owner Households"]   # Set custom legend label
+        )
+        fig.add_trace(legend_trace)
+        legend_trace = go.Bar(
+            x=[None],
+            y=[None],
+            marker_color=hh_colors[1],  # Customize marker color
+            showlegend=True,  # Show legend only for this trace
+            name=localization[language]["Renter Households"]  # Set custom legend label
+        )
 
-        # Generating comparison plot
-        n = 0
-        for i, c, b in zip(plot_df_c['Income_Category'], colors, x_base):
-            plot_df_frag_c = plot_df_c.loc[plot_df_c['Income_Category'] == i, :]
-            fig.add_trace(go.Bar(
-                y=plot_df_frag_c['Income_Category'],
-                x=plot_df_frag_c['Percent HH'],
-                name=b.replace(" Income", ""),
-                marker_color=c,
-                orientation='h',
-                hovertemplate='%{y} - ' + '%{x: .2%}<extra></extra>',
-                legendgroup=f'{n}',
-                showlegend=False,
-            ), row=1, col=2)
-            n += 1
+        # Add the custom legend trace to the figure
+        fig.add_trace(legend_trace)
 
         # Plot layout settings
         fig.update_layout(
             title=localization[language]['Percentage of Households in Core Housing Need, by Income Category,'] + f"{'<br>' if language == 'en' else ' '}{geo}" +
                   (f' {localization[language]["Renter Households"]} {localization[language]["vs"]} '
                    f'{localization[language]["Owner Households"]}'),
-            showlegend=False,
-            width=900,
             height=450,
-            legend=dict(font=dict(size=8)),
+            legend=dict(font=dict(size=9)),
             modebar_color=modebar_color,
             modebar_activecolor=modebar_activecolor,
             plot_bgcolor='#F8F9F9',
-            legend_title="Income",
+            legend_title=localization[language]["Housing Type"]
         )
         fig.update_yaxes(
             title=localization[language]["Income Category"] + '<br>' + localization[language]["(Max. affordable shelter costs)"],
@@ -188,18 +192,13 @@ def update_geo_figure(geo: str, geo_c: str, year_comparison: str, scale, refresh
             original_year, compared_year = default_year, default_year
 
         # Subplot setting for the comparison mode
-        fig = make_subplots(rows=2, cols=2,
+        fig = make_subplots(rows=1, cols=2,
                             subplot_titles=(
                                 f"{compared_year if year_comparison else geo}, "
                                 f"{localization[language]['Owner Households']}",
-                                f"{compared_year if year_comparison else geo}, "
-                                f"{localization[language]['Renter Households']}",
                                 f"{original_year if year_comparison else geo_c}, "
-                                f"{localization[language]['Owner Households']}",
-                                f"{original_year if year_comparison else geo_c}, "
-                                f"{localization[language]['Renter Households']}"),
-                            shared_xaxes=True,
-                            vertical_spacing=0.1)
+                                f"{localization[language]['Renter Households']}",),
+                            shared_xaxes=True,)
 
         # Main Plot
 
@@ -211,48 +210,51 @@ def update_geo_figure(geo: str, geo_c: str, year_comparison: str, scale, refresh
             if error_region_figure(geo, default_year, language):
                 return error_region_figure(geo, default_year, language)
         plot_df = (
-            plot_df_core_housing_need_by_income(geo, False, language, int(compared_year)) if year_comparison else
-            plot_df_core_housing_need_by_income(geo, False, language)
+            plot_df_core_housing_need_by_income(geo, False, False, language, int(compared_year)) if year_comparison else
+            plot_df_core_housing_need_by_income(geo, False, False, language)
         )
-
-        # Generating owner old plot
-        n = 0
-        for i, c, b in zip(plot_df['Income_Category'], colors, x_base):
-            plot_df_frag = plot_df.loc[plot_df['Income_Category'] == i, :]
-            fig.add_trace(go.Bar(
-                y=plot_df_frag['Income_Category'],
-                x=plot_df_frag['Percent HH'],
-                name=b.replace(" Income", ""),
-                marker_color=c,
-                orientation='h',
-                hovertemplate='%{y} - ' + '%{x: .2%}<extra></extra>',
-                legendgroup=f'{n}'
-            ), row=1, col=1)
-            n += 1
+        plot_df_c = (
+            plot_df_core_housing_need_by_income(geo, True, False, language, int(compared_year)) if year_comparison else
+            plot_df_core_housing_need_by_income(geo, True, False, language)
+        )
 
         fig.update_yaxes(title=localization[language]["Income Category"] +
                                '<br>' + localization[language]["(Max. affordable shelter costs)"], row=1, col=1)
 
-        plot_df_c = (
-            plot_df_core_housing_need_by_income(geo, True, language, int(compared_year)) if year_comparison else
-            plot_df_core_housing_need_by_income(geo, True, language)
-        )
-
-        # Generating renter old plot
-        n = 0
-        for i, c, b in zip(plot_df_c['Income_Category'], colors, x_base):
-            plot_df_frag_c = plot_df_c.loc[plot_df_c['Income_Category'] == i, :]
-            fig.add_trace(go.Bar(
-                y=plot_df_frag_c['Income_Category'],
-                x=plot_df_frag_c['Percent HH'],
-                name=b.replace(" Income", ""),
-                marker_color=c,
-                orientation='h',
-                hovertemplate='%{y} - ' + '%{x: .2%}<extra></extra>',
-                legendgroup=f'{n}',
-                showlegend=False,
-            ), row=1, col=2)
-            n += 1
+        # Generating Left Plot
+        fig.add_trace(go.Bar(
+            y=plot_df['Income_Category'],
+            x=plot_df['Percent HH'],
+            name=localization[language]["Owner Households"],
+            marker_color=colors,
+            orientation='h',
+            hovertemplate='%{y}, ' + f'HH Type: {localization[language]["Owner Households"]} - ' + '%{x: .2%}<extra></extra>',
+            showlegend=False,
+        ), row=1, col=1)
+        fig.add_trace(go.Bar(
+            y=plot_df_c['Income_Category'],
+            x=plot_df_c['Percent HH'],
+            name=localization[language]["Renter Households"],
+            marker_color=hh_colors,
+            orientation='h',
+            hovertemplate='%{y}, ' + f'HH Type: {localization[language]["Renter Households"]} - ' + '%{x: .2%}<extra></extra>',
+            showlegend=False,
+        ), row=1, col=1)
+        # Create a separate trace for the custom legend
+        fig.add_trace(go.Bar(
+            x=[None],
+            y=[None],
+            marker_color=colors[1],  # Customize marker color
+            # showlegend=True,  # Show legend only for this trace
+            name=localization[language]["Owner Households"]  # Set custom legend label
+        ), row=1, col=1)
+        fig.add_trace(go.Bar(
+            x=[None],
+            y=[None],
+            marker_color=hh_colors[1],  # Customize marker color
+            showlegend=True,  # Show legend only for this trace
+            name=localization[language]["Renter Households"]  # Set custom legend label
+        ), row=1, col=1)
         # Comparison plot
 
         # Generating dataframe for owner newplot
@@ -262,57 +264,45 @@ def update_geo_figure(geo: str, geo_c: str, year_comparison: str, scale, refresh
         else:
             if error_region_figure(geo_c, default_year, language):
                 return error_region_figure(geo_c, default_year, language)
+        plot_df = (
+            plot_df_core_housing_need_by_income(geo, False, True, language) if year_comparison else
+            plot_df_core_housing_need_by_income(geo_c, False, True, language)
+        )
         plot_df_c = (
-            plot_df_core_housing_need_by_income(geo, False, language) if year_comparison else
-            plot_df_core_housing_need_by_income(geo_c, False, language)
+            plot_df_core_housing_need_by_income(geo, True, True, language) if year_comparison else
+            plot_df_core_housing_need_by_income(geo_c, True, True, language)
         )
 
-        # Generating owner new plot
-        n = 0
-        for i, c, b in zip(plot_df_c['Income_Category'], colors, x_base):
-            plot_df_frag_c = plot_df_c.loc[plot_df_c['Income_Category'] == i, :]
-            fig.add_trace(go.Bar(
-                y=plot_df_frag_c['Income_Category'],
-                x=plot_df_frag_c['Percent HH'],
-                name=b.replace(" Income", ""),
-                marker_color=c,
-                orientation='h',
-                hovertemplate='%{y} - ' + '%{x: .2%}<extra></extra>',
-                legendgroup=f'{n}',
-                showlegend=False,
-            ), row=2, col=1)
-            n += 1
-        n = 0
-        plot_df_c = (
-            plot_df_core_housing_need_by_income(geo, True, language) if year_comparison else
-            plot_df_core_housing_need_by_income(geo_c, True, language)
-        )
-        for i, c, b in zip(plot_df_c['Income_Category'], colors, x_base):
-            plot_df_frag_c = plot_df_c.loc[plot_df_c['Income_Category'] == i, :]
-            fig.add_trace(go.Bar(
-                y=plot_df_frag_c['Income_Category'],
-                x=plot_df_frag_c['Percent HH'],
-                name=b.replace(" Income", ""),
-                marker_color=c,
-                orientation='h',
-                hovertemplate='%{y} - ' + '%{x: .2%}<extra></extra>',
-                legendgroup=f'{n}',
-                showlegend=False,
-            ), row=2, col=2)
-            n += 1
+        # Generating Left Plot
+        fig.add_trace(go.Bar(
+            y=plot_df['Income_Category'],
+            x=plot_df['Percent HH'],
+            name=localization[language]["Owner Households"],
+            marker_color=colors,
+            orientation='h',
+            hovertemplate='%{y}, ' + f'HH Type: {localization[language]["Owner Households"]} - ' + '%{x: .2%}<extra></extra>',
+            showlegend=False,
+        ), row=1, col=2)
+        fig.add_trace(go.Bar(
+            y=plot_df_c['Income_Category'],
+            x=plot_df_c['Percent HH'],
+            name=localization[language]["Renter Households"],
+            marker_color=hh_colors,
+            orientation='h',
+            hovertemplate='%{y}, ' + f'HH Type: {localization[language]["Renter Households"]} - ' + '%{x: .2%}<extra></extra>',
+            showlegend=False,
+        ), row=1, col=2)
         # Plot layout settings
         fig.update_layout(
             title=localization[language]['Percentage of Households in Core Housing Need, by Income Category,'] + f"<br>{geo}" +
                   (f' {compared_year} {localization[language]["vs"]} {original_year}' if year_comparison
                    else f" {default_year}"),
-            showlegend=False,
             width=900,
-            height=800,
             legend=dict(font=dict(size=8)),
             modebar_color=modebar_color,
             modebar_activecolor=modebar_activecolor,
             plot_bgcolor='#F8F9F9',
-            legend_title="Income"
+            legend_title=localization[language]["Housing Type"]
         )
         fig.update_yaxes(
             fixedrange=True,

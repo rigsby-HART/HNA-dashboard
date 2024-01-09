@@ -89,6 +89,9 @@ localization: Dict[str, Dict[str, str]] = {
         "No Data for {geo}, please try CD/Provincial level": "No Data for {geo}, please try CD/Provincial level",
         "No Data for {geo}, please try another CSD": "No Data for {geo}, please try another CSD",
         "Bedroom Count": "Bedroom Count",
+        'Percentage of Households in Core Housing Need, by Income Category and HH Type,':
+            'Percentage of Households in Core Housing Need, by Income Category and HH Type,',
+        "Housing Type": "Housing Type",
     },
     "fr": {
         "Very Low Income": "Très faible revenu",
@@ -177,5 +180,8 @@ localization: Dict[str, Dict[str, str]] = {
             "Aucune donnée pour {geo}, veuillez essayer au niveau CD/Provincial",
         "No Data for {geo}, please try another CSD": "Aucune donnée pour {geo}, veuillez essayer un autre CSD",
         "Bedroom Count": "Bedroom Count",
+        'Percentage of Households in Core Housing Need, by Income Category and HH Type,':
+            'Percentage of Households in Core Housing Need, by Income Category and HH Type,',
+        "Housing Type": "Housing Type",
     }
 }
