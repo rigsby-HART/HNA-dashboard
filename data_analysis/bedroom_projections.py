@@ -6,12 +6,12 @@ from sqlalchemy import create_engine
 # Specify the file path of the CSV file
 csv_file = 'data_analysis/2021_Unit_Mix_Consolidated_canada.csv'  # Replace with the actual file path
 
+
 # Read the CSV file into a DataFrame
 df = pd.read_csv(csv_file, header=None, encoding='latin-1', dtype=str)
 
 CHN_status = [x.strip() for x in df.iloc[0, 1:].unique()]
 hh_type = [x.strip() for x in df.iloc[1, 1:].unique()]
-
 AMHI = [x.strip() for x in df.iloc[2, 1:].unique()]
 hh_size = [x.strip() for x in df.iloc[3, 1:].unique()]
 
@@ -35,6 +35,10 @@ columnName = columnName.rename({x: (x + 1) for x in range(groups)})
 bedroom_predictions = bedroom_predictions.rename(columns=columnName.to_dict())
 bedroom_predictions.insert(0, "Geography", df.iloc[4:, 0])
 bedroom_predictions = bedroom_predictions.reset_index(drop=True)
+
+# Import the households by income and size
+households_by_income_and_size = pd.read_csv("households_by_income_and_size.csv", header=None, encoding='latin-1')
+bedroom_predictions = pd.merge(bedroom_predictions, households_by_income_and_size, by="Geography")
 
 # Create engine
 # engine = create_engine(f'sqlite:///sources//previous_years//hart2021.db')
@@ -119,13 +123,20 @@ def get_percentage(column: pd.Series):
 # extend to the future hhs as well.  As we already do a linear prediction on the population from 2016->2026, we have
 # future population data.  Then multiply that value in.
 def add_columns(row):
+    # Region name
     geo = row["Geography"]
+    # Get the data from Census CSV, if we don't have the data, drop the row
     projection_row = predictions_2031[predictions_2031["Geography"] == geo].head(1).squeeze()
     if projection_row.empty or np.isnan(projection_row.iat[0]):
         return pd.Series(dict([(val, 0) for val in output_columns]))
+    # Generate the output row that we append into our current SQL table
     output = dict([(val, 0) for val in output_columns])
+    # Temporary Storage for the HH type x HH size matrix
     df_2031 = pd.DataFrame(columns=hh_size)
+    # Our 2021 bedroom count x income matrix but flattened
     bedrooms_2021 = dict([(val, 0) for val in [f"2021 bedroom need {bed} bed {income}" for bed in beds for income in income_lv_list]])
+
+    # Fill HH type x HH size matrix
     for i, income in enumerate(AMHI):
         for size in hh_size:
             for type in hh_type:
@@ -136,14 +147,18 @@ def add_columns(row):
         # Percent of each hh size @ that income level
 
         df_2031 = df_2031.apply(get_percentage)
+
+        # Currently we are predicting using the 2031 projections by HH size & income level
         for hh in df_2031.columns:
             df_2031[hh] = projection_row[f"2031 Projected {hh_pp_map[hh]} with income {income_map[income]}"] * df_2031[hh]
 
-        for y in range(len(df_2031.index)):
-            for x in range(len(df_2031.columns)):
+        # Iterate through housing type x hh size matrix at each income level to generate bedroom count x income matrix
+        for y in range(len(df_2031.index)): # Index is Housing Type
+            for x in range(len(df_2031.columns)): # Columns are HH size
                 bed = bedroom_map(df_2031.index[y], int(df_2031.columns[x][0]))
                 if bed < 1 or bed > 5:
-                    continue # This just means that the entry is empty anyways.  The census does a cross product of all
+                    continue
+                    # This just means that the entry is empty anyways.  The census does a cross product of all
                     # household types and person counts.  This leads to impossible combinations (1 person hh with child)
                 short_income = income_lv_list[i]
                 if not (df_2031.iat[y, x] == 0 or np.isnan(df_2031.iat[y, x])):
