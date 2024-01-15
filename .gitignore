@@ -2,7 +2,6 @@
 .DS_Store
 .env
 *.ipynb
-*.csv
 **/Census Divisions/
 **/Census SubDivisions/
 **/Province Boundaries/
@@ -10,5 +9,3 @@
 /env/
 /ubuntu/
 /cache/
-/data_analysis/*.db
-/data_analysis/renter_owner/*.db

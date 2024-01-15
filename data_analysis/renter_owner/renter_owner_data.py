@@ -26,7 +26,6 @@ CHN_status = [x.strip() for x in df.iloc[3, 1:].unique()]
 
 numbers = df.iloc[4:, 1:].replace("x", "0").fillna(0).astype(int)
 
-# Total households/Transgender households are the last two types
 groups = len(CHN_status) * len(AMHI) * len(housing_type)
 renter_vs_owner_data = numbers.iloc[:, 1:groups+1]
 
