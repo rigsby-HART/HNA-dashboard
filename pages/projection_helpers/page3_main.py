@@ -364,7 +364,7 @@ def layout(year=default_year):
                                     html.Div([
                                         # Title
                                         html.H3(children=html.Strong(
-                                            f'{prediction_year} Projected Bedroom Count by Income Category'),
+                                            f'{prediction_year} Projected Households by Bedroom Count and Income Category'),
                                             className='subtitle-lgeo',
                                             id="bedroom-title-page3"),
 
