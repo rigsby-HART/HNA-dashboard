@@ -24,6 +24,7 @@ import pages.renter_owner_helpers.income_categories                     # noqa
 import pages.renter_owner_helpers.percentage_CHN_by_income              # noqa
 import pages.renter_owner_helpers.percentage_CHN_by_HH_type             # noqa
 import pages.renter_owner_helpers.housing_deficit                       # noqa
+import pages.renter_owner_helpers.subsidized_renters                    # noqa
 
 
 # Setting layout for dashboard

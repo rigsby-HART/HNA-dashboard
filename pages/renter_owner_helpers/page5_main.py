@@ -26,7 +26,7 @@ def layout(year: int = default_year):
                         html.Div(
                             children=[
 
-                                # Income Categories and Affordable Shelter Costs
+                                # Income Categories and Affordable Shelter Costs Renters vs Owners
 
                                 html.Div([
                                     # Title
@@ -47,6 +47,66 @@ def layout(year: int = default_year):
                                     html.Div([
                                         dash_table.DataTable(
                                             id='income-category-affordability-table-pg5',
+                                            columns=[
+                                                {"name": i, 'id': i, "deletable": False, "selectable": False} for i in
+                                                table.columns
+                                            ],
+                                            data=table.to_dict('records'),
+                                            editable=True,
+                                            sort_action="native",
+                                            sort_mode="multi",
+                                            column_selectable=False,
+                                            row_selectable=False,
+                                            row_deletable=False,
+                                            selected_columns=[],
+                                            selected_rows=[],
+                                            page_action="native",
+                                            page_current=0,
+                                            page_size=10,
+                                            merge_duplicate_headers=True,
+                                            export_format="xlsx",
+                                            # style_table={
+                                            #               'padding':'20px',
+                                            #
+                                            #               },
+                                            style_data={'whiteSpace': 'normal', 'overflow': 'hidden',
+                                                        'textOverflow': 'ellipsis'},
+                                            style_cell={'font-family': 'Bahnschrift',
+                                                        'height': 'auto',
+                                                        'whiteSpace': 'normal',
+                                                        'overflow': 'hidden',
+                                                        'textOverflow': 'ellipsis'
+                                                        },
+                                            style_header={'textAlign': 'right', 'fontWeight': 'bold'}
+                                        ),
+                                        html.Div(id='income-category-affordability-table-container')
+                                    ], className='pg5-table-lgeo'
+
+                                    ),
+
+                                ], className='pg5-table-plot-box-lgeo'),
+
+                                # Income Categories and Affordable Shelter Costs Subsidized Renters vs Unsubsidized
+
+                                html.Div([
+                                    # Title
+                                    html.H3(
+                                        children=html.Strong(f'Income Categories and Affordable Shelter Costs, {year}'),
+                                        id='income-category-subsidized-title-page5'),
+                                    # Description
+                                    html.Div([
+                                        html.H6(
+                                            'The following table shows the range of household incomes and affordable '
+                                            'shelter costs for each income category, in 2020 dollar values, '
+                                            'as well what percentage of the total number of households falls within '
+                                            'each category.')
+                                    ], className='muni-reg-text-lgeo'),
+
+                                    # Table
+
+                                    html.Div([
+                                        dash_table.DataTable(
+                                            id='income-category-subsidized-table-pg5',
                                             columns=[
                                                 {"name": i, 'id': i, "deletable": False, "selectable": False} for i in
                                                 table.columns
