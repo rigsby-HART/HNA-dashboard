@@ -1,6 +1,7 @@
 # This file is used to remove any discrepancies within 2016 and 2021 files.
 import pandas as pd
 
+
 # Gets the first four rows of the dataframe, and returns each row as a unique list
 def strip_column_names(df: pd.DataFrame):
     minority_status = [x for x in df.iloc[0, 1:].unique()]
@@ -10,6 +11,7 @@ def strip_column_names(df: pd.DataFrame):
     CHN_status = [x for x in df.iloc[3, 1:].unique()]
 
     return minority_status, housing_type, AMHI, CHN_status
+
 
 # Lists the differences between the two dataframes
 def list_differences(df_2016, df_2021):
@@ -47,7 +49,6 @@ map_2016_to_2021 = {
     '  Households with income 51% to 80% of AMHI': '  Households with household income 51% to 80% of AMHI',
     '  Households with income 81% to 120% of AMHI': '  Households with household income 81% to 120% of AMHI',
     '  Households with income 121% or more of AMHI': '  Households with household income 121% and over of AMHI'
-
 
 }
 csv_2016 = 'data_analysis/renter_owner/2016_HNA_Consolidated.csv'

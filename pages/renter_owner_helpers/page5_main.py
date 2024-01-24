@@ -38,8 +38,8 @@ def layout(year: int = default_year):
                                         html.H6(
                                             'The following table shows the range of household incomes and affordable '
                                             'shelter costs for each income category, in 2020 dollar values, '
-                                            'as well what percentage of the total number of households falls within '
-                                            'each category.')
+                                            'as well compares owner and renter households for what percentage of the '
+                                            'total number of households falls within each category.')
                                     ], className='muni-reg-text-lgeo'),
 
                                     # Table
@@ -91,15 +91,15 @@ def layout(year: int = default_year):
                                 html.Div([
                                     # Title
                                     html.H3(
-                                        children=html.Strong(f'Income Categories and Affordable Shelter Costs, {year}'),
+                                        children=html.Strong(f'Income Categories and Affordable Shelter Costs for Subsidized and Unsubsidized Renters, {year}'),
                                         id='income-category-subsidized-title-page5'),
                                     # Description
                                     html.Div([
                                         html.H6(
                                             'The following table shows the range of household incomes and affordable '
                                             'shelter costs for each income category, in 2020 dollar values, '
-                                            'as well what percentage of the total number of households falls within '
-                                            'each category.')
+                                            'as well compares subsidized and unsubsidized renters for what percentage '
+                                            'of the total number of households falls within each category.')
                                     ], className='muni-reg-text-lgeo'),
 
                                     # Table

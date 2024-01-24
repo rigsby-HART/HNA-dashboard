@@ -9,11 +9,11 @@ from sqlalchemy import insert
 
 # This file takes in 2021_Consolidated_trans added.csv and hart2021.db
 # The purpose is to add in transgender CHN data into the partners table in the database
-# Both files should be placed in the same directory as this file,
+# Both files should be placed in the same directory as this file
 
 
 # Specify the file path of the CSV file
-csv_file = 'data_analysis/2021_Consolidated_trans added.csv'  # Replace with the actual file path
+csv_file = 'data_analysis/2021_Consolidated_trans added.csv' 
 
 # Read the CSV file into a DataFrame
 df = pd.read_csv(csv_file, header=None, encoding='latin-1', dtype=str)

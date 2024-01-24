@@ -2,7 +2,7 @@
 import numpy as np
 import pandas as pd
 
-csv_file = '../2021_Consolidated_trans added.csv'  # Replace with the actual file path
+csv_file = '../2021_Consolidated_trans added.csv' 
 
 # Read the CSV file into a DataFrame
 df = pd.read_csv(csv_file, header=None, encoding='latin-1', dtype=str)

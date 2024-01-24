@@ -3,17 +3,15 @@ import numpy as np
 import re
 
 from sqlalchemy import create_engine
-from sqlalchemy import Table, Column, Integer, String, Float, MetaData
 from sqlalchemy.orm import declarative_base
-from sqlalchemy import insert
 
-# This file takes in 2021_Consolidated_trans added.csv and hart2021.db
-# The purpose is to add in transgender CHN data into the partners table in the database
-# Both files should be placed in the same directory as this file,
+# This file takes in the associated.csv and hart20xx.db
+# The purpose is to add in renter vs owner data and create the owners table in the database
+# Both files should be placed in the same directory as this file
 
 
 # Specify the file path of the CSV file
-csv_file = 'data_analysis/renter_owner/2016_HNA_Consolidated_processed.csv'  # Replace with the actual file path
+csv_file = 'data_analysis/renter_owner/2016_HNA_Consolidated_processed.csv'
 
 # Read the CSV file into a DataFrame
 df = pd.read_csv(csv_file, header=None, encoding='latin-1', dtype=str)
@@ -27,7 +25,7 @@ CHN_status = [x.strip() for x in df.iloc[3, 1:].unique()]
 numbers = df.iloc[4:, 1:].replace("x", "0").fillna(0).astype(int)
 
 groups = len(CHN_status) * len(AMHI) * len(housing_type)
-renter_vs_owner_data = numbers.iloc[:, 1:groups+1]
+renter_vs_owner_data = numbers.iloc[:, 1:groups + 1]
 
 # Create the names of the columns
 columnName = pd.Series([""] * (groups))
@@ -75,20 +73,24 @@ Base = declarative_base()
 # Percent of trans HH in CHN
 
 income_lv_list = ['20% or under', '21% to 50%', '51% to 80%', '81% to 120%', '121% or more']
-income_labels = ['Very Low Income','Low Income','Moderate Income','Median Income', 'High Income']
+income_labels = ['Very Low Income', 'Low Income', 'Moderate Income', 'Median Income', 'High Income']
 # One for percent of the total population, then one for each income
 label = '{household} Percent HH with income {range} of AMHI in core housing need'
 total = housing_type[0]
 owner = housing_type[1]
 renter = housing_type[2]
-output_columns = [label.format(household = owner, range=income) for income in income_lv_list] + \
-    [label.format(household = renter, range=income) for income in income_lv_list] + \
-    [f'Per HH with income {income} of AMHI in core housing need that are renter HH' for income in income_lv_list] + \
-    [f'Per HH with income {income} of AMHI in core housing need that are owner HH' for income in income_lv_list] + \
-    [f'{owner}-{income}-{type}' for income in AMHI for type in CHN_status] + \
-    [f'{renter}-{income}-{type}' for income in AMHI for type in CHN_status] + \
-    [f'Percent of {owner} HH that are in {income}' for income in income_labels] + \
-    [f'Percent of {renter} HH that are in {income}' for income in income_labels]
+output_columns = [label.format(household=owner, range=income) for income in income_lv_list] + \
+                 [label.format(household=renter, range=income) for income in income_lv_list] + \
+                 [f'Per HH with income {income} of AMHI in core housing need that are renter HH' for income in
+                  income_lv_list] + \
+                 [f'Per HH with income {income} of AMHI in core housing need that are owner HH' for income in
+                  income_lv_list] + \
+                 [f'{owner}-{income}-{type}' for income in AMHI for type in CHN_status] + \
+                 [f'{renter}-{income}-{type}' for income in AMHI for type in CHN_status] + \
+                 [f'Percent of {owner} HH that are in {income}' for income in income_labels] + \
+                 [f'Percent of {renter} HH that are in {income}' for income in income_labels]
+
+
 def add_columns(row):
     # Match row to transgender row
     geo = row["Geography"]
@@ -103,19 +105,19 @@ def add_columns(row):
     row_output = {}
     label = '{household} Percent HH with income {range} of AMHI in core housing need'
     for index, income_lvl in enumerate(income_lv_list):
-        index += 1 # Because our income level doesn't have a total as the first index, unlike our AMHI list
+        index += 1  # Because our income level doesn't have a total as the first index, unlike our AMHI list
         try:
-            row_output[label.format(household = owner, range=income_lvl)] = \
+            row_output[label.format(household=owner, range=income_lvl)] = \
                 rent_row[f"{owner}-{AMHI[index]}-{CHN_status[1]}"].item() / \
                 rent_row[f"{owner}-{AMHI[index]}-{CHN_status[0]}"].item()
         except ZeroDivisionError:
             row_output[output_columns[index]] = None
         try:
-            row_output[label.format(household = renter, range=income_lvl)] = \
+            row_output[label.format(household=renter, range=income_lvl)] = \
                 rent_row[f"{renter}-{AMHI[index]}-{CHN_status[1]}"].item() / \
                 rent_row[f"{renter}-{AMHI[index]}-{CHN_status[0]}"].item()
         except ZeroDivisionError:
-            row_output[output_columns[index+len(income_lv_list)]] = None
+            row_output[output_columns[index + len(income_lv_list)]] = None
         # Info for Percentage of Households in Core Housing Need, by Income Category and HH Size
         try:
             row_output[f'Per HH with income {income_lvl} of AMHI in core housing need that are owner HH'] = \
@@ -138,16 +140,17 @@ def add_columns(row):
     for index, label in enumerate(income_labels):
         try:
             row_output[f'Percent of {owner} HH that are in {label}'] = \
-                rent_row[f"{owner}-{AMHI[index+1]}-{CHN_status[0]}"].item() / \
+                rent_row[f"{owner}-{AMHI[index + 1]}-{CHN_status[0]}"].item() / \
                 rent_row[f"{owner}-{AMHI[0]}-{CHN_status[0]}"].item()
             row_output[f'Percent of {renter} HH that are in {label}'] = \
-                rent_row[f"{renter}-{AMHI[index+1]}-{CHN_status[0]}"].item() / \
+                rent_row[f"{renter}-{AMHI[index + 1]}-{CHN_status[0]}"].item() / \
                 rent_row[f"{renter}-{AMHI[0]}-{CHN_status[0]}"].item()
         except ZeroDivisionError:
             # print(f"division by zero on {geo}")
             True
 
     return pd.Series(row_output)
+
 
 output_columns.sort()
 ownership = partners["Geography"].to_frame(name="Geography")
