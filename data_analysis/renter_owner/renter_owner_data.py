@@ -65,7 +65,6 @@ renter_vs_owner_data.iloc[1:, 0] = renter_vs_owner_data.iloc[1:, 0].apply(conver
 condition = renter_vs_owner_data.iloc[:, 0].notna()
 renter_vs_owner_data = renter_vs_owner_data[condition]
 renter_vs_owner_data = renter_vs_owner_data.reset_index(drop=True)
-Base = declarative_base()
 
 # 'Percent Non-Binary HH in core housing need'
 # Calculate percent of the non-binary ppl in CHN by income category
@@ -158,7 +157,7 @@ ownership[output_columns] = partners.apply(add_columns, axis=1)
 # partners = pd.concat([partners, partners.apply(add_columns, axis=1)])
 sql = 'DROP TABLE IF EXISTS ownership;'
 result = engine.execute(sql)
-ownership.to_sql("ownership", engine)
+ownership.to_sql("ownership", engine, index=False)
 # class Ownership(Base):
 #     __tablename__ = "ownership"
 #
