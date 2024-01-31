@@ -38,11 +38,11 @@ def layout(year: int = default_year):
                                         id='income-categories-title-pg2'),
                                     # Description
                                     html.Div([
-                                        html.H6(
-                                            'The following table shows the range of household incomes and affordable '
-                                            'shelter costs for each income category, in 2020 dollar values, '
-                                            'as well what percentage of the total number of households falls within '
-                                            'each category.')
+                                        dcc.Markdown(
+                                            '''
+                                            ###### Income categories are determined by their relationship with each geography’s [Area Median Household Income (AMHI)](https://hart.ubc.ca/housing-glossary/#amhi). The following table shows the range of household incomes and affordable shelter costs that make up each income category, in 2020 dollar values, as well what percentage of the total number of households that fall within each category.
+                                            '''
+                                        )
                                     ], className='muni-reg-text-lgeo', ),
 
                                     # Table
@@ -98,9 +98,11 @@ def layout(year: int = default_year):
                                         id='percent-HH-CHN-title-pg2'),
                                     # Description
                                     html.Div([
-                                        html.H6(
-                                            'Income categories are determined by their relationship with each geography’s Area Median Household Income (AMHI). This table shows the range of household incomes and affordable shelter costs for each income category, in 2020 dollar values, as well what percentage of the total number of households falls within each category.')
-                                    ], className='muni-reg-text-lgeo'),
+                                        dcc.Markdown(
+                                            '''
+                                            ###### The following chart shows percentage of households in each income category that are in [Core Housing Need (CHN)](https://hart.ubc.ca/housing-glossary/#chn). When there is no bar for an income category, it means that either there are no households in Core Housing Need within an income category, or that there are [too few households to report](https://hart.ubc.ca/housing-glossary/#data-suppression). 
+                                            '''
+                                        )], className='muni-reg-text-lgeo'),
 
                                     # Graph
 
@@ -127,13 +129,9 @@ def layout(year: int = default_year):
                                         id='percent-IC-HH-CHN-title-pg2'),
                                     # Description
                                     html.Div([
-                                        html.H6(
-                                            'The following chart looks at those households in Core Housing Need and '
-                                            'shows their relative distribution by household size (i.e. the number of '
-                                            'individuals in a given household) for each household income category. '
-                                            'When there is no bar for an income category, it means that either there '
-                                            'are no households in Core Housing Need within an income category, '
-                                            'or that there are too few households to report.')
+                                        dcc.Markdown(
+                                            '###### The following chart looks at those households in [Core Housing Need](https://hart.ubc.ca/housing-glossary/#chn) and shows their relative distribution by household size (i.e. the number of rooms in a home) for each household income category. When there is no bar for an income category, it means that either there are no households in Core Housing Need within an income category, or that there are [too few households to report](https://hart.ubc.ca/housing-glossary/#data-suppression).'
+                                        )
                                     ],  id='percent-IC-HH-CHN-description-pg2',
                                         className='muni-reg-text-lgeo'),
 
@@ -160,8 +158,12 @@ def layout(year: int = default_year):
                                             id='housing-deficit-pg2'),
                                     # Description
                                     html.Div([
-                                        html.H6(
-                                            'The following table shows the total number of households in Core Housing Need by household size and income category, which may be considered as the existing deficit of housing options in the community.')
+                                        dcc.Markdown(
+                                            '###### The following table shows the total number of households in [Core '
+                                            'Housing Need](https://hart.ubc.ca/housing-glossary/#chn) by household '
+                                            'size and income category, which may be'
+                                            'considered as the existing deficit of housing options in the community.'
+                                        )
                                     ], className='muni-reg-text-lgeo'),
 
                                     # Table
@@ -216,17 +218,20 @@ def layout(year: int = default_year):
                                         id='pct-pp-hh-chn-pg2'),
                                     # Description
                                     html.Div([
-                                        html.H6(
-                                            'The following chart compares the rates of Core Housing Need across '
+                                        dcc.Markdown(
+                                            '###### The following chart compares the rates of [Core Housing Need](https://hart.ubc.ca/housing-glossary/#chn) across '
                                             'populations that are at high risk of experiencing housing need. The '
                                             '"Community (all HH)" bar represents the rate of Core Housing Need for '
                                             'all households in the selected community to act as a point of reference. '
                                             'The population with the greatest rate of Core Housing Need is '
                                             'highlighted in dark blue. When there is no bar for a priority '
                                             'population, it means that either there are no households in Core Housing '
-                                            'Need within that priority population, or that there are too few '
-                                            'households to report.')
-                                    ], className='muni-reg-text-lgeo'),
+                                            'Need within that priority population, or that there are [too few '
+                                            'households to report](https://hart.ubc.ca/housing-glossary/#data-suppression).')
+                                        ],
+                                        id='percent-CHN-PP-description-pg2',
+                                        className='muni-reg-text-lgeo'
+                                    ),
 
                                     # Graphs
 
@@ -251,9 +256,18 @@ def layout(year: int = default_year):
                                         id='pct-pp-ic-chn-pg2'),
                                     # Description
                                     html.Div([
-                                        html.H6(
-                                            'The following chart looks at those households in Core Housing Need for each priority population and shows their relative distribution by household income category. When there is no bar for a priority population, it means that either there are no households in Core Housing Need within that priority population, or that there are too few households to report.')
-                                    ], className='muni-reg-text-lgeo'),
+                                            dcc.Markdown(
+                                                '###### The following chart looks at those households in Core Housing '
+                                                'Need for each priority population and shows their relative '
+                                                'distribution by household income category. When there is no bar for '
+                                                'a priority population, it means that either there are no households '
+                                                'in [Core Housing Need](https://hart.ubc.ca/housing-glossary/#chn) within that priority population, or that there '
+                                                'are [too few households to report](https://hart.ubc.ca/housing-glossary/#data-suppression).'
+                                            )
+                                        ],
+                                        id='percent-CHN-PP-IC-description-pg2',
+                                        className='muni-reg-text-lgeo'
+                                    ),
 
                                     # Graphs
 

@@ -62,6 +62,9 @@ modebar_color = '#099DD7'
 # Grayish navy
 modebar_activecolor = '#044762'
 
+# Colours for Renters vs Owners (first is blue, second is green)
+owner_blue = "#39C0F7"
+renter_green = "#3EB549"
 
 # Font size for tables when they are displayed on the comparison mode
 
