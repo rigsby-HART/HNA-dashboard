@@ -4,7 +4,7 @@ from dash import Output, Input, State, callback
 from plotly.subplots import make_subplots
 
 from app_file import cache
-from helpers.create_engine import default_year, default_value, income_partners_year
+from helpers.create_engine import default_year, default_value, partner_table
 from helpers.localization import localization
 from helpers.style_helper import modebar_color, modebar_activecolor, hh_colors
 from helpers.table_helper import query_table, get_language, area_scale_primary_only, area_scale_comparison, \
@@ -44,7 +44,7 @@ columns = ['Percent HH with income 20% or under of AMHI in core housing need',
 
 # Plot dataframe generator
 def plot_df_core_housing_need_by_amhi(geo: str, IsComparison: bool, language: str, year: int = default_year):
-    geo, joined_df_filtered = query_table(geo, year, income_partners_year)
+    geo, joined_df_filtered = query_table(geo, year, partner_table)
 
     x_list = []
 

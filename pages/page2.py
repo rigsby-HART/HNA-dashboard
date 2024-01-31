@@ -6,7 +6,7 @@ from dash import dcc, Input, Output, ctx, callback, State, html, clientside_call
 from dash import register_page
 
 from app_file import cache
-from helpers.create_engine import income_partners_year, default_year, default_value
+from helpers.create_engine import partner_table, default_year, default_value
 from helpers.table_helper import query_table
 from pages.page2_helpers.page2_main import layout
 
@@ -18,12 +18,13 @@ warnings.filterwarnings("ignore")
 layout = layout(default_year)
 
 # Import helpers
-import pages.page2_helpers.housing_deficit  # noqa
 import pages.page2_helpers.income_categories  # noqa
+import pages.page2_helpers.percentage_CHN_by_income  # noqa
+import pages.page2_helpers.percentage_CHN_by_income_and_HH_size  # noqa
+import pages.page2_helpers.housing_deficit  # noqa
+import pages.page2_helpers.housing_deficit_bedrooms  # noqa
 import pages.page2_helpers.percentage_CHN_by_pp_income  # noqa
 import pages.page2_helpers.percentage_CHN_by_priority_population  # noqa
-import pages.page2_helpers.percentage_CHN_by_income_and_HH_size  # noqa
-import pages.page2_helpers.percentage_CHN_by_income  # noqa
 
 
 @callback(
@@ -115,14 +116,14 @@ def func_ov7(n_clicks, geo, geo_c, year_comparison):
     if "ov7-download-csv" == ctx.triggered_id:
         if year_comparison:
             original_year, compared_year = year_comparison.split("-")
-            _, joined_df_geo = query_table(geo, int(original_year), income_partners_year)
-            _, joined_df_geo_c = query_table(geo, int(compared_year), income_partners_year)
+            _, joined_df_geo = query_table(geo, int(original_year), partner_table)
+            _, joined_df_geo_c = query_table(geo, int(compared_year), partner_table)
             joined_df_download = pd.concat([joined_df_geo, joined_df_geo_c])
             joined_df_download = joined_df_download.drop(columns=['pk_x', 'pk_y'])
             return dcc.send_data_frame(joined_df_download.to_csv, "result.csv")
         else:
-            _, joined_df_geo = query_table(geo, default_year, income_partners_year)
-            _, joined_df_geo_c = query_table(geo_c, default_year, income_partners_year)
+            _, joined_df_geo = query_table(geo, default_year, partner_table)
+            _, joined_df_geo_c = query_table(geo_c, default_year, partner_table)
             joined_df_download = pd.concat([joined_df_geo, joined_df_geo_c])
             joined_df_download = joined_df_download.drop(columns=['pk_x', 'pk_y'])
 

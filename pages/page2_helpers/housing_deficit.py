@@ -3,7 +3,7 @@ from dash import Output, Input, State, callback
 from dash.dash_table.Format import Format, Group, Scheme
 
 from app_file import cache
-from helpers.create_engine import default_year, default_value, income_partners_year
+from helpers.create_engine import default_year, default_value, partner_table
 from helpers.style_helper import style_data_conditional, style_header_conditional, columns_color_fill, \
     comparison_font_size
 from helpers.table_helper import query_table, get_language, area_scale_primary_only, error_region_table, \
@@ -43,7 +43,7 @@ columns = ['Percent HH with income 20% or under of AMHI in core housing need',
 
 # Table generator
 def table_core_affordable_housing_deficit(geo, is_second, year: int = default_year):
-    geo, joined_df_filtered = query_table(geo, year, income_partners_year)
+    geo, joined_df_filtered = query_table(geo, year, partner_table)
 
     table2 = pd.DataFrame({'Income Category': income_ct})
 

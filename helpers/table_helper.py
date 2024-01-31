@@ -7,7 +7,7 @@ import plotly.express as px
 
 from typing import List, Dict
 from dash import dcc
-from helpers.create_engine import mapped_geo_code, income_partners_year, updated_csd_year, income_indigenous_year, \
+from helpers.create_engine import mapped_geo_code, partner_table, updated_csd_year, income_indigenous_year, \
     default_year, df_geo_list, mapped_geo_code_year
 from helpers.style_helper import style_header_conditional
 from helpers.localization import localization
@@ -49,7 +49,7 @@ def storage_variables():
 
 def error_region_table(geo: str, year: int, language: str):
     try:
-        geo, row = query_table(geo, year, income_partners_year)
+        geo, row = query_table(geo, year, partner_table)
     except:
         no_data = localization[language]["No Data for {geo}, in the {year} dataset"].format(geo=geo, year=year)
         table = pd.DataFrame({no_data: [""]})
@@ -107,7 +107,7 @@ def error_indigenous_table(geo: str, year: int, language="en"):
 
 def error_region_figure(geo: str, year: int, language: str):
     try:
-        geo, row = query_table(geo, year, income_partners_year)
+        geo, row = query_table(geo, year, partner_table)
     except:
         fig = px.line(x=[localization[language]["No Data for {geo}, in the {year} dataset"].format(geo=geo, year=year)],
                       y=[''])

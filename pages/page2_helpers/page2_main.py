@@ -2,11 +2,11 @@ from dash import html, dash_table, dcc
 from plotly import express as px
 
 from app_file import cache
-from helpers.create_engine import income_partners_year, default_year
+from helpers.create_engine import partner_table, default_year
 from helpers.table_helper import storage_variables
 
 # Generate tables needed for default page
-joined_df_filtered = income_partners_year[default_year].query('Geography == "Fraser Valley (CD, BC)"')
+joined_df_filtered = partner_table[default_year].query('Geography == "Fraser Valley (CD, BC)"')
 table = joined_df_filtered[['Rent 20% of AMHI', 'Rent 50% of AMHI']]
 table2 = joined_df_filtered[['Rent 20% of AMHI', 'Rent 50% of AMHI']]
 fig = px.line(x=['Not Available'], y=['Not Available'])
@@ -206,6 +206,58 @@ def layout(year: int = default_year):
                                                 export_format="xlsx"
                                             ),
                                             html.Div(id='datatable2-interactivity-container')
+                                        ], className='pg2-table-lgeo'
+                                        ),
+                                    ]
+                                    ),# Description
+                                    html.Div([
+                                        dcc.Markdown(
+                                            '###### The following table shows the total number of households in [Core '
+                                            'Housing Need (CHN)](https://hart.ubc.ca/housing-glossary/#chn) by '
+                                            'bedroom count and income category, which may be considered as the '
+                                            'existing deficit of housing options in the community.  Due to [data '
+                                            'suppression](https://hart.ubc.ca/housing-glossary/#data-suppression), '
+                                            'the CHN totals may not match up',
+                                            link_target="_blank"
+                                        )
+                                    ], className='muni-reg-text-lgeo'),
+
+                                    # Table
+
+                                    html.Div(children=[
+
+                                        html.Div([
+                                            dash_table.DataTable(
+                                                id='housing-deficit-bedroom-table',
+                                                columns=[
+                                                    {"name": i, "id": i, "deletable": False, "selectable": False} for i
+                                                    in
+                                                    table2.columns
+                                                ],
+                                                data=table2.to_dict('records'),
+                                                editable=True,
+                                                sort_action="native",
+                                                sort_mode="multi",
+                                                column_selectable=False,
+                                                row_selectable=False,
+                                                row_deletable=False,
+                                                selected_columns=[],
+                                                selected_rows=[],
+                                                page_action="native",
+                                                page_current=0,
+                                                page_size=25,
+                                                merge_duplicate_headers=True,
+                                                style_data={'whiteSpace': 'normal', 'overflow': 'hidden',
+                                                            'textOverflow': 'ellipsis'},
+                                                style_cell={'font-family': 'Bahnschrift',
+                                                            'height': 'auto',
+                                                            'whiteSpace': 'normal',
+                                                            'overflow': 'hidden',
+                                                            'textOverflow': 'ellipsis'},
+                                                style_header={'text-align': 'middle', 'fontWeight': 'bold'},
+                                                export_format="xlsx"
+                                            ),
+                                            html.Div(id='housing-deficit-bedroom-table-container')
                                         ], className='pg2-table-lgeo'
                                         ),
                                     ]
