@@ -35,11 +35,10 @@ def layout(year: int = default_year):
                                         id='income-categories-title-page5'),
                                     # Description
                                     html.Div([
-                                        html.H6(
-                                            'The following table shows the range of household incomes and affordable '
-                                            'shelter costs for each income category, in 2020 dollar values, '
-                                            'as well what percentage of the total number of households falls within '
-                                            'each category.')
+                                        dcc.Markdown(
+                                            '''
+                                            ###### Income categories are determined by their relationship with each geography’s [Area Median Household Income (AMHI)](https://hart.ubc.ca/housing-glossary/#amhi). The following table shows the range of household incomes and affordable shelter costs that make up each income category, in 2020 dollar values, as well what percentage of the total number of households that fall within each category for both homeowners and renters.
+                                            ''')
                                     ], className='muni-reg-text-lgeo'),
 
                                     # Table
@@ -95,8 +94,10 @@ def layout(year: int = default_year):
                                         id='percent-HH-CHN-title-page5'),
                                     # Description
                                     html.Div([
-                                        html.H6(
-                                            'Income categories are determined by their relationship with each geography’s Area Median Household Income (AMHI). This table shows the range of household incomes and affordable shelter costs for each income category, in 2020 dollar values, as well what percentage of the total number of households falls within each category.')
+                                        dcc.Markdown(
+                                            '''
+                                            ###### Income categories are determined by their relationship with each geography’s [Area Median Household Income (AMHI)](https://hart.ubc.ca/housing-glossary/#amhi). The following table shows the range of household incomes and affordable shelter costs that make up each income category, in 2020 dollar values, as well what percentage of the total number of households that fall within each category for both homeowners and renters.
+                                            ''')
                                     ], className='muni-reg-text-lgeo'),
 
                                     # Graph
@@ -124,8 +125,10 @@ def layout(year: int = default_year):
                                         id='percent-IC-HH-CHN-title-page5'),
                                     # Description
                                     html.Div([
-                                        html.H6(
-                                            'The following chart looks at those households in Core Housing Need and shows their relative distribution by housing type for each household income category. When there is no bar for an income category, it means that either there are no households in Core Housing Need within an income category, or that there are too few households to report.')
+                                        dcc.Markdown(
+                                            '''
+                                            ###### The following chart looks at those owner and renter households in [Core Housing Need](https://hart.ubc.ca/housing-glossary/#chn) and their relative distribution by housing size for each household income category. When there is no bar for an income category, it means that either there are no households in [Core Housing Need](https://hart.ubc.ca/housing-glossary/#chn) within an income category, or that there are [too few households to report](https://hart.ubc.ca/housing-glossary/#data-suppression).
+                                            ''')
                                     ], className='muni-reg-text-lgeo'),
 
                                     # Graph
@@ -151,8 +154,10 @@ def layout(year: int = default_year):
                                             id='housing-deficit-page5'),
                                     # Description
                                     html.Div([
-                                        html.H6(
-                                            'The following table shows the total number of households in Core Housing Need by household size and income category, which may be considered as the existing deficit of housing options in the community.')
+                                        dcc.Markdown(
+                                            '''
+                                            ###### The following table shows the total number of owner and renter households in [Core Housing Need](https://hart.ubc.ca/housing-glossary/#chn) by household size and income category, which may be considered as the existing deficit of housing options in the community.
+                                            ''')
                                     ], className='muni-reg-text-lgeo'),
 
                                     # Table
