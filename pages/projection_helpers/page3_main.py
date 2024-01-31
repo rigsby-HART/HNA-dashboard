@@ -694,6 +694,12 @@ def layout(year=default_year):
                                         ' using Plotly.'
                                     ], className='lgeo-credit-text'),
 
+                                    # Whitespace
+
+                                    html.Div(
+                                        style={"height": "70px"},
+                                    )
+
                                 ]),
 
                             ], className='dashboard-pg3-lgeo'

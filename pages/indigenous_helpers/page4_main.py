@@ -231,6 +231,12 @@ def layout(year):
                                     ' using Plotly.'
                                 ], className='lgeo-credit-text'),
 
+                                # Whitespace
+
+                                html.Div(
+                                    style={"height": "70px"},
+                                )
+
                             ], className='dashboard-pg4-lgeo'
                         ),
                     ], className='background-pg4-lgeo'
