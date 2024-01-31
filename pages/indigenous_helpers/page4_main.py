@@ -41,7 +41,9 @@ def layout(year):
                                             '###### The following table shows the range of Indigenous household incomes and '
                                             'affordable shelter costs for each income category, in 2020 dollar values, '
                                             'as well what percentage of the total number of Indigenous households that '
-                                            'fall within each category.'),
+                                            'fall within each category.',
+                                            link_target="_blank"
+                                        ),
 
                                     ], className='muni-reg-text-lgeo'),
 
@@ -95,7 +97,9 @@ def layout(year):
                                     # Description
                                     html.Div([
                                         dcc.Markdown(
-                                            '###### Income categories are determined by their relationship with each geography’s [Area Median Household Income (AMHI)](https://hart.ubc.ca/housing-glossary/#amhi). The following graph shows the range of Indigenous household incomes and affordable shelter costs for each income category, in 2020 dollar values, as well what percentage of the total number of Indigenous households falls within each category.')
+                                            '###### Income categories are determined by their relationship with each geography’s [Area Median Household Income (AMHI)](https://hart.ubc.ca/housing-glossary/#amhi). The following graph shows the range of Indigenous household incomes and affordable shelter costs for each income category, in 2020 dollar values, as well what percentage of the total number of Indigenous households falls within each category.',
+                                            link_target="_blank"
+                                        )
                                     ], className='muni-reg-text-lgeo'),
 
                                     # Graph
@@ -125,7 +129,9 @@ def layout(year):
                                     # Description
                                     html.Div([
                                         dcc.Markdown(
-                                            '###### The following graph looks at those Indigenous households in [Core Housing Need](https://hart.ubc.ca/housing-glossary/#chn) and shows their relative distribution by household size (i.e. the number of individuals in a given household) for each household income category. Where there are no reported households in Core Housing Need, there are [too few households to report](https://hart.ubc.ca/housing-glossary/#data-suppression) while protecting privacy.')
+                                            '###### The following graph looks at those Indigenous households in [Core Housing Need](https://hart.ubc.ca/housing-glossary/#chn) and shows their relative distribution by household size (i.e. the number of individuals in a given household) for each household income category. Where there are no reported households in Core Housing Need, there are [too few households to report](https://hart.ubc.ca/housing-glossary/#data-suppression) while protecting privacy.',
+                                            link_target="_blank"
+                                        )
                                     ], className='muni-reg-text-lgeo'),
 
                                     # Graph
@@ -161,7 +167,9 @@ def layout(year):
                                             'options in the community. Where there are zero households to report, '
                                             'it means there are [too few to report]('
                                             'https://hart.ubc.ca/housing-glossary/#data-suppression) while protecting '
-                                            'privacy.')
+                                            'privacy.',
+                                            link_target="_blank"
+                                        )
                                     ], className='muni-reg-text-lgeo'),
 
                                     # Table
