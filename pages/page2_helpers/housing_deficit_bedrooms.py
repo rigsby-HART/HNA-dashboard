@@ -77,7 +77,7 @@ def table_core_affordable_housing_deficit(geo, is_second, year: int = default_ye
             x_list.append(x)
         i += 1
 
-    table2['Max. affordable shelter cost'] = x_list
+    table2['Max. affordable cost'] = x_list
     table2['Income Category'] = [
         'Very low Income',
         'Low Income',
@@ -90,11 +90,11 @@ def table_core_affordable_housing_deficit(geo, is_second, year: int = default_ye
     row_total_csd = table2.sum(axis=0)
     row_total_csd[0] = 'Total'
     table2.loc[len(table2['Income Category']), :] = row_total_csd
-    table2.loc[5, 'Max. affordable shelter cost'] = 'Total'
+    table2.loc[5, 'Max. affordable cost'] = 'Total'
     # pdb.set_trace()
     if is_second is True:
-        table2 = table2.rename(columns={'Total': 'Total ', 'Max. affordable shelter cost':
-            'Max. affordable shelter cost '})
+        table2 = table2.rename(columns={'Total': 'Total ', 'Max. affordable cost':
+            'Max. affordable cost '})
 
     return table2
 
@@ -140,7 +140,7 @@ def update_table2(geo, geo_c, year_comparison: str, scale, lang_query, refresh):
         #     table = pd.DataFrame({no_data: [""]})
         #     return [{"name": no_data, "id": no_data}], table.to_dict("records"), [], [], style_header_conditional
 
-        table2 = table2[['Max. affordable shelter cost', '1 Bedroom Homes', '2 Bedroom Homes',
+        table2 = table2[['Max. affordable cost', '1 Bedroom Homes', '2 Bedroom Homes',
                          '3 Bedroom Homes', '4 Bedroom Homes', '5 Bedroom Homes', 'Total']]
 
         # Generating callback output to update table
@@ -160,7 +160,7 @@ def update_table2(geo, geo_c, year_comparison: str, scale, lang_query, refresh):
                                      }
                                  ] + [
                                      {
-                                         'if': {'column_id': 'Max. affordable shelter cost'},
+                                         'if': {'column_id': 'Max. affordable cost'},
                                          'maxWidth': "120px",
 
                                      }
@@ -206,7 +206,7 @@ def update_table2(geo, geo_c, year_comparison: str, scale, lang_query, refresh):
             table_core_affordable_housing_deficit(geo, False)
         )
 
-        table2 = table2[['Income Category', 'Max. affordable shelter cost',
+        table2 = table2[['Income Category', 'Max. affordable cost',
                          '1 Bedroom Homes', '2 Bedroom Homes', '3 Bedroom Homes',
                          '4 Bedroom Homes', '5 Bedroom Homes', 'Total']]
 
@@ -222,7 +222,7 @@ def update_table2(geo, geo_c, year_comparison: str, scale, lang_query, refresh):
             table_core_affordable_housing_deficit(geo_c, True)
         )
 
-        table2_c = table2_c[['Income Category', 'Max. affordable shelter cost ',
+        table2_c = table2_c[['Income Category', 'Max. affordable cost ',
                              '1 Bedroom Homes ', '2 Bedroom Homes ', '3 Bedroom Homes ',
                              '4 Bedroom Homes ', '5 Bedroom Homes ', 'Total ']]
 
@@ -236,7 +236,7 @@ def update_table2(geo, geo_c, year_comparison: str, scale, lang_query, refresh):
         col_list = []
 
         for i in table2.columns[1:]:
-            if i == 'Max. affordable shelter cost':
+            if i == 'Max. affordable cost':
                 col_list.append({"name": ["Area", i], "id": i})
             else:
                 col_list.append({"name": [geo + " " + compared_year if year_comparison else geo, i],
@@ -249,7 +249,7 @@ def update_table2(geo, geo_c, year_comparison: str, scale, lang_query, refresh):
                                  )})
 
         for i in table2_c.columns[1:]:
-            if i == 'Max. affordable shelter cost ':
+            if i == 'Max. affordable cost ':
                 col_list.append({"name": ["", i], "id": i})
             else:
                 col_list.append({"name": [geo + " " + original_year if year_comparison else geo_c, i],
@@ -283,13 +283,13 @@ def update_table2(geo, geo_c, year_comparison: str, scale, lang_query, refresh):
                                      }
                                  ] + [
                                      {
-                                         'if': {'column_id': 'Max. affordable shelter cost'},
+                                         'if': {'column_id': 'Max. affordable cost'},
                                          'maxWidth': "120px",
 
                                      }
                                  ] + [
                                      {
-                                         'if': {'column_id': 'Max. affordable shelter cost '},
+                                         'if': {'column_id': 'Max. affordable cost '},
                                          'maxWidth': "120px",
 
                                      }
