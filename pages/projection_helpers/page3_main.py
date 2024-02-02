@@ -521,7 +521,7 @@ def layout(year=default_year):
                                         html.H6([
                                             'Comparing a local community’s growth rates to the growth rate of the region allows for insight into if the community is matching regional patterns of change. There are numerous potential causes for discrepencies, which are further discussed in ',
                                             html.A('the project methods.',
-                                                   href='https://hart.ubc.ca/wp-content/uploads/2023/06/HNA-Methodology-06-09-2023.pdf',
+                                                   href='https://hart.ubc.ca/hna-methodology/',
                                                    target="_blank")])
                                     ], className='muni-reg-text-lgeo'),
 
@@ -693,6 +693,12 @@ def layout(year=default_year):
                                         html.A('Licker Geospatial', href='https://www.lgeo.co/', target="_blank"),
                                         ' using Plotly.'
                                     ], className='lgeo-credit-text'),
+
+                                    # Whitespace
+
+                                    html.Div(
+                                        style={"height": "70px"},
+                                    )
 
                                 ]),
 

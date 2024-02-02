@@ -8,7 +8,7 @@ from plotly.subplots import make_subplots
 from app_file import cache
 from helpers.create_engine import default_year, default_value, income_ownership_year
 from helpers.localization import localization
-from helpers.style_helper import modebar_color, modebar_activecolor, hh_colors, colors
+from helpers.style_helper import modebar_color, modebar_activecolor, hh_colors, colors, owner_blue, renter_green
 from helpers.table_helper import query_table, get_language, area_scale_primary_only, area_scale_comparison, \
     error_region_figure
 
@@ -26,7 +26,7 @@ x_base = ['Very Low Income',
           'High Income',
           ]
 
-hh_type_colors = [colors[1], hh_colors[1]]
+hh_type_colors = [owner_blue, renter_green]
 
 # Plot dataframe generator
 def plot_df_core_housing_need_by_amhi(geo: str, IsComparison: bool, language: str, year: int = default_year):

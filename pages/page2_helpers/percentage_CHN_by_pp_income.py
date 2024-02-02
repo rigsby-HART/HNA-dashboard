@@ -7,7 +7,7 @@ from dash import Output, Input, State, callback
 from plotly.subplots import make_subplots
 
 from app_file import cache
-from helpers.create_engine import default_year, default_value, income_partners_year
+from helpers.create_engine import default_year, default_value, partner_table
 from helpers.localization import localization
 from helpers.style_helper import colors, modebar_color, modebar_activecolor
 from helpers.table_helper import query_table, get_language, area_scale_primary_only, area_scale_comparison, \
@@ -70,7 +70,7 @@ income_lv_list = ['20% or under', '21% to 50%', '51% to 80%', '81% to 120%', '12
 # Plot dataframe generator
 
 def plot_df_core_housing_need_by_priority_population_income(geo: str, language: str, year=default_year):
-    geo, joined_df_filtered = query_table(geo, year, income_partners_year)
+    geo, joined_df_filtered = query_table(geo, year, partner_table)
 
     income_col = []
     percent_col = []

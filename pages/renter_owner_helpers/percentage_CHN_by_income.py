@@ -7,7 +7,7 @@ from plotly.subplots import make_subplots
 from app_file import cache
 from helpers.create_engine import default_year, default_value, income_ownership_year
 from helpers.localization import localization
-from helpers.style_helper import colors, modebar_color, modebar_activecolor, hh_colors
+from helpers.style_helper import colors, modebar_color, modebar_activecolor, hh_colors, renter_green, owner_blue
 from helpers.table_helper import query_table, get_language, area_scale_primary_only, area_scale_comparison, \
     error_region_figure
 
@@ -117,7 +117,7 @@ def update_geo_figure(geo: str, geo_c: str, year_comparison: str, scale, refresh
             y=plot_df['Income_Category'],
             x=plot_df['Percent HH'],
             name=localization[language]["Owner Households"],
-            marker_color=colors,
+            marker_color=owner_blue,
             orientation='h',
             hovertemplate='%{y}, ' + f'HH Type: {localization[language]["Owner Households"]} - ' + '%{x: .2%}<extra></extra>',
             showlegend=False,
@@ -126,7 +126,7 @@ def update_geo_figure(geo: str, geo_c: str, year_comparison: str, scale, refresh
             y=plot_df_c['Income_Category'],
             x=plot_df_c['Percent HH'],
             name=localization[language]["Renter Households"],
-            marker_color=hh_colors,
+            marker_color=renter_green,
             orientation='h',
             hovertemplate='%{y}, ' + f'HH Type: {localization[language]["Renter Households"]} - ' + '%{x: .2%}<extra></extra>',
             showlegend=False,
@@ -136,7 +136,7 @@ def update_geo_figure(geo: str, geo_c: str, year_comparison: str, scale, refresh
         legend_trace = go.Bar(
             x=[None],
             y=[None],
-            marker_color=colors[1],  # Customize marker color
+            marker_color=owner_blue,  # Customize marker color
             # showlegend=True,  # Show legend only for this trace
             name=localization[language]["Owner Households"]   # Set custom legend label
         )
@@ -144,7 +144,7 @@ def update_geo_figure(geo: str, geo_c: str, year_comparison: str, scale, refresh
         legend_trace = go.Bar(
             x=[None],
             y=[None],
-            marker_color=hh_colors[1],  # Customize marker color
+            marker_color=renter_green,  # Customize marker color
             showlegend=True,  # Show legend only for this trace
             name=localization[language]["Renter Households"]  # Set custom legend label
         )
@@ -226,7 +226,7 @@ def update_geo_figure(geo: str, geo_c: str, year_comparison: str, scale, refresh
             y=plot_df['Income_Category'],
             x=plot_df['Percent HH'],
             name=localization[language]["Owner Households"],
-            marker_color=colors,
+            marker_color=owner_blue,
             orientation='h',
             hovertemplate='%{y}, ' + f'HH Type: {localization[language]["Owner Households"]} - ' + '%{x: .2%}<extra></extra>',
             showlegend=False,
@@ -235,7 +235,7 @@ def update_geo_figure(geo: str, geo_c: str, year_comparison: str, scale, refresh
             y=plot_df_c['Income_Category'],
             x=plot_df_c['Percent HH'],
             name=localization[language]["Renter Households"],
-            marker_color=hh_colors,
+            marker_color=renter_green,
             orientation='h',
             hovertemplate='%{y}, ' + f'HH Type: {localization[language]["Renter Households"]} - ' + '%{x: .2%}<extra></extra>',
             showlegend=False,
@@ -244,14 +244,14 @@ def update_geo_figure(geo: str, geo_c: str, year_comparison: str, scale, refresh
         fig.add_trace(go.Bar(
             x=[None],
             y=[None],
-            marker_color=colors[1],  # Customize marker color
+            marker_color=owner_blue,  # Customize marker color
             # showlegend=True,  # Show legend only for this trace
             name=localization[language]["Owner Households"]  # Set custom legend label
         ), row=1, col=1)
         fig.add_trace(go.Bar(
             x=[None],
             y=[None],
-            marker_color=hh_colors[1],  # Customize marker color
+            marker_color=renter_green,  # Customize marker color
             showlegend=True,  # Show legend only for this trace
             name=localization[language]["Renter Households"]  # Set custom legend label
         ), row=1, col=1)
@@ -278,7 +278,7 @@ def update_geo_figure(geo: str, geo_c: str, year_comparison: str, scale, refresh
             y=plot_df['Income_Category'],
             x=plot_df['Percent HH'],
             name=localization[language]["Owner Households"],
-            marker_color=colors,
+            marker_color=owner_blue,
             orientation='h',
             hovertemplate='%{y}, ' + f'HH Type: {localization[language]["Owner Households"]} - ' + '%{x: .2%}<extra></extra>',
             showlegend=False,
@@ -287,7 +287,7 @@ def update_geo_figure(geo: str, geo_c: str, year_comparison: str, scale, refresh
             y=plot_df_c['Income_Category'],
             x=plot_df_c['Percent HH'],
             name=localization[language]["Renter Households"],
-            marker_color=hh_colors,
+            marker_color=renter_green,
             orientation='h',
             hovertemplate='%{y}, ' + f'HH Type: {localization[language]["Renter Households"]} - ' + '%{x: .2%}<extra></extra>',
             showlegend=False,

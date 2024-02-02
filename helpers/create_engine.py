@@ -42,19 +42,20 @@ df_province_list.columns = df_geo_list.columns
 mapped_geo_code = pd.read_sql_table('geocodes_integrated', engine_current.connect())
 
 # Repeat the data processing for each year
-income_partners_year: Dict[int, pd.DataFrame] = {}
+partner_table: Dict[int, pd.DataFrame] = {}
 income_indigenous_year: Dict[int, pd.DataFrame] = {}
 income_ownership_year: Dict[int, pd.DataFrame] = {}
 updated_csd_year: Dict[int, pd.DataFrame] = {}
 updated_cd_year: Dict[int, pd.DataFrame] = {}
 mapped_geo_code_year: Dict[int, pd.DataFrame] = {}
+bedrooms_table: Dict[int, pd.DataFrame] = {}
 for year in engine_list.keys():
     income_category = pd.read_sql_table('income', engine_list[year].connect())
     income_category = income_category.drop(['Geography'], axis=1)
     income_category = income_category.rename(columns={'Formatted Name': 'Geography'})
 
     df_partners = pd.read_sql_table('partners', engine_list[year].connect())
-    income_partners_year[year] = income_category.merge(df_partners, how='left', on='Geography')
+    partner_table[year] = income_category.merge(df_partners, how='left', on='Geography')
 
     df_ind = pd.read_sql_table('indigenous', engine_list[year].connect())
     income_indigenous_year[year] = income_category.merge(df_ind, how='left', on='Geography')
@@ -65,4 +66,6 @@ for year in engine_list.keys():
     updated_csd_year[year] = pd.read_sql_table('csd_hh_projections', engine_list[year].connect())
     updated_cd_year[year] = pd.read_sql_table('cd_hh_projections', engine_list[year].connect())
     mapped_geo_code_year[year] = pd.read_sql_table('geocodes_integrated', engine_list[year].connect())
+    if year == 2021:
+        bedrooms_table[year] = pd.read_sql_table('bedrooms_2021', engine_list[year].connect())
 

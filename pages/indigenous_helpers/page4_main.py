@@ -37,11 +37,13 @@ def layout(year):
                                         id='Income-Category-Indigenous-Title-page4'),
                                     # Description
                                     html.Div([
-                                        html.H6(
-                                            'The following table shows the range of Indigenous household incomes and '
+                                        dcc.Markdown(
+                                            '###### The following table shows the range of Indigenous household incomes and '
                                             'affordable shelter costs for each income category, in 2020 dollar values, '
                                             'as well what percentage of the total number of Indigenous households that '
-                                            'fall within each category.'),
+                                            'fall within each category.',
+                                            link_target="_blank"
+                                        ),
 
                                     ], className='muni-reg-text-lgeo'),
 
@@ -94,8 +96,10 @@ def layout(year):
 
                                     # Description
                                     html.Div([
-                                        html.H6(
-                                            'Income categories are determined by their relationship with each geography’s Area Median Household Income (AMHI). The following graph shows the range of Indigenous household incomes and affordable shelter costs for each income category, in 2020 dollar values, as well what percentage of the total number of Indigenous households falls within each category.')
+                                        dcc.Markdown(
+                                            '###### Income categories are determined by their relationship with each geography’s [Area Median Household Income (AMHI)](https://hart.ubc.ca/housing-glossary/#amhi). The following graph shows the range of Indigenous household incomes and affordable shelter costs for each income category, in 2020 dollar values, as well what percentage of the total number of Indigenous households falls within each category.',
+                                            link_target="_blank"
+                                        )
                                     ], className='muni-reg-text-lgeo'),
 
                                     # Graph
@@ -124,8 +128,10 @@ def layout(year):
 
                                     # Description
                                     html.Div([
-                                        html.H6(
-                                            'The following graph looks at those Indigenous households in Core Housing Need and shows their relative distribution by household size (i.e. the number of individuals in a given household) for each household income category. Where there are no reported households in Core Housing Need, there are too few households to report while protecting privacy.')
+                                        dcc.Markdown(
+                                            '###### The following graph looks at those Indigenous households in [Core Housing Need](https://hart.ubc.ca/housing-glossary/#chn) and shows their relative distribution by household size (i.e. the number of individuals in a given household) for each household income category. Where there are no reported households in Core Housing Need, there are [too few households to report](https://hart.ubc.ca/housing-glossary/#data-suppression) while protecting privacy.',
+                                            link_target="_blank"
+                                        )
                                     ], className='muni-reg-text-lgeo'),
 
                                     # Graph
@@ -153,8 +159,17 @@ def layout(year):
                                         id='Deficit-page4'),
                                     # Description
                                     html.Div([
-                                        html.H6(
-                                            'The following table shows the total number of Indigenous households in Core Housing Need by household size and income category, which may be considered as the existing deficit of housing options in the community. Where there are zero households to report, it means there are too few to report while protecting privacy.')
+                                        dcc.Markdown(
+                                            '###### The following table shows the total number of Indigenous '
+                                            'households in [Core Housing Need]('
+                                            'https://hart.ubc.ca/housing-glossary/#chn) by household size and income '
+                                            'category, which may be considered as the existing deficit of housing '
+                                            'options in the community. Where there are zero households to report, '
+                                            'it means there are [too few to report]('
+                                            'https://hart.ubc.ca/housing-glossary/#data-suppression) while protecting '
+                                            'privacy.',
+                                            link_target="_blank"
+                                        )
                                     ], className='muni-reg-text-lgeo'),
 
                                     # Table
@@ -215,6 +230,12 @@ def layout(year):
                                     html.A('Licker Geospatial', href='https://www.lgeo.co/', target="_blank"),
                                     ' using Plotly.'
                                 ], className='lgeo-credit-text'),
+
+                                # Whitespace
+
+                                html.Div(
+                                    style={"height": "70px"},
+                                )
 
                             ], className='dashboard-pg4-lgeo'
                         ),
