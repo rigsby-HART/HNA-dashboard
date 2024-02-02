@@ -212,12 +212,12 @@ def layout(year: int = default_year):
                                     ),# Description
                                     html.Div([
                                         dcc.Markdown(
-                                            '###### The following table shows the total number of households in [Core '
-                                            'Housing Need (CHN)](https://hart.ubc.ca/housing-glossary/#chn) by '
-                                            'bedroom count and income category, which may be considered as the '
-                                            'existing deficit of housing options in the community.  Due to [data '
-                                            'suppression](https://hart.ubc.ca/housing-glossary/#data-suppression), '
-                                            'the CHN totals may not match up',
+                                            '###### The following table converts the above figures into the total '
+                                            'number of homes by bedroom size and maximum cost required to satisfy the '
+                                            'existing deficit. To learn more about how we converted household size to '
+                                            'bedrooms, view our [unit mix methodology]('
+                                            'https://hart.ubc.ca/HNA-Methodology.pdf#page=27). Due to rounding and '
+                                            'data suppression, the CHN totals may not match up with the above table.',
                                             link_target="_blank"
                                         )
                                     ], className='muni-reg-text-lgeo'),
