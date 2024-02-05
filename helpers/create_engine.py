@@ -66,6 +66,5 @@ for year in engine_list.keys():
     updated_csd_year[year] = pd.read_sql_table('csd_hh_projections', engine_list[year].connect())
     updated_cd_year[year] = pd.read_sql_table('cd_hh_projections', engine_list[year].connect())
     mapped_geo_code_year[year] = pd.read_sql_table('geocodes_integrated', engine_list[year].connect())
-    if year == 2021:
-        bedrooms_table[year] = pd.read_sql_table('bedrooms_2021', engine_list[year].connect())
+    bedrooms_table[year] = pd.read_sql_table('bedrooms', engine_list[year].connect())
 

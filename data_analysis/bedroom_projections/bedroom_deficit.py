@@ -4,7 +4,12 @@ import pandas as pd
 from sqlalchemy import create_engine
 
 # Specify the file path of the CSV file
-csv_file = 'data_analysis/bedroom_projections/2021_Unit_Mix_Consolidated_canada.csv'  # Replace with the actual file path
+
+year = 2016
+csv_file = 'data_analysis/bedroom_projections/2016_Unit_Mix_Consolidated_canada.csv'  # Replace with the actual file path
+engine = create_engine(f'sqlite:///data_analysis//hart2016.db')
+households_by_income_and_size = pd.read_csv("data_analysis/bedroom_projections/households_by_income_and_size_2016.csv",
+                                            encoding='latin-1')
 
 # Read the CSV file into a DataFrame
 df = pd.read_csv(csv_file, header=None, encoding='latin-1', dtype=str)
@@ -35,12 +40,9 @@ prediction_data.insert(0, "Geography", df.iloc[4:, 0])
 prediction_data = prediction_data.reset_index(drop=True)
 
 # Import the households by income and size
-households_by_income_and_size = pd.read_csv("data_analysis/bedroom_projections/households_by_income_and_size.csv",
-                                            encoding='latin-1')
 prediction_data = pd.merge(prediction_data, households_by_income_and_size, on="Geography", how="left")
 
 # Create engine
-engine = create_engine(f'sqlite:///data_analysis//hart2016.db')
 mapped_geo_code = pd.read_sql_table('geocodes_integrated', engine.connect())
 geo_codes = pd.read_sql_table('geocodes_integrated', engine.connect())
 conn = engine.connect()
@@ -119,6 +121,10 @@ def get_percentage(column: pd.Series):
     return column / _sum
 
 
+# The data formats are different
+in_chn = CHN_status[2] if year == 2016 else CHN_status[1]
+
+
 # Calculate the number of missing bedrooms using the HNA methodology listed on the website
 def add_columns(row):
     # Generate the output row that we append into our current SQL table
@@ -132,7 +138,7 @@ def add_columns(row):
         for size in hh_size:
             for type in hh_type:
                 hh_type_size_matrix.at[type, size] = row[
-                    f"{size}-{type}-{income}-{CHN_status[1]}"]
+                    f"{size}-{type}-{income}-{in_chn}"]
                 # We're only interested in the total here, since we're trying to calculate
 
         # Iterate through housing type x hh size matrix at each income level to generate bedroom count x income matrix
@@ -159,6 +165,6 @@ bedroom_predictions.insert(0, geo_label, prediction_data[geo_label])
 # prediction_data[output_columns] = prediction_data.apply(add_columns, axis=1)
 # predictions_2031 = pd.merge(predictions_2031, bedroom_predictions, on="Geography", how="left")
 # predictions_2031 = predictions_2031.drop(["Region_Code", "Province_Code", "Geography", "Region", "Province"], axis=1)
-sql = 'DROP TABLE IF EXISTS bedrooms_2016;'
+sql = 'DROP TABLE IF EXISTS bedrooms;'
 result = engine.execute(sql)
-bedroom_predictions.to_sql("bedrooms_2016", engine, index=False)
+bedroom_predictions.to_sql("bedrooms", engine, index=False)

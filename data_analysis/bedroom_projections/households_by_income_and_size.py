@@ -2,7 +2,8 @@
 import numpy as np
 import pandas as pd
 
-csv_file = '../2021_Consolidated_trans added.csv'  # Replace with the actual file path
+
+csv_file = '../year_diff/2016_HNA_Consolidated.csv'  # Replace with the actual file path
 
 # Read the CSV file into a DataFrame
 df = pd.read_csv(csv_file, header=None, encoding='latin-1', dtype=str)
@@ -60,4 +61,4 @@ def keep_income_by_hh_size(row: pd.Series):
 
 households_by_income_and_size: pd.DataFrame = subset.apply(keep_income_by_hh_size, axis=1)
 households_by_income_and_size.insert(0, "Geography", df.iloc[4:, 0].reset_index(drop=True))
-households_by_income_and_size.to_csv('households_by_income_and_size.csv', index=False)
+households_by_income_and_size.to_csv('households_by_income_and_size_2016.csv', index=False)
