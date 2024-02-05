@@ -7,7 +7,9 @@ import warnings
 import json
 import geopandas as gpd
 import plotly.graph_objects as go
-from dash import dcc, html, Input, Output, ctx, callback, State
+from dash import dcc, html, Input, Output, ctx, callback, State, clientside_callback
+
+from app_file import cache
 # Importing Geo Code Information
 from helpers.create_engine import engine_current, mapped_geo_code, df_province_list, df_region_list
 from helpers.table_helper import storage_variables
@@ -79,6 +81,7 @@ fig_m.update_layout(mapbox_style="carto-positron",
 
 # Setting layout for dashboard
 
+dash.register_page(__name__)
 
 layout = html.Div(children=
                   # Fetching Area/Comparison Area/Clicked area scale info in local storage
@@ -143,8 +146,8 @@ layout = html.Div(children=
                                   ], className='region-button-box-lgeo'
                                   ),
                                   html.Div(children=[
-                                      html.Button('Compare 2021 vs 2016',
-                                                  title="Toggle a comparison between 2021 and 2016",
+                                      html.Button('Compare 2016 vs 2021',
+                                                  title="Toggle a comparison between 2016 and 2021",
                                                   id='year-comparison-button', n_clicks=0,
                                                   className='region-button-lgeo'),
                                   ], className='region-button-box-lgeo'
@@ -184,6 +187,7 @@ layout = html.Div(children=
 
 # Callback for storing selected areas and area scale level
 
+
 @callback(
     Output('main-area', 'data'),
     Output('comparison-area', 'data'),
@@ -193,8 +197,10 @@ layout = html.Div(children=
     Input('comparison-geo-dropdown-parent', 'n_clicks'),
     Input('to-geography-1', 'n_clicks'),
     Input('to-region-1', 'n_clicks'),
-    Input('to-province-1', 'n_clicks')
+    Input('to-province-1', 'n_clicks'),
+    cache_args_to_ignore=[2, 3, 4, 5]
 )
+@cache.memoize()
 def store_geo(geo, geo_c, *args):
     id_name = str(ctx.triggered_id)
     return geo, geo_c, id_name
@@ -349,25 +355,28 @@ def subregion_map(value, random_color, clicked_code):
 
 # Callback logic for the map picker
 
+
 @callback(
     Output('canada_map', 'figure'),
     Output('primary-geo-dropdown', 'value'),
     Output('comparison-geo-dropdown', 'value'),
     [Input('canada_map', 'clickData')],
-    Input('reset-map', 'n_clicks'),
     Input('primary-geo-dropdown', 'value'),
     Input('comparison-geo-dropdown', 'value'),
-    # Input('primary-geo-dropdown', 'n_clicks'),
+    Input('reset-map', 'n_clicks'),
     Input('to-geography-1', 'n_clicks'),
     Input('to-region-1', 'n_clicks'),
-    Input('to-province-1', 'n_clicks')
+    Input('to-province-1', 'n_clicks'),
 )
-def update_map(clickData, reset_map, select_region, comparison_region, *args):
+@cache.memoize()
+# 
+def update_map(clickData, select_region, comparison_region, *args):
     # If no area is selected, then map will show Canada Map
-
     if select_region is None:
         select_region = default_value
     # Make the logic below zoom to the correct level even during comparison
+
+    # User clicked on comparison dropdown
     if ctx.triggered_id == "comparison-geo-dropdown" or ctx.triggered_id == "comparison-geo-dropdown-parent":
         if comparison_region is None:
             return dash.no_update, select_region, None
@@ -399,8 +408,12 @@ def update_map(clickData, reset_map, select_region, comparison_region, *args):
     if (len(clicked_code) == 4 and selectedDropDown) or "to-region-1" == ctx.triggered_id:
 
         # When users click 'View Census Division' button after selecting Province on dropbox menu
-        # -> Show map for Province
+        # Canada is the current focus
+        if len(clicked_code) == 1:
+            fig_m = province_map(default_value, True)
 
+            return fig_m, select_region, comparison_region
+        # -> Show map for Province
         if len(clicked_code) == 2:
             fig_m = province_map(region_in_focus, False)
 
@@ -491,30 +504,49 @@ def update_map(clickData, reset_map, select_region, comparison_region, *args):
 
     # default map (show provinces) before clicking anything on the map
 
-    else:
-        fig_m = province_map(select_region, True)
+    fig_m = province_map(select_region, True)
 
-        return fig_m, select_region, comparison_region
+    return fig_m, select_region, comparison_region
+
+
+# Add custom CSS to change the color of the disabled input
+clientside_callback(
+    """
+    function updateDisabledColor(isDisabled) {
+        if (isDisabled) {
+            // Change the color of the disabled input
+            return { backgroundColor: 'lightgray', color: 'darkgray' };
+        } else {
+            // Reset styles when the input is not disabled
+            return { backgroundColor: 'white', color: 'black' };
+        }
+    }
+    """,
+    Output('comparison-geo-dropdown', 'style'),
+    [Input('comparison-geo-dropdown', 'disabled')]
+)
 
 
 @callback(
     Output('year-comparison', 'data'),
-    Output("comparison-geo-dropdown-parent", "style"),
+    Output("comparison-geo-dropdown", "disabled"),
     Output("year-comparison-button", "style"),
     State('year-comparison', 'data'),
     Input("year-comparison-button", "n_clicks"),
     Input('reset-map', 'n_clicks'),
+    cache_args_to_ignore=[1, 2]
 )
+@cache.memoize()
 def toggle_year_comparison(year_comparison, *args):
     if ctx.triggered_id == "year-comparison-button":
         if year_comparison is not None:
-            return None, {"visibility": "visible"}, {}
+            year_comparison = None
+            return year_comparison, False, {}
         else:
-            return "2021-2016", {"visibility": "hidden"}, {
+            year_comparison = "2021-2016"
+            return year_comparison, True, {
                 "color": "#FFFFFF",
                 "background-color": "#3EB549"
             }
-
-
     # return dash.no_update, dash.no_update
-    return None, {"visibility": "visible"}, {}
+    return None, False, {}

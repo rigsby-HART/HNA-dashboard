@@ -1,0 +1,8 @@
+localization = {
+    "en": {
+
+    },
+    "fr": {
+
+    }
+}
