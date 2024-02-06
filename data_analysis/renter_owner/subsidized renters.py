@@ -3,7 +3,8 @@ import numpy as np
 import re
 
 from sqlalchemy import create_engine
-from sqlalchemy.orm import declarative_base
+
+from data_analysis.helper.label_fixes import translate
 
 # This file takes in the associated.csv and hart20xx.db
 # The purpose is to add in subsidized vs unsubsidized renter data into the owners table in the database
@@ -11,7 +12,9 @@ from sqlalchemy.orm import declarative_base
 
 
 # Specify the file path of the CSV file
-csv_file = 'data_analysis/renter_owner/subsidized_renters_2021.csv'
+year = 2021
+csv_file = f'data_analysis/renter_owner/subsidized_renters_{year}.csv'
+engine = create_engine(f'sqlite:///data_analysis///hart{year}.db')
 
 # Read the CSV file into a DataFrame
 df = pd.read_csv(csv_file, header=None, encoding='latin-1', dtype=str)
@@ -19,6 +22,11 @@ df = pd.read_csv(csv_file, header=None, encoding='latin-1', dtype=str)
 subsidization = [x.strip() for x in df.iloc[0, 1:].unique()]  # [Subsidized housing, Not subsidized housing]
 AMHI = [x.strip() for x in df.iloc[1, 1:].unique()]
 CHN_status = [x.strip() for x in df.iloc[2, 1:].unique()]
+
+# Change the labels to match current year labels
+subsidization = [translate(year, label) for label in subsidization]
+AMHI = [translate(year, label) for label in AMHI]
+CHN_status = [translate(year, label) for label in CHN_status]
 
 numbers = df.iloc[3:, 1:].replace("x", "0").fillna(0).astype(int)  # Census censors data with 'x'
 
@@ -42,9 +50,7 @@ subsidized_renters.insert(0, "Geography", df.iloc[3:, 0])
 subsidized_renters = subsidized_renters.reset_index(drop=True)
 
 # Create engine
-engine = create_engine(f'sqlite:///data_analysis//renter_owner///hart2021.db')
 mapped_geo_code = pd.read_sql_table('geocodes_integrated', engine.connect())
-ownership = pd.read_sql_table('ownership', engine.connect())
 conn = engine.connect()
 
 
@@ -144,11 +150,9 @@ def add_columns(row):
 
 
 output_columns.sort()
-# ownership = subsidized_renters["Geography"].to_frame(name="Geography")
 new_columns = subsidized_renters.apply(add_columns, axis=1)
-new_columns = pd.concat([subsidized_renters["Geography"], new_columns], axis=1)
-ownership = pd.merge(ownership, new_columns, on="Geography")
-# ownership.drop("index", inplace=True, axis=1)
-sql = 'DROP TABLE IF EXISTS ownership;'
+output = pd.concat([subsidized_renters["Geography"], new_columns], axis=1)
+# subsidized_rent.drop("index", inplace=True, axis=1)
+sql = 'DROP TABLE IF EXISTS subsidized_rent;'
 result = engine.execute(sql)
-ownership.to_sql("ownership", engine, index=False)
+output.to_sql("subsidized_rent", engine, index=False)

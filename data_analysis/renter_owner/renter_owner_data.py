@@ -12,6 +12,7 @@ from sqlalchemy.orm import declarative_base
 
 # Specify the file path of the CSV file
 csv_file = 'data_analysis/renter_owner/2016_HNA_Consolidated_processed.csv'
+engine = create_engine(f'sqlite:///data_analysis//hart2016.db')
 
 # Read the CSV file into a DataFrame
 df = pd.read_csv(csv_file, header=None, encoding='latin-1', dtype=str)
@@ -42,8 +43,6 @@ renter_vs_owner_data.insert(0, "Geography", df.iloc[4:, 0])
 renter_vs_owner_data = renter_vs_owner_data.reset_index(drop=True)
 
 # Create engine
-# engine = create_engine(f'sqlite:///sources//previous_years//hart2021.db')
-engine = create_engine(f'sqlite:///data_analysis//renter_owner///hart2016.db')
 mapped_geo_code = pd.read_sql_table('geocodes_integrated', engine.connect())
 partners = pd.read_sql_table('partners', engine.connect())
 conn = engine.connect()

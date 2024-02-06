@@ -42,13 +42,16 @@ df_province_list.columns = df_geo_list.columns
 mapped_geo_code = pd.read_sql_table('geocodes_integrated', engine_current.connect())
 
 # Repeat the data processing for each year
-partner_table: Dict[int, pd.DataFrame] = {}
-income_indigenous_year: Dict[int, pd.DataFrame] = {}
-income_ownership_year: Dict[int, pd.DataFrame] = {}
-updated_csd_year: Dict[int, pd.DataFrame] = {}
-updated_cd_year: Dict[int, pd.DataFrame] = {}
-mapped_geo_code_year: Dict[int, pd.DataFrame] = {}
-bedrooms_table: Dict[int, pd.DataFrame] = {}
+partner_table: Dict[int, pd.DataFrame] = {} # Jhin Zhao wtf is this
+income_indigenous_year: Dict[int, pd.DataFrame] = {} # Contains data for indigenous census (page4)
+income_ownership_year: Dict[int, pd.DataFrame] = {} # Contains data for ownership census (page5)
+updated_csd_year: Dict[int, pd.DataFrame] = {} # Data for CSD level projections
+updated_cd_year: Dict[int, pd.DataFrame] = {} # Data for CD level projections
+mapped_geo_code_year: Dict[int, pd.DataFrame] = {} # Maps data from Geocode to label (123 4567 > Burnaby (CSD, BC))
+bedrooms_table: Dict[int, pd.DataFrame] = {} # Contains data for bedroom predition (page2)
+subsidized_rent_table: Dict[int, pd.DataFrame] = {} # Contains data for subsidized vs unsubbed renters (page5)
+
+
 for year in engine_list.keys():
     income_category = pd.read_sql_table('income', engine_list[year].connect())
     income_category = income_category.drop(['Geography'], axis=1)
@@ -62,6 +65,9 @@ for year in engine_list.keys():
 
     df_ownership = pd.read_sql_table('ownership', engine_list[year].connect())
     income_ownership_year[year] = income_category.merge(df_ownership, how='left', on='Geography')
+
+    df_subsidized_rent = pd.read_sql_table('subsidized_rent', engine_list[year].connect())
+    subsidized_rent_table[year] = income_category.merge(df_subsidized_rent, how='left', on='Geography')
 
     updated_csd_year[year] = pd.read_sql_table('csd_hh_projections', engine_list[year].connect())
     updated_cd_year[year] = pd.read_sql_table('cd_hh_projections', engine_list[year].connect())

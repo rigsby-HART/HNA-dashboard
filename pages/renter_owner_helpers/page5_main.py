@@ -87,66 +87,6 @@ def layout(year: int = default_year):
 
                                 ], className='pg5-table-plot-box-lgeo'),
 
-                                # Income Categories and Affordable Shelter Costs Subsidized Renters vs Unsubsidized
-
-                                html.Div([
-                                    # Title
-                                    html.H3(
-                                        children=html.Strong(f'Income Categories and Affordable Shelter Costs for Subsidized and Unsubsidized Renters, {year}'),
-                                        id='income-category-subsidized-title-page5'),
-                                    # Description
-                                    html.Div([
-                                        html.H6(
-                                            'The following table shows the range of household incomes and affordable '
-                                            'shelter costs for each income category, in 2020 dollar values, '
-                                            'as well compares subsidized and unsubsidized renters for what percentage '
-                                            'of the total number of households falls within each category.')
-                                    ], className='muni-reg-text-lgeo'),
-
-                                    # Table
-
-                                    html.Div([
-                                        dash_table.DataTable(
-                                            id='income-category-subsidized-table-pg5',
-                                            columns=[
-                                                {"name": i, 'id': i, "deletable": False, "selectable": False} for i in
-                                                table.columns
-                                            ],
-                                            data=table.to_dict('records'),
-                                            editable=True,
-                                            sort_action="native",
-                                            sort_mode="multi",
-                                            column_selectable=False,
-                                            row_selectable=False,
-                                            row_deletable=False,
-                                            selected_columns=[],
-                                            selected_rows=[],
-                                            page_action="native",
-                                            page_current=0,
-                                            page_size=10,
-                                            merge_duplicate_headers=True,
-                                            export_format="xlsx",
-                                            # style_table={
-                                            #               'padding':'20px',
-                                            #
-                                            #               },
-                                            style_data={'whiteSpace': 'normal', 'overflow': 'hidden',
-                                                        'textOverflow': 'ellipsis'},
-                                            style_cell={'font-family': 'Bahnschrift',
-                                                        'height': 'auto',
-                                                        'whiteSpace': 'normal',
-                                                        'overflow': 'hidden',
-                                                        'textOverflow': 'ellipsis'
-                                                        },
-                                            style_header={'textAlign': 'right', 'fontWeight': 'bold'}
-                                        ),
-                                        html.Div(id='income-category-affordability-table-container')
-                                    ], className='pg5-table-lgeo'
-
-                                    ),
-
-                                ], className='pg5-table-plot-box-lgeo'),
-
                                 # Percentage of Households in Core Housing Need, by Income Category
 
                                 html.Div([
@@ -234,7 +174,191 @@ def layout(year: int = default_year):
 
                                         html.Div([
                                             dash_table.DataTable(
-                                                id='datatable2-interactivity-pg5',
+                                                id='housing-deficit-pg5',
+                                                columns=[
+                                                    {"name": i, "id": i, "deletable": False, "selectable": False} for i
+                                                    in
+                                                    table2.columns
+                                                ],
+                                                data=table2.to_dict('records'),
+                                                editable=True,
+                                                sort_action="native",
+                                                sort_mode="multi",
+                                                column_selectable=False,
+                                                row_selectable=False,
+                                                row_deletable=False,
+                                                selected_columns=[],
+                                                selected_rows=[],
+                                                page_action="native",
+                                                page_current=0,
+                                                page_size=25,
+                                                merge_duplicate_headers=True,
+                                                style_data={'whiteSpace': 'normal', 'overflow': 'hidden',
+                                                            'textOverflow': 'ellipsis'},
+                                                style_cell={'font-family': 'Bahnschrift',
+                                                            'height': 'auto',
+                                                            'whiteSpace': 'normal',
+                                                            'overflow': 'hidden',
+                                                            'textOverflow': 'ellipsis'},
+                                                style_header={'text-align': 'middle', 'fontWeight': 'bold'},
+                                                export_format="xlsx"
+                                            ),
+                                            html.Div(id='datatable2-interactivity-container')
+                                        ], className='pg5-table-lgeo'
+                                        ),
+                                    ]
+                                    ),
+                                ], className='pg5-table-plot-box-lgeo'),
+
+                                # Income Categories and Affordable Shelter Costs Subsidized Renters vs Unsubsidized
+
+                                html.Div([
+                                    # Title
+                                    html.H3(
+                                        children=html.Strong(
+                                            f'Income Categories and Affordable Shelter Costs for Subsidized and Unsubsidized Renters, {year}'),
+                                        id='income-category-subsidized-title-page5'),
+                                    # Description
+                                    html.Div([
+                                        html.H6(
+                                            'The following table shows the range of household incomes and affordable '
+                                            'shelter costs for each income category, in 2020 dollar values, '
+                                            'as well compares subsidized and unsubsidized renters for what percentage '
+                                            'of the total number of households falls within each category.')
+                                    ], className='muni-reg-text-lgeo'),
+
+                                    # Table
+
+                                    html.Div([
+                                        dash_table.DataTable(
+                                            id='income-category-subsidized-table-pg5',
+                                            columns=[
+                                                {"name": i, 'id': i, "deletable": False, "selectable": False} for i in
+                                                table.columns
+                                            ],
+                                            data=table.to_dict('records'),
+                                            editable=True,
+                                            sort_action="native",
+                                            sort_mode="multi",
+                                            column_selectable=False,
+                                            row_selectable=False,
+                                            row_deletable=False,
+                                            selected_columns=[],
+                                            selected_rows=[],
+                                            page_action="native",
+                                            page_current=0,
+                                            page_size=10,
+                                            merge_duplicate_headers=True,
+                                            export_format="xlsx",
+                                            # style_table={
+                                            #               'padding':'20px',
+                                            #
+                                            #               },
+                                            style_data={'whiteSpace': 'normal', 'overflow': 'hidden',
+                                                        'textOverflow': 'ellipsis'},
+                                            style_cell={'font-family': 'Bahnschrift',
+                                                        'height': 'auto',
+                                                        'whiteSpace': 'normal',
+                                                        'overflow': 'hidden',
+                                                        'textOverflow': 'ellipsis'
+                                                        },
+                                            style_header={'textAlign': 'right', 'fontWeight': 'bold'}
+                                        ),
+                                        html.Div(id='income-category-affordability-table-container')
+                                    ], className='pg5-table-lgeo'
+
+                                    ),
+
+                                ], className='pg5-table-plot-box-lgeo'),
+
+                                # Percentage of Households in Core Housing Need, by Income Category Subsidized Renters vs Unsubsidized
+
+                                html.Div([
+                                    # Title
+                                    html.H3(children=html.Strong(
+                                        f'Percentage of Households in Core Housing Need, by Income Category, {year}'),
+                                        id='percent-HH-CHN-subsidized-title-page5'),
+                                    # Description
+                                    html.Div([
+                                        dcc.Markdown(
+                                            '''
+                                            ###### Income categories are determined by their relationship with each geography’s [Area Median Household Income (AMHI)](https://hart.ubc.ca/housing-glossary/#amhi). The following table shows the range of household incomes and affordable shelter costs that make up each income category, in 2020 dollar values, as well what percentage of the total number of households that fall within each category for both homeowners and renters.
+                                            ''',
+                                            link_target="_blank"
+                                        )
+                                    ], className='muni-reg-text-lgeo'),
+
+                                    # Graph
+
+                                    html.Div(children=[
+
+                                        dcc.Graph(
+                                            id='percent-HH-CHN-subsidized-graph-pg5',
+                                            figure=fig,
+                                            config=config,
+                                        )
+                                    ],
+                                        className='pg5-plot-lgeo'
+
+                                    ),
+
+                                ], className='pg5-table-plot-box-lgeo'),
+
+                                # Percentage of Households in Core Housing Need, by Income Category and HH Size Subsidized Renters vs Unsubsidized
+
+                                html.Div([
+                                    # Title
+                                    html.H3(children=html.Strong(
+                                        f'Percentage of Households in Core Housing Need for Subsidized vs Unsubsidized Renters, by Income Category and Housing Type, {year}'),
+                                        id='percent-IC-HH-CHN-subsidized-title-page5'),
+                                    # Description
+                                    html.Div([
+                                        dcc.Markdown(
+                                            '''
+                                            ###### The following chart looks at those subsidized and unsubsidized renter households in [Core Housing Need](https://hart.ubc.ca/housing-glossary/#chn) and their relative distribution for each household income category. When there is no bar for an income category, it means that either there are no households in Core Housing Need within an income category, or that there are [too few households to report](https://hart.ubc.ca/housing-glossary/#data-suppression).
+                                            ''',
+                                            link_target="_blank"
+                                        )
+                                    ], className='muni-reg-text-lgeo'),
+
+                                    # Graph
+
+                                    html.Div(children=[
+
+                                        dcc.Graph(
+                                            id='CHN-by-IC-HH-graph-subsidized-pg5',
+                                            figure=fig,
+                                            config=config,
+                                        )
+                                    ],
+                                        className='pg5-plot-lgeo'
+                                    ),
+
+                                ], className='pg5-table-plot-box-lgeo'),
+
+                                # Affordable Housing Deficit
+
+                                html.Div([
+                                    # Title
+                                    html.H3(children=html.Strong(f'{year} Affordable Housing Deficit for Subsidized Renters vs Unsubsidized Renters'),
+                                            id='housing-deficit-subsidized-page5'),
+                                    # Description
+                                    html.Div([
+                                        dcc.Markdown(
+                                            '''
+                                            ###### The following table shows the total number of subsidized and unsubsidized renter households in [Core Housing Need](https://hart.ubc.ca/housing-glossary/#chn) by income category, which may be considered as the existing deficit of housing options in the community.
+                                            ''',
+                                            link_target="_blank"
+                                        )
+                                    ], className='muni-reg-text-lgeo'),
+
+                                    # Table
+
+                                    html.Div(children=[
+
+                                        html.Div([
+                                            dash_table.DataTable(
+                                                id='housing-deficit-subsidized-pg5',
                                                 columns=[
                                                     {"name": i, "id": i, "deletable": False, "selectable": False} for i
                                                     in

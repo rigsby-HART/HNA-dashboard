@@ -92,6 +92,8 @@ localization: Dict[str, Dict[str, str]] = {
         'Percentage of Households in Core Housing Need, by Income Category and HH Type,':
             'Percentage of Households in Core Housing Need, by Income Category and HH Type,',
         "Housing Type": "Housing Type",
+        "Subsidized Housing": "Subsidized Housing",
+        "Unsubsidized Housing": "Unsubsidized Housing",
     },
     "fr": {
         "Very Low Income": "Très faible revenu",
@@ -183,5 +185,7 @@ localization: Dict[str, Dict[str, str]] = {
         'Percentage of Households in Core Housing Need, by Income Category and HH Type,':
             'Percentage of Households in Core Housing Need, by Income Category and HH Type,',
         "Housing Type": "Housing Type",
+        "Subsidized Housing": "Subsidized Housing",
+        "Unsubsidized Housing": "Unsubsidized Housing",
     }
 }

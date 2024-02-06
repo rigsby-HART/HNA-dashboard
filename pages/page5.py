@@ -1,19 +1,12 @@
 # Importing Libraries
 
 import pandas as pd
-import plotly.graph_objects as go
 import warnings
 from dash import dcc, Input, Output, ctx, callback, State, html, register_page
-from dash.dash_table.Format import Format, Scheme, Group
-from plotly.subplots import make_subplots
 
 from app_file import cache
-from helpers.style_helper import style_header_conditional, style_data_conditional
 from helpers.create_engine import income_ownership_year, default_year, default_value
-from helpers.table_helper import area_scale_comparison, area_scale_primary_only, error_region_table, \
-    error_region_figure, \
-    query_table, get_language
-from helpers.localization import localization
+from helpers.table_helper import query_table, get_language
 from pages.renter_owner_helpers.page5_main import layout
 
 register_page(__name__)
@@ -25,6 +18,9 @@ import pages.renter_owner_helpers.percentage_CHN_by_income              # noqa
 import pages.renter_owner_helpers.percentage_CHN_by_HH_type             # noqa
 import pages.renter_owner_helpers.housing_deficit                       # noqa
 import pages.renter_owner_helpers.subsidized_renters                    # noqa
+import pages.renter_owner_helpers.subsidized_percentage_CHN_by_income   # noqa
+import pages.renter_owner_helpers.subsidized_percentage_CHN_by_HH_type  # noqa
+import pages.renter_owner_helpers.subsidized_housing_deficit            # noqa
 
 
 # Setting layout for dashboard

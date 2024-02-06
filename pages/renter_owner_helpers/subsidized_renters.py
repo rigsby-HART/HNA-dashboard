@@ -3,7 +3,7 @@ import pandas as pd
 from dash import Output, Input, State, callback
 
 from app_file import cache
-from helpers.create_engine import default_year, default_value, income_ownership_year
+from helpers.create_engine import default_year, default_value, subsidized_rent_table
 from helpers.style_helper import style_data_conditional, style_header_conditional, columns_color_fill, \
     comparison_font_size
 from helpers.table_helper import query_table, get_language, area_scale_primary_only, area_scale_comparison, \
@@ -33,7 +33,7 @@ income_ct = [x + f" ({a})" for x, a in zip(x_base, amhi_range)]
 
 # Table generator
 def table_amhi_shelter_cost(geo: str, is_second: bool, year: int = default_year):
-    geo, joined_df_filtered = query_table(geo, year, income_ownership_year)
+    geo, joined_df_filtered = query_table(geo, year, subsidized_rent_table)
 
     portion_of_not_subsidized_renter_hh = []
     for x in x_base:

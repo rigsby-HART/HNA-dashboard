@@ -95,15 +95,15 @@ def table_core_affordable_housing_deficit(geo, is_second, year: int = default_ye
     return table2
 
 @callback(
-    Output('datatable2-interactivity-pg5', 'columns'),
-    Output('datatable2-interactivity-pg5', 'data'),
-    Output('datatable2-interactivity-pg5', 'style_data_conditional'),
-    Output('datatable2-interactivity-pg5', 'style_cell_conditional'),
-    Output('datatable2-interactivity-pg5', 'style_header_conditional'),
+    Output('housing-deficit-pg5', 'columns'),
+    Output('housing-deficit-pg5', 'data'),
+    Output('housing-deficit-pg5', 'style_data_conditional'),
+    Output('housing-deficit-pg5', 'style_cell_conditional'),
+    Output('housing-deficit-pg5', 'style_header_conditional'),
     Input('main-area', 'data'),
     Input('comparison-area', 'data'),
     Input('year-comparison', 'data'),
-    Input('datatable2-interactivity-pg5', 'selected_columns'),
+    Input('housing-deficit-pg5', 'selected_columns'),
     Input('area-scale-store', 'data'),
     State('url', 'search'),
     cache_args_to_ignore=[3]
