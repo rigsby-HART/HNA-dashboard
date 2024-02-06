@@ -25,7 +25,6 @@ def plot2_new_projection(geo, IsComparison, language, year: int = default_year):
     updated_csd_filtered = updated_csd_year[year].query('Geo_Code ==' + f"{geo_code_clicked}")
     # This predicts 10 years into the future.  I will hardcode the assumption of year + 10
     prediction_year = year + 10
-
     updated_csd_filtered_current_plot2 = updated_csd_filtered[[
         'Total - Private households by household type including census family structure - Total – Private households by household income proportion to AMHI_1 -   1pp',
         'Total - Private households by household type including census family structure - Total – Private households by household income proportion to AMHI_1 -   2pp',
