@@ -5,10 +5,10 @@ from sqlalchemy import create_engine
 
 # Specify the file path of the CSV file
 
-year = 2016
-csv_file = 'data_analysis/bedroom_projections/2016_Unit_Mix_Consolidated_canada.csv'  # Replace with the actual file path
-engine = create_engine(f'sqlite:///data_analysis//hart2016.db')
-households_by_income_and_size = pd.read_csv("data_analysis/bedroom_projections/households_by_income_and_size_2016.csv",
+year = 2021
+csv_file = 'data_analysis/bedroom_projections/2021_Unit_Mix_Consolidated.csv'  # Replace with the actual file path
+engine = create_engine(f'sqlite:///data_analysis//hart2021.db')
+households_by_income_and_size = pd.read_csv("data_analysis/bedroom_projections/households_by_income_and_size_2021.csv",
                                             encoding='latin-1')
 
 # Read the CSV file into a DataFrame

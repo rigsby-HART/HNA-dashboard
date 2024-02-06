@@ -129,7 +129,7 @@ def update_geo_figure2(geo, geo_c, year_comparison: str, scale, refresh, lang_qu
             barmode='stack',
             plot_bgcolor='#F8F9F9',
             title=localization[language][
-                      'Percentage of Households in Core Housing Need, by Income Category and HH Size,'] + f'<br>{default_year} {geo}',
+                      'Percentage of Households in Core Housing Need, by Income Category and HH Type,'] + f'<br>{default_year} {geo}',
             legend_title=localization[language]["Housing Type"]
         )
         fig2.update_yaxes(

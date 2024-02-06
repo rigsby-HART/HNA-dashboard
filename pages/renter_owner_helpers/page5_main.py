@@ -191,7 +191,7 @@ def layout(year: int = default_year):
                                     html.Div([
                                         dcc.Markdown(
                                             '''
-                                            ###### The following chart looks at those owner and renter households in [Core Housing Need](https://hart.ubc.ca/housing-glossary/#chn) and their relative distribution by housing size for each household income category. When there is no bar for an income category, it means that either there are no households in Core Housing Need within an income category, or that there are [too few households to report](https://hart.ubc.ca/housing-glossary/#data-suppression).
+                                            ###### The following chart looks at those owner and renter households in [Core Housing Need](https://hart.ubc.ca/housing-glossary/#chn) and their relative distribution for each household income category. When there is no bar for an income category, it means that either there are no households in Core Housing Need within an income category, or that there are [too few households to report](https://hart.ubc.ca/housing-glossary/#data-suppression).
                                             ''',
                                             link_target="_blank"
                                         )
@@ -222,7 +222,7 @@ def layout(year: int = default_year):
                                     html.Div([
                                         dcc.Markdown(
                                             '''
-                                            ###### The following table shows the total number of owner and renter households in [Core Housing Need](https://hart.ubc.ca/housing-glossary/#chn) by household size and income category, which may be considered as the existing deficit of housing options in the community.
+                                            ###### The following table shows the total number of owner and renter households in [Core Housing Need](https://hart.ubc.ca/housing-glossary/#chn) by income category, which may be considered as the existing deficit of housing options in the community.
                                             ''',
                                             link_target="_blank"
                                         )

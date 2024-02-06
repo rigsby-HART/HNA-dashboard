@@ -21,6 +21,8 @@ def area_scale_primary_only(geo, scale):
         geo = mapped_geo_code.loc[mapped_geo_code['Geography'] == geo, :]['Region'].tolist()[0]
     elif "to-province-1" == scale:
         geo = mapped_geo_code.loc[mapped_geo_code['Geography'] == geo, :]['Province'].tolist()[0]
+    if geo is None:
+        geo = "Canada"
     return geo
 
 
@@ -35,6 +37,10 @@ def area_scale_comparison(geo, geo_c, scale):
     elif "to-province-1" == scale:
         geo = mapped_geo_code.loc[mapped_geo_code['Geography'] == geo, :]['Province'].tolist()[0]
         geo_c = mapped_geo_code.loc[mapped_geo_code['Geography'] == geo_c, :]['Province'].tolist()[0]
+    if geo is None:
+        geo = "Canada"
+    if geo_c is None:
+        geo_c = "Canada"
     return geo, geo_c
 
 

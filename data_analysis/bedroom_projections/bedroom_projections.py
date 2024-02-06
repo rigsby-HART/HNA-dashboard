@@ -4,7 +4,10 @@ import pandas as pd
 from sqlalchemy import create_engine
 
 # Specify the file path of the CSV file
-csv_file = 'data_analysis/bedroom_projections/2021_Unit_Mix_Consolidated.csv' 
+csv_file = 'data_analysis/bedroom_projections/2021_Unit_Mix_Consolidated.csv'  # Replace with the actual file path
+households_by_income_and_size = pd.read_csv("data_analysis/bedroom_projections/households_by_income_and_size_2021.csv",
+                                            encoding='latin-1')
+engine = create_engine(f'sqlite:///data_analysis//hart2021.db')
 
 # Read the CSV file into a DataFrame
 df = pd.read_csv(csv_file, header=None, encoding='latin-1', dtype=str)
@@ -35,13 +38,11 @@ prediction_data.insert(0, "Geography", df.iloc[4:, 0])
 prediction_data = prediction_data.reset_index(drop=True)
 
 # Import the households by income and size
-households_by_income_and_size = pd.read_csv("data_analysis/bedroom_projections/households_by_income_and_size.csv",
-                                            encoding='latin-1')
+
 prediction_data = pd.merge(prediction_data, households_by_income_and_size, on="Geography", how="left")
 
 # Create engine
 # engine = create_engine(f'sqlite:///sources//previous_years//hart2021.db')
-engine = create_engine(f'sqlite:///data_analysis//hart2021.db')
 mapped_geo_code = pd.read_sql_table('geocodes_integrated', engine.connect())
 partners = pd.read_sql_table('partners', engine.connect())
 predictions = pd.read_sql_table('csd_hh_projections', engine.connect())
