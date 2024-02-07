@@ -62,17 +62,17 @@ def table_amhi_shelter_cost(geo: str, is_second: bool, year: int = default_year)
 
     if not is_second:
         table = pd.DataFrame(
-            {'Income Category': income_ct, '% of Not subsidized Rental HHs': portion_of_not_subsidized_renter_hh,
+            {'Income Category': income_ct, '% of Unsubsidized Rental HHs': portion_of_not_subsidized_renter_hh,
              '% of Subsidized Rental HHs': portion_of_subsidized_renter_hh, 'Annual HH Income': amhi_list,
              'Affordable Shelter Cost (2020 CAD$)': shelter_list})
-        table['% of Not subsidized Rental HHs'] = table['% of Not subsidized Rental HHs'].astype(str) + '%'
+        table['% of Unsubsidized Rental HHs'] = table['% of Unsubsidized Rental HHs'].astype(str) + '%'
         table['% of Subsidized Rental HHs'] = table['% of Subsidized Rental HHs'].astype(str) + '%'
     else:
         table = pd.DataFrame(
-            {'Income Category': income_ct, '% of Not subsidized Rental HHs ': portion_of_not_subsidized_renter_hh,
+            {'Income Category': income_ct, '% of Unsubsidized Rental HHs ': portion_of_not_subsidized_renter_hh,
              '% of Subsidized Rental HHs ': portion_of_subsidized_renter_hh, 'Annual HH Income ': amhi_list,
              'Affordable Shelter Cost (2020 CAD$) ': shelter_list})
-        table['% of Not subsidized Rental HHs '] = table['% of Not subsidized Rental HHs '].astype(str) + '%'
+        table['% of Unsubsidized Rental HHs '] = table['% of Unsubsidized Rental HHs '].astype(str) + '%'
         table['% of Subsidized Rental HHs '] = table['% of Subsidized Rental HHs '].astype(str) + '%'
 
     return table, median_income, median_rent
@@ -142,7 +142,7 @@ def update_table1(geo, geo_c, year_comparison: str, selected_columns, scale, lan
 
                                       },
                                       {
-                                          'if': {'column_id': '% of Not subsidized Rental HHs'},
+                                          'if': {'column_id': '% of Unsubsidized Rental HHs'},
                                           'maxWidth': "120px",
                                       },
                                       {
@@ -239,7 +239,7 @@ def update_table1(geo, geo_c, year_comparison: str, selected_columns, scale, lan
                                          'width': '28%'
                                      },
                                      {
-                                         'if': {'column_id': '% of Not subsidized Rental HHs'},
+                                         'if': {'column_id': '% of Unsubsidized Rental HHs'},
                                          'maxWidth': "120px",
                                      },
                                      {
@@ -247,7 +247,7 @@ def update_table1(geo, geo_c, year_comparison: str, selected_columns, scale, lan
                                          'maxWidth': "120px",
                                      },
                                      {
-                                         'if': {'column_id': '% of Not subsidized Rental HHs '},
+                                         'if': {'column_id': '% of Unsubsidized Rental HHs '},
                                          'maxWidth': "120px",
                                      },
                                      {

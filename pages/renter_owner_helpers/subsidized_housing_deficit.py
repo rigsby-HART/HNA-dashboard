@@ -38,6 +38,7 @@ AMHI = ['Total - Private households by Household income as a proportion to Area 
         'Households with household income 121% and over of AMHI']
 subsidized_renter = 'Subsidized housing'
 unsubsidized_renter = 'Not subsidized housing'
+unsubsidized_label = 'Unsubsidized housing'
 status = 'Households in core housing need status'
 
 
@@ -81,6 +82,9 @@ def table_core_affordable_housing_deficit(geo, is_second, year: int = default_ye
     row_total_csd[0] = 'Total'
     table2.loc[len(table2['Income Category']), :] = row_total_csd
     table2.loc[5, 'Income Category (Max. affordable shelter cost)'] = 'Total'
+
+    # Use "Unsubsidized" not "Not subsidized"
+    table2 = table2.rename(columns={unsubsidized_renter: unsubsidized_label})
     # pdb.set_trace()
     if is_second is True:
         # You need unique names for columns
@@ -89,7 +93,7 @@ def table_core_affordable_housing_deficit(geo, is_second, year: int = default_ye
                 'Total': 'Total ',
                 'Income Category (Max. affordable shelter cost)': 'Income Category (Max. affordable shelter cost) ',
                 subsidized_renter: subsidized_renter + " ",
-                unsubsidized_renter: unsubsidized_renter + " "
+                unsubsidized_label: unsubsidized_label + " "
             })
 
     return table2
@@ -132,7 +136,7 @@ def update_table2(geo, geo_c, year_comparison: str, selected_columns, scale, lan
             table = pd.DataFrame({no_data: [""]})
             return [{"name": no_data, "id": no_data}], table.to_dict("records"), [], [], style_header_conditional
 
-        table2 = table2[['Income Category (Max. affordable shelter cost)', unsubsidized_renter, subsidized_renter, 'Total']]
+        table2 = table2[['Income Category (Max. affordable shelter cost)', unsubsidized_label, subsidized_renter, 'Total']]
 
         # Generating callback output to update table
         col_list = []
@@ -197,7 +201,7 @@ def update_table2(geo, geo_c, year_comparison: str, selected_columns, scale, lan
             table_core_affordable_housing_deficit(geo, False)
         )
 
-        table2 = table2[['Income Category', 'Income Category (Max. affordable shelter cost)', unsubsidized_renter, subsidized_renter, 'Total']]
+        table2 = table2[['Income Category', 'Income Category (Max. affordable shelter cost)', unsubsidized_label, subsidized_renter, 'Total']]
 
         # Generating comparison table
         if year_comparison:
@@ -212,7 +216,7 @@ def update_table2(geo, geo_c, year_comparison: str, selected_columns, scale, lan
         )
 
         table2_c = table2_c[['Income Category', 'Income Category (Max. affordable shelter cost) ',
-                             unsubsidized_renter + " ", subsidized_renter + " ", 'Total ']]
+                             unsubsidized_label + " ", subsidized_renter + " ", 'Total ']]
 
         # Merging main and comparison table
 
