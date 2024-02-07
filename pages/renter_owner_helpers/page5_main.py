@@ -26,7 +26,7 @@ def layout(year: int = default_year):
                         html.Div(
                             children=[
 
-                                # Income Categories and Affordable Shelter Costs
+                                # Income Categories and Affordable Shelter Costs Renters vs Owners
 
                                 html.Div([
                                     # Title
@@ -229,5 +229,5 @@ def layout(year: int = default_year):
 
                             ], className='dashboard-pg2-lgeo'
                         ),
-                    ], className='background-pg2-lgeo'
+                    ], className='background-pg5-lgeo'
                     )
