@@ -413,5 +413,5 @@ def layout(year: int = default_year):
 
                             ], className='dashboard-pg2-lgeo'
                         ),
-                    ], className='background-pg2-lgeo'
+                    ], className='background-pg5-lgeo'
                     )
