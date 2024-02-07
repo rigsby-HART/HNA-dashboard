@@ -1,8 +1,8 @@
 # Importing Libraries
-from dash import register_page
+from dash import register_page, Output, Input, State, callback
 from helpers.create_engine import default_year
 from pages.projection_helpers.page3_main import layout
-
+import dash_bootstrap_components as dbc
 register_page(__name__)
 # Default selected area
 default_value = 'Canada'
@@ -23,6 +23,13 @@ import pages.projection_helpers.bedroom_projections # noqa
 import pages.projection_helpers.bedroom_projections_delta # noqa
 
 
+# @callback(
+#     Output("projection-modal", "is_open"),
+#     Input("close", "n_clicks"),
+# )
+# def toggle_modal(button):
+#     if button:
+#         return False
 # 
 # @callback(
 #     Output("HH-IC-page3", "children"),
