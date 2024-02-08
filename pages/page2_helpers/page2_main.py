@@ -275,14 +275,13 @@ def layout(year: int = default_year):
                                     # Description
                                     html.Div([
                                         dcc.Markdown(
-                                            '###### The following chart compares the rates of [Core Housing Need](https://hart.ubc.ca/housing-glossary/#chn) across '
-                                            'populations that are at high risk of experiencing housing need. The '
-                                            '"Community (all HH)" bar represents the rate of Core Housing Need for '
-                                            'all households in the selected community to act as a point of reference. '
-                                            'The population with the greatest rate of Core Housing Need is '
-                                            'highlighted in dark blue. When there is no bar for a priority '
-                                            'population, it means that either there are no households in Core Housing '
-                                            'Need within that priority population, or that there are [too few '
+                                            'The following chart compares the rates of [Core Housing Need (CHN)](https://hart.ubc.ca/housing-glossary/#chn) across populations that '
+                                            'are at [high risk of experiencing housing need](https://hart.ubc.ca/housing-glossary/#priority-populations) . The "Community (all '
+                                            'HH)" bar represents the rate of CHN for all households in the selected '
+                                            'community to act as a point of reference. The population with the '
+                                            'greatest rate of CHN is highlighted in dark blue. When there is no bar '
+                                            'for a priority population, it means that either there are no households '
+                                            'in CHN within that priority population, or that there are [too few '
                                             'households to report](https://hart.ubc.ca/housing-glossary/#data-suppression).',
                                             link_target="_blank"
                                         )

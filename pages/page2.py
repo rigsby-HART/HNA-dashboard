@@ -79,7 +79,15 @@ def change_descriptions(year_comparison, refresh):
     if year_comparison:
         return (
             dcc.Markdown(
-                '###### The following chart looks at those households in [Core Housing Need](https://hart.ubc.ca/housing-glossary/#chn) and shows their relative distribution by household size (i.e. the number of rooms in a home) for each household income category. When there is no bar for an income category, it means that either there are no households in Core Housing Need within an income category, or that there are [too few households to report](https://hart.ubc.ca/housing-glossary/#data-suppression). Census Canada didn\'t collect data on transgender or non-binary households in 2016'
+            '###### The following chart compares the rates of [Core Housing Need (CHN)](https://hart.ubc.ca/housing-glossary/#chn) across populations that '
+                'are at [high risk of experiencing housing need](https://hart.ubc.ca/housing-glossary/#priority-populations) . The "Community (all '
+                'HH)" bar represents the rate of CHN for all households in the selected '
+                'community to act as a point of reference. The population with the '
+                'greatest rate of CHN is highlighted in dark blue. When there is no bar '
+                'for a priority population, it means that either there are no households '
+                'in CHN within that priority population, or that there are [too few '
+                'households to report](https://hart.ubc.ca/housing-glossary/#data-suppression). Census Canada didn\'t collect data on '
+                'transgender or non-binary households in 2016'
                 , link_target="_blank"
             ),
             dcc.Markdown(
@@ -89,7 +97,14 @@ def change_descriptions(year_comparison, refresh):
         )
     return (
         dcc.Markdown(
-            '###### The following chart looks at those households in [Core Housing Need](https://hart.ubc.ca/housing-glossary/#chn) and shows their relative distribution by household size (i.e. the number of rooms in a home) for each household income category. When there is no bar for an income category, it means that either there are no households in Core Housing Need within an income category, or that there are [too few households to report](https://hart.ubc.ca/housing-glossary/#data-suppression).'
+            '###### The following chart compares the rates of [Core Housing Need (CHN)](https://hart.ubc.ca/housing-glossary/#chn) across populations that '
+                    'are at [high risk of experiencing housing need](https://hart.ubc.ca/housing-glossary/#priority-populations) . The "Community (all '
+                    'HH)" bar represents the rate of CHN for all households in the selected '
+                    'community to act as a point of reference. The population with the '
+                    'greatest rate of CHN is highlighted in dark blue. When there is no bar '
+                    'for a priority population, it means that either there are no households '
+                    'in CHN within that priority population, or that there are [too few '
+                    'households to report](https://hart.ubc.ca/housing-glossary/#data-suppression).'
             , link_target="_blank"
         ),
         dcc.Markdown(
