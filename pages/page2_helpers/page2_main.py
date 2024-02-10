@@ -3,6 +3,7 @@ from plotly import express as px
 
 from app_file import cache
 from helpers.create_engine import partner_table, default_year
+from helpers.paragraph_files import strings
 from helpers.table_helper import storage_variables
 
 # Generate tables needed for default page
@@ -39,9 +40,7 @@ def layout(year: int = default_year):
                                     # Description
                                     html.Div([
                                         dcc.Markdown(
-                                            '''
-                                            ###### Income categories are determined by their relationship with each geography’s [Area Median Household Income (AMHI)](https://hart.ubc.ca/housing-glossary/#amhi). The following table shows the range of household incomes and affordable shelter costs that make up each income category, in 2020 dollar values, as well what percentage of the total number of households that fall within each category.
-                                            ''',
+                                            strings['income-categories-page2'],
                                             link_target="_blank"
                                         )
                                     ], className='muni-reg-text-lgeo', ),
@@ -100,9 +99,7 @@ def layout(year: int = default_year):
                                     # Description
                                     html.Div([
                                         dcc.Markdown(
-                                            '''
-                                            ###### The following chart shows percentage of households in each income category that are in [Core Housing Need (CHN)](https://hart.ubc.ca/housing-glossary/#chn). When there is no bar for an income category, it means that either there are no households in Core Housing Need within an income category, or that there are [too few households to report](https://hart.ubc.ca/housing-glossary/#data-suppression). 
-                                            ''',
+                                            strings['percentage-CHN-by-income-table-page2'],
                                             link_target="_blank"
                                         )], className='muni-reg-text-lgeo'),
 
@@ -132,7 +129,7 @@ def layout(year: int = default_year):
                                     # Description
                                     html.Div([
                                         dcc.Markdown(
-                                            '###### The following chart looks at those households in [Core Housing Need](https://hart.ubc.ca/housing-glossary/#chn) and shows their relative distribution by household size (i.e. the number of rooms in a home) for each household income category. When there is no bar for an income category, it means that either there are no households in Core Housing Need within an income category, or that there are [too few households to report](https://hart.ubc.ca/housing-glossary/#data-suppression).',
+                                            strings['percentage-CHN-by-income-graph-page2'],
                                             link_target="_blank"
                                         )
                                     ],  id='percent-IC-HH-CHN-description-pg2',
@@ -162,10 +159,7 @@ def layout(year: int = default_year):
                                     # Description
                                     html.Div([
                                         dcc.Markdown(
-                                            '###### The following table shows the total number of households in [Core '
-                                            'Housing Need](https://hart.ubc.ca/housing-glossary/#chn) by household '
-                                            'size and income category, which may be'
-                                            'considered as the existing deficit of housing options in the community.',
+                                            strings["housing-deficit-page2"],
                                             link_target="_blank"
                                         )
                                     ], className='muni-reg-text-lgeo'),
@@ -212,12 +206,7 @@ def layout(year: int = default_year):
                                     ),# Description
                                     html.Div([
                                         dcc.Markdown(
-                                            '###### The following table converts the above figures into the total '
-                                            'number of homes by bedroom size and maximum cost required to satisfy the '
-                                            'existing deficit. To learn more about how we converted household size to '
-                                            'bedrooms, view our [unit mix methodology]('
-                                            'https://hart.ubc.ca/HNA-Methodology.pdf#page=27). Due to rounding and '
-                                            'data suppression, the CHN totals may not match up with the above table.',
+                                            strings["housing-deficit-bedrooms-page2"],
                                             link_target="_blank"
                                         )
                                     ], className='muni-reg-text-lgeo'),
@@ -275,14 +264,7 @@ def layout(year: int = default_year):
                                     # Description
                                     html.Div([
                                         dcc.Markdown(
-                                            'The following chart compares the rates of [Core Housing Need (CHN)](https://hart.ubc.ca/housing-glossary/#chn) across populations that '
-                                            'are at [high risk of experiencing housing need](https://hart.ubc.ca/housing-glossary/#priority-populations) . The "Community (all '
-                                            'HH)" bar represents the rate of CHN for all households in the selected '
-                                            'community to act as a point of reference. The population with the '
-                                            'greatest rate of CHN is highlighted in dark blue. When there is no bar '
-                                            'for a priority population, it means that either there are no households '
-                                            'in CHN within that priority population, or that there are [too few '
-                                            'households to report](https://hart.ubc.ca/housing-glossary/#data-suppression).',
+                                            strings["percentage-CHN-by-priority-population-page2"],
                                             link_target="_blank"
                                         )
                                         ],
@@ -314,12 +296,7 @@ def layout(year: int = default_year):
                                     # Description
                                     html.Div([
                                             dcc.Markdown(
-                                                '###### The following chart looks at those households in Core Housing '
-                                                'Need for each priority population and shows their relative '
-                                                'distribution by household income category. When there is no bar for '
-                                                'a priority population, it means that either there are no households '
-                                                'in [Core Housing Need](https://hart.ubc.ca/housing-glossary/#chn) within that priority population, or that there '
-                                                'are [too few households to report](https://hart.ubc.ca/housing-glossary/#data-suppression).',
+                                                strings["percentage-CHN-by-pp-income-page2"] ,
                                                 link_target="_blank"
                                             )
                                         ],

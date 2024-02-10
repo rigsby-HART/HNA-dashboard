@@ -7,6 +7,7 @@ from dash import register_page
 
 from app_file import cache
 from helpers.create_engine import partner_table, default_year, default_value
+from helpers.paragraph_files import strings
 from helpers.table_helper import query_table
 from pages.page2_helpers.page2_main import layout
 
@@ -79,39 +80,25 @@ def change_descriptions(year_comparison, refresh):
     if year_comparison:
         return (
             dcc.Markdown(
-            '###### The following chart compares the rates of [Core Housing Need (CHN)](https://hart.ubc.ca/housing-glossary/#chn) across populations that '
-                'are at [high risk of experiencing housing need](https://hart.ubc.ca/housing-glossary/#priority-populations) . The "Community (all '
-                'HH)" bar represents the rate of CHN for all households in the selected '
-                'community to act as a point of reference. The population with the '
-                'greatest rate of CHN is highlighted in dark blue. When there is no bar '
-                'for a priority population, it means that either there are no households '
-                'in CHN within that priority population, or that there are [too few '
-                'households to report](https://hart.ubc.ca/housing-glossary/#data-suppression). Census Canada didn\'t collect data on '
-                'transgender or non-binary households in 2016'
+                strings['percentage-CHN-by-priority-population-page2'] +
+                'Census Canada didn\'t collect data on transgender or non-binary households in 2016'
                 , link_target="_blank"
             ),
             dcc.Markdown(
-                '###### The following chart looks at those households in [Core Housing Need](https://hart.ubc.ca/housing-glossary/#chn) for each priority population and shows their relative distribution by household income category. When there is no bar for a priority population, it means that either there are no households in Core Housing Need within that priority population, or that there are [too few households to report](https://hart.ubc.ca/housing-glossary/#data-suppression). Census Canada didn\'t collect data on transgender or non-binary households in 2016'
+                strings['percentage-CHN-by-pp-income-page2'] +
+                'Census Canada didn\'t collect data on transgender or non-binary households in 2016'
                 , link_target="_blank"
             ),
         )
     return (
-        dcc.Markdown(
-            '###### The following chart compares the rates of [Core Housing Need (CHN)](https://hart.ubc.ca/housing-glossary/#chn) across populations that '
-                    'are at [high risk of experiencing housing need](https://hart.ubc.ca/housing-glossary/#priority-populations) . The "Community (all '
-                    'HH)" bar represents the rate of CHN for all households in the selected '
-                    'community to act as a point of reference. The population with the '
-                    'greatest rate of CHN is highlighted in dark blue. When there is no bar '
-                    'for a priority population, it means that either there are no households '
-                    'in CHN within that priority population, or that there are [too few '
-                    'households to report](https://hart.ubc.ca/housing-glossary/#data-suppression).'
-            , link_target="_blank"
-        ),
-        dcc.Markdown(
-
-            '###### The following chart looks at those households in [Core Housing Need](https://hart.ubc.ca/housing-glossary/#chn) for each priority population and shows their relative distribution by household income category. When there is no bar for a priority population, it means that either there are no households in Core Housing Need within that priority population, or that there are [too few households to report](https://hart.ubc.ca/housing-glossary/#data-suppression).'
-            , link_target="_blank"
-        ),
+            dcc.Markdown(
+                strings['percentage-CHN-by-priority-population-page2']
+                , link_target="_blank"
+            ),
+            dcc.Markdown(
+                strings['percentage-CHN-by-pp-income-page2']
+                , link_target="_blank"
+            ),
     )
 
 

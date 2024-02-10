@@ -3,6 +3,7 @@ from plotly import express as px
 
 from app_file import cache
 from helpers.create_engine import partner_table, default_year
+from helpers.paragraph_files import strings
 from helpers.table_helper import storage_variables
 
 # Generate tables needed for default page
@@ -36,9 +37,7 @@ def layout(year: int = default_year):
                                     # Description
                                     html.Div([
                                         dcc.Markdown(
-                                            '''
-                                            ###### Income categories are determined by their relationship with each geography’s [Area Median Household Income (AMHI)](https://hart.ubc.ca/housing-glossary/#amhi). The following table shows the range of household incomes and affordable shelter costs that make up each income category, in 2020 dollar values, as well what percentage of the total number of households that fall within each category for both homeowners and renters.
-                                            ''',
+                                            strings["income-categories-page5"] ,
                                             link_target="_blank"
                                         )
                                     ], className='muni-reg-text-lgeo'),
@@ -97,9 +96,7 @@ def layout(year: int = default_year):
                                     # Description
                                     html.Div([
                                         dcc.Markdown(
-                                            '''
-                                            ###### Income categories are determined by their relationship with each geography’s [Area Median Household Income (AMHI)](https://hart.ubc.ca/housing-glossary/#amhi). The following table shows the range of household incomes and affordable shelter costs that make up each income category, in 2020 dollar values, as well what percentage of the total number of households that fall within each category for both homeowners and renters.
-                                            ''',
+                                            strings["percentage-CHN-by-income-graph-page5"],
                                             link_target="_blank"
                                         )
                                     ], className='muni-reg-text-lgeo'),
@@ -130,9 +127,7 @@ def layout(year: int = default_year):
                                     # Description
                                     html.Div([
                                         dcc.Markdown(
-                                            '''
-                                            ###### The following chart looks at those owner and renter households in [Core Housing Need](https://hart.ubc.ca/housing-glossary/#chn) and their relative distribution for each household income category. When there is no bar for an income category, it means that either there are no households in Core Housing Need within an income category, or that there are [too few households to report](https://hart.ubc.ca/housing-glossary/#data-suppression).
-                                            ''',
+                                            strings["percentage-CHN-by-IC-HH-size-page5"] ,
                                             link_target="_blank"
                                         )
                                     ], className='muni-reg-text-lgeo'),
@@ -161,9 +156,7 @@ def layout(year: int = default_year):
                                     # Description
                                     html.Div([
                                         dcc.Markdown(
-                                            '''
-                                            ###### The following table shows the total number of owner and renter households in [Core Housing Need](https://hart.ubc.ca/housing-glossary/#chn) by income category, which may be considered as the existing deficit of housing options in the community.
-                                            ''',
+                                            strings["housing-deficit-page5"],
                                             link_target="_blank"
                                         )
                                     ], className='muni-reg-text-lgeo'),

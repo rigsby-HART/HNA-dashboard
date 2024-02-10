@@ -15,10 +15,10 @@ layout = layout(default_year)
 # noqa pervents pycharm from marking these as unused
 import pages.projection_helpers.municipal_vs_regional_hh # noqa
 import pages.projection_helpers.municipal_vs_regional_income # noqa
-import pages.projection_helpers.projectioned_hh_delta # noqa
+import pages.projection_helpers.projections_hh_delta # noqa
 import pages.projection_helpers.projections_by_hh_size_and_IC # noqa
-import pages.projection_helpers.bedroom_projections # noqa
-import pages.projection_helpers.bedroom_projections_delta # noqa
+# import pages.projection_helpers.bedroom_projections # noqa
+# import pages.projection_helpers.bedroom_projections_delta # noqa
 import pages.projection_helpers.projections_by_household_size # noqa
 import pages.projection_helpers.projections_by_income_category # noqa
 
