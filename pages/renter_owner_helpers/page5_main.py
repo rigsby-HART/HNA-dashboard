@@ -213,11 +213,10 @@ def layout(year: int = default_year):
                                         id='income-category-subsidized-title-page5'),
                                     # Description
                                     html.Div([
-                                        html.H6(
-                                            'The following table shows the range of household incomes and affordable '
-                                            'shelter costs for each income category, in 2020 dollar values, '
-                                            'as well compares subsidized and unsubsidized renters for what percentage '
-                                            'of the total number of households falls within each category.')
+                                        dcc.Markdown(
+                                            strings["income-categories-subsidized-page5"],
+                                            link_target="_blank"
+                                        )
                                     ], className='muni-reg-text-lgeo'),
 
                                     # Table
@@ -274,9 +273,7 @@ def layout(year: int = default_year):
                                     # Description
                                     html.Div([
                                         dcc.Markdown(
-                                            '''
-                                            ###### Income categories are determined by their relationship with each geography’s [Area Median Household Income (AMHI)](https://hart.ubc.ca/housing-glossary/#amhi). The following table shows the range of household incomes and affordable shelter costs that make up each income category, in 2020 dollar values, as well what percentage of the total number of households that fall within each category for both homeowners and renters.
-                                            ''',
+                                    strings["percentage-CHN-by-income-graph-subsidized-page5"],
                                             link_target="_blank"
                                         )
                                     ], className='muni-reg-text-lgeo'),
@@ -307,9 +304,7 @@ def layout(year: int = default_year):
                                     # Description
                                     html.Div([
                                         dcc.Markdown(
-                                            '''
-                                            ###### The following chart looks at those subsidized and unsubsidized renter households in [Core Housing Need](https://hart.ubc.ca/housing-glossary/#chn) and their relative distribution for each household income category. When there is no bar for an income category, it means that either there are no households in Core Housing Need within an income category, or that there are [too few households to report](https://hart.ubc.ca/housing-glossary/#data-suppression).
-                                            ''',
+                                            strings["percentage-CHN-by-IC-HH-size-subsidized-page5"],
                                             link_target="_blank"
                                         )
                                     ], className='muni-reg-text-lgeo'),
@@ -338,9 +333,7 @@ def layout(year: int = default_year):
                                     # Description
                                     html.Div([
                                         dcc.Markdown(
-                                            '''
-                                            ###### The following table shows the total number of subsidized and unsubsidized renter households in [Core Housing Need](https://hart.ubc.ca/housing-glossary/#chn) by income category, which may be considered as the existing deficit of housing options in the community.
-                                            ''',
+                                            strings["housing-deficit-subsidized-page5"],
                                             link_target="_blank"
                                         )
                                     ], className='muni-reg-text-lgeo'),
