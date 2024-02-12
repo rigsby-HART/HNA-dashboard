@@ -35,25 +35,6 @@ def layout(year=default_year):
 
                         html.Div(
                             children=[
-                                # Warning popup
-                                dbc.Modal(
-                                    [
-                                        dbc.ModalHeader(children=[
-                                            dcc.Markdown(
-                                                "### Projection Disclaimer"
-                                            )
-                                        ]),
-                                        dbc.ModalBody(children=[
-                                            dcc.Markdown(
-                                                "###### Projections are done assuming \"Business as Usual\", and thus do not take account for any policy changes that could affect populations.  Predictions are made using the [HNA methodology](https://hart.ubc.ca/hna-methodology/)",
-                                                link_target="_blank",
-                                            )
-                                        ]),
-                                    ],
-                                    id="projection-modal",
-                                    is_open=True,
-                                    size="lg"
-                                ),
 
                                 html.Div([
 
