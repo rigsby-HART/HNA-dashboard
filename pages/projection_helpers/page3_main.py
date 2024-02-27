@@ -204,7 +204,7 @@ def layout(year=default_year):
 
                                         html.Div([
                                             dcc.Markdown(
-                                                strings["projections-by-hh-size-IC-page3"] ,
+                                                strings["projections-by-hh-size-IC-page3"],
                                                 link_target="_blank"
                                             )
                                         ],
@@ -247,7 +247,8 @@ def layout(year=default_year):
 
                                         html.Div([
                                             dcc.Markdown(
-                                                strings["projections-by-hh-size-IC-graph-page3"] ,
+                                                strings["projections-by-hh-size-IC-warning-page3"] + "\n\n" +
+                                                strings["projections-by-hh-size-IC-graph-page3"],
                                                 link_target="_blank"
                                             )
                                         ],

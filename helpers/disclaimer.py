@@ -17,7 +17,7 @@ disclaimer = dbc.Modal(
                          'accounted for any changes in the policy or population landscape (let alone the dramatic '
                          'shifts since 2021). Our projections estimate the increase or decrease in the total number of '
                          'households (',
-                         html.U([html.B('not'), 'housing need']),
+                         html.U([html.B('not ', style={"font-weight": "bold"}), 'housing need']),
                          ') using a “line of best fit” between 2006, 2016, '
                          'and 2021 census. To learn more about our projections, please see our ',
                          html.A('methodology here.',
@@ -27,7 +27,7 @@ disclaimer = dbc.Modal(
                 html.H6(['These projections are simple guides to give an idea'
                          ' of how a community might grow or decline if ',
                          html.I('past trends continue into the future'),
-                         ', not definitive assessments on which targets should be based'])
+                         ', not definitive assessments on which targets should be based.'])
             ]
         ),
     ],
