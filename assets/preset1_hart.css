@@ -936,6 +936,9 @@ ol {
 #projection-modal-header > h3 {
   color: white;
 }
+#HH-size-IC-graph-description-page3 > div > h6 > strong {
+  font-weight: bold;
+}
 /* Misc
 –––––––––––––––––––––––––––––––––––––––––––––––––– */
 hr {
