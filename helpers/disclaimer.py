@@ -5,8 +5,19 @@ disclaimer = dbc.Modal(
     children=[
         dbc.ModalHeader(
             dcc.Markdown(
-                "### Projection Disclaimer"
-            )),
+                "### Projection Disclaimer",
+                style={
+                    "flex-grow": "1",
+                    "color": "white",
+                    "text-align": "center",
+                },
+                id="projection-modal-header"
+            ),
+            style={
+                "background": "#39c0f7",
+                "flex-direction": "row",
+            }
+        ),
         dbc.ModalBody(
             [
                 html.H6('Making Household Projections is not a precise science. Many organizations and government '
@@ -28,7 +39,11 @@ disclaimer = dbc.Modal(
                          ' of how a community might grow or decline if ',
                          html.I('past trends continue into the future'),
                          ', not definitive assessments on which targets should be based.'])
-            ]
+            ],
+            style={
+                "margin": "20px",
+            }
+
         ),
     ],
     id="projection-modal",

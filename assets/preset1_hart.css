@@ -933,7 +933,9 @@ ol {
 .u-pull-left {
   float: left; }
 
-
+#projection-modal-header > h3 {
+  color: white;
+}
 /* Misc
 –––––––––––––––––––––––––––––––––––––––––––––––––– */
 hr {
