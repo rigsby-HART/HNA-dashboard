@@ -1,5 +1,5 @@
 import dash_bootstrap_components as dbc
-from dash import dcc, html
+from dash import dcc, html, Output, Input, State, callback
 
 disclaimer = dbc.Modal(
     children=[
@@ -13,6 +13,7 @@ disclaimer = dbc.Modal(
                 },
                 id="projection-modal-header"
             ),
+            close_button=False,
             style={
                 "background": "#39c0f7",
                 "flex-direction": "row",
@@ -42,11 +43,37 @@ disclaimer = dbc.Modal(
             ],
             style={
                 "margin": "20px",
+            },
+        ),
+        dbc.ModalFooter(
+            dbc.Button(
+                "I Understand", id="close", className="ms-auto", n_clicks=0,
+                style={
+                    "background": "#39C0F7",
+                    "border": "#39C0F7",
+                }
+            ),
+            style={
+                "justify-content": "center",
             }
 
         ),
     ],
+    backdrop="static",
+    keyboard=False,
     id="projection-modal",
     is_open=True,
     size="lg"
 )
+
+
+@callback(
+    Output("projection-modal", "is_open"),
+    [Input("close", "n_clicks")],
+    [State("projection-modal", "is_open")],
+    config_prevent_initial_callbacks=True,
+)
+def toggle_modal(n2, is_open):
+    if n2:
+        return False
+    return is_open
