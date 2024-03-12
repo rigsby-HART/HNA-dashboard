@@ -12,7 +12,8 @@ Example as below
 ![img.png](images/sqlitebrowser.png)
 
 However since I (Jack) inherited this project several months after the completion,
-I never had access to the original scripts to create this database.  As such, I created several 
+I never had access to the original scripts to create this database.  (Retcon, I just got access a month before I left, 
+refer to [this for the files](https://github.com/UBC-HART/HNA-DataGen))  As such, I created several 
 scripts to append new requests to this database. I plan to format it better 
 someday, but since they are one time use and as of right now, and literally only I 
 use them, I haven't gotten to it.  

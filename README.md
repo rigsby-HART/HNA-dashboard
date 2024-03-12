@@ -35,6 +35,7 @@ Please make sure you have the following installed (requirements.txt is provided 
 Changelog: 
 2023/10/16 - To use the requirements.txt as is, python 3.11 or before is recommended as one of the packages uses the 
 deprecated "distutils" setup package.  (https://peps.python.org/pep-0632/)
+2024/03/12 - There exists a Dockerfile if you'd like a guaranteed working environment.  
 
 - Python 3
 - Pandas
@@ -44,15 +45,19 @@ deprecated "distutils" setup package.  (https://peps.python.org/pep-0632/)
 - Dash
 - SQL Alchemy
 
+It is recommended to just use the requirements file, as you most likely will be missing libraries that aren't core.
+
 ### Start Local Server and Run the Dashboard
 
 1. Git Clone or Download the code package from the repository
-2. Type `python app.py` on your Shell inside of the folder of the code package.
-3. Type `localhost:8000/page1`, `localhost:8000/page2`, `localhost:8000/page3`, and `localhost:8000/page4` on your browser. Each page indicates:
+2. Run `pip install -r requirements.txt` to install all the required packages.
+3. Type `python app.py` on your Shell inside of the folder of the code package.
+4. Type `localhost:8000/page1`, up to page 5 on your browser. Each page indicates:
     - page1: Map Picker
     - page2: Core Housing Need page
     - page3: Household Projections page
-    - page4: Indigenous Household Core Housing Need Page
+    - page4: Indigenous Household Core Housing Need page
+    - page5: Renter vs Owners (and Subsidized Renters) page
     
 ## Technical Support
 
