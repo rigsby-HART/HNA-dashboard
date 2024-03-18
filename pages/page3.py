@@ -36,8 +36,7 @@ import pages.projection_helpers.projections_by_income_category # noqa
     Input('year-comparison', 'data'),
     Input('area-scale-store', 'data'),
     State('url', 'search'),
-    Input('datatable9-interactivity', 'selected_columns'),
-    cache_args_to_ignore=[-1]
+    Input("main-area", "modified_timestamp"),
 )
 def change_download_names_p3_0(geo: str, geo_c: str, year_comparison: str, scale, lang_query, update):
     return change_download_title(geo, geo_c, year_comparison, scale,
@@ -49,8 +48,7 @@ def change_download_names_p3_0(geo: str, geo_c: str, year_comparison: str, scale
     Input('year-comparison', 'data'),
     Input('area-scale-store', 'data'),
     State('url', 'search'),
-    Input('datatable9-interactivity', 'selected_columns'),
-    cache_args_to_ignore=[-1]
+    Input("main-area", "modified_timestamp"),
 )
 def change_download_names_p3_1(geo: str, geo_c: str, year_comparison: str, scale, lang_query, update):
     return change_download_title(geo, geo_c, year_comparison, scale,
@@ -62,8 +60,7 @@ def change_download_names_p3_1(geo: str, geo_c: str, year_comparison: str, scale
     Input('year-comparison', 'data'),
     Input('area-scale-store', 'data'),
     State('url', 'search'),
-    Input('datatable9-interactivity', 'selected_columns'),
-    cache_args_to_ignore=[-1]
+    Input("main-area", "modified_timestamp"),
 )
 def change_download_names_p3_2(geo: str, geo_c: str, year_comparison: str, scale, lang_query, update):
     return change_download_title(geo, geo_c, year_comparison, scale,
@@ -75,8 +72,7 @@ def change_download_names_p3_2(geo: str, geo_c: str, year_comparison: str, scale
     Input('year-comparison', 'data'),
     Input('area-scale-store', 'data'),
     State('url', 'search'),
-    Input('datatable9-interactivity', 'selected_columns'),
-    cache_args_to_ignore=[-1]
+    Input("main-area", "modified_timestamp"),
 )
 def change_download_names_p3_3(geo: str, geo_c: str, year_comparison: str, scale, lang_query, update):
     return change_download_title(geo, geo_c, year_comparison, scale,
@@ -88,8 +84,7 @@ def change_download_names_p3_3(geo: str, geo_c: str, year_comparison: str, scale
     Input('year-comparison', 'data'),
     Input('area-scale-store', 'data'),
     State('url', 'search'),
-    Input('datatable9-interactivity', 'selected_columns'),
-    cache_args_to_ignore=[-1]
+    Input("main-area", "modified_timestamp"),
 )
 def change_download_names_p3_4(geo: str, geo_c: str, year_comparison: str, scale, lang_query, update):
     return change_download_title(geo, geo_c, year_comparison, scale,
@@ -101,8 +96,7 @@ def change_download_names_p3_4(geo: str, geo_c: str, year_comparison: str, scale
     Input('year-comparison', 'data'),
     Input('area-scale-store', 'data'),
     State('url', 'search'),
-    Input('datatable9-interactivity', 'selected_columns'),
-    cache_args_to_ignore=[-1]
+    Input("main-area", "modified_timestamp"),
 )
 def change_download_names_p3_5(geo: str, geo_c: str, year_comparison: str, scale, lang_query, update):
     return change_download_title(geo, geo_c, year_comparison, scale,

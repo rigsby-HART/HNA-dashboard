@@ -37,8 +37,7 @@ import pages.page2_helpers.percentage_CHN_by_priority_population  # noqa
     Input('year-comparison', 'data'),
     Input('area-scale-store', 'data'),
     State('url', 'search'),
-    Input('income-category-affordability-table', 'selected_columns'),
-    cache_args_to_ignore=[-1]
+    Input("main-area", "modified_timestamp"),
 )
 def change_download_names_p2_0(geo: str, geo_c: str, year_comparison: str, scale, lang_query, update):
     return change_download_title(geo, geo_c, year_comparison, scale,
@@ -50,8 +49,7 @@ def change_download_names_p2_0(geo: str, geo_c: str, year_comparison: str, scale
     Input('year-comparison', 'data'),
     Input('area-scale-store', 'data'),
     State('url', 'search'),
-    Input('income-category-affordability-table', 'selected_columns'),
-    cache_args_to_ignore=[-1]
+    Input("main-area", "modified_timestamp"),
 )
 def change_download_names_p2_1(geo: str, geo_c: str, year_comparison: str, scale, lang_query, update):
     return change_download_title(geo, geo_c, year_comparison, scale,
@@ -63,8 +61,7 @@ def change_download_names_p2_1(geo: str, geo_c: str, year_comparison: str, scale
     Input('year-comparison', 'data'),
     Input('area-scale-store', 'data'),
     State('url', 'search'),
-    Input('income-category-affordability-table', 'selected_columns'),
-    cache_args_to_ignore=[-1]
+    Input("main-area", "modified_timestamp"),
 )
 def change_download_names_p2_2(geo: str, geo_c: str, year_comparison: str, scale, lang_query, update):
     return change_download_title(geo, geo_c, year_comparison, scale,
@@ -76,8 +73,7 @@ def change_download_names_p2_2(geo: str, geo_c: str, year_comparison: str, scale
     Input('year-comparison', 'data'),
     Input('area-scale-store', 'data'),
     State('url', 'search'),
-    Input('income-category-affordability-table', 'selected_columns'),
-    cache_args_to_ignore=[-1]
+    Input("main-area", "modified_timestamp"),
 )
 def change_download_names_p2_3(geo: str, geo_c: str, year_comparison: str, scale, lang_query, update):
     return change_download_title(geo, geo_c, year_comparison, scale,
@@ -94,7 +90,7 @@ def change_download_names_p2_3(geo: str, geo_c: str, year_comparison: str, scale
     Output("pct-pp-hh-chn-pg2", "children"),
     Output("pct-pp-ic-chn-pg2", "children"),
     Input('year-comparison', 'data'),
-    Input('income-category-affordability-table', 'selected_columns'),
+    Input("year-comparison", "modified_timestamp"),
     cache_args_to_ignore=[-1]
 )
 @cache.memoize()
@@ -129,7 +125,7 @@ def change_title_labels(year_comparison, refresh):
     Output("percent-CHN-PP-description-pg2", "children"),
     Output("percent-CHN-PP-IC-description-pg2", "children"),
     Input('year-comparison', 'data'),
-    Input('income-category-affordability-table', 'selected_columns'),
+    Input("year-comparison", "modified_timestamp"),
     cache_args_to_ignore=[-1]
 )
 @cache.memoize()

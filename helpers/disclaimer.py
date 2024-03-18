@@ -71,7 +71,7 @@ disclaimer = dbc.Modal(
     Output("projection-modal", "is_open"),
     [Input("close", "n_clicks")],
     [State("projection-modal", "is_open")],
-    config_prevent_initial_callbacks=True,
+    # config_prevent_initial_callbacks=True,
 )
 def toggle_modal(n2, is_open):
     if n2:

@@ -38,8 +38,7 @@ import pages.indigenous_helpers.housing_deficit             # noqa
     Input('year-comparison', 'data'),
     Input('area-scale-store', 'data'),
     State('url', 'search'),
-    Input('datatable-interactivity_ind', 'selected_columns'),
-    cache_args_to_ignore=[-1]
+    Input("main-area", "modified_timestamp"),
 )
 def change_download_names_p4_0(geo: str, geo_c: str, year_comparison: str, scale, lang_query, update):
     return change_download_title(geo, geo_c, year_comparison, scale,
@@ -52,8 +51,7 @@ def change_download_names_p4_0(geo: str, geo_c: str, year_comparison: str, scale
     Input('year-comparison', 'data'),
     Input('area-scale-store', 'data'),
     State('url', 'search'),
-    Input('datatable-interactivity_ind', 'selected_columns'),
-    cache_args_to_ignore=[-1]
+    Input("main-area", "modified_timestamp"),
 )
 def change_download_names_p4_1(geo: str, geo_c: str, year_comparison: str, scale, lang_query, update):
     return change_download_title(geo, geo_c, year_comparison, scale,
@@ -68,7 +66,7 @@ def change_download_names_p4_1(geo: str, geo_c: str, year_comparison: str, scale
     Input('main-area', 'data'),
     Input('comparison-area', 'data'),
     State('year-comparison', 'data'),
-    prevent_initial_call=True,
+    # prevent_initial_call=True,
     cache_args_to_ignore=[0,2]
 )
 @cache.memoize()

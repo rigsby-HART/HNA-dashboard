@@ -48,6 +48,7 @@ def storage_variables():
         dcc.Store(id='main-area', storage_type='local'),
         dcc.Store(id='comparison-area', storage_type='local'),
         dcc.Store(id='year-comparison', storage_type='local'),
+        dcc.Location(id='url', refresh=False)
     ]
 
 

@@ -8,11 +8,7 @@ from helpers.table_helper import storage_variables
 
 # Define the index page layout
 
-app.layout = html.Div(
-    storage_variables() + [
-        dcc.Location(id='url', refresh=False),
-        dash.page_container
-    ])
+app.layout = html.Div(dash.page_container)
 server = app.server
 
 # Run the app on localhost:8050
