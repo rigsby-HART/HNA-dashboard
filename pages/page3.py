@@ -40,7 +40,7 @@ import pages.projection_helpers.projections_by_income_category # noqa
 )
 def change_download_names_p3_0(geo: str, geo_c: str, year_comparison: str, scale, lang_query, update):
     return change_download_title(geo, geo_c, year_comparison, scale,
-                       "Projected Household Gain/Loss by Income")
+                       "Projected Households by Income")
 @callback(
     Output('graph10', 'config'),
     Input('main-area', 'data'),
@@ -52,7 +52,7 @@ def change_download_names_p3_0(geo: str, geo_c: str, year_comparison: str, scale
 )
 def change_download_names_p3_1(geo: str, geo_c: str, year_comparison: str, scale, lang_query, update):
     return change_download_title(geo, geo_c, year_comparison, scale,
-                       "Projected Household Gain/Loss by Household Size")
+                       "Projected Households by Household Size")
 @callback(
     Output('graph-h', 'config'),
     Input('main-area', 'data'),
@@ -64,7 +64,7 @@ def change_download_names_p3_1(geo: str, geo_c: str, year_comparison: str, scale
 )
 def change_download_names_p3_2(geo: str, geo_c: str, year_comparison: str, scale, lang_query, update):
     return change_download_title(geo, geo_c, year_comparison, scale,
-                       "Projected Household Gain/Loss by Household Size and Income")
+                       "Projected Households by Household Size and Income")
 @callback(
     Output('graph11', 'config'),
     Input('main-area', 'data'),
@@ -76,7 +76,7 @@ def change_download_names_p3_2(geo: str, geo_c: str, year_comparison: str, scale
 )
 def change_download_names_p3_3(geo: str, geo_c: str, year_comparison: str, scale, lang_query, update):
     return change_download_title(geo, geo_c, year_comparison, scale,
-                       "Projected Household Gain/Loss by Household Size and Income Delta")
+                       "Projected Household Deltas by Household Size and Income")
 @callback(
     Output('graph12', 'config'),
     Input('main-area', 'data'),
@@ -100,7 +100,7 @@ def change_download_names_p3_4(geo: str, geo_c: str, year_comparison: str, scale
 )
 def change_download_names_p3_5(geo: str, geo_c: str, year_comparison: str, scale, lang_query, update):
     return change_download_title(geo, geo_c, year_comparison, scale,
-                       "Projected Community and Regional Household Growth Rates")
+                       "Projected Municipal Household Growth Rates by Household Size")
 
 
 # 

@@ -27,8 +27,8 @@ layout = layout(default_year)
 # Plot/table generators and callbacks
 # Import helpers
 import pages.indigenous_helpers.income_categories                     # noqa
-import pages.indigenous_helpers.percentage_CHN_by_income_and_HH_size              # noqa
-import pages.indigenous_helpers.housing_deficit             # noqa
+import pages.indigenous_helpers.percentage_CHN_by_income              # noqa
+import pages.indigenous_helpers.percentage_CHN_by_income_and_HH_size_and_housing_deficit             # noqa
 # import pages.indigenous_helpers.download_text             # noqa
 
 @callback(

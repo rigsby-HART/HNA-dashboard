@@ -198,7 +198,7 @@ def update_geo_figure34(geo, geo_c, year_comparison, scale, refresh, lang_query)
             yaxis=dict(autorange="reversed"),
             barmode='stack',
             plot_bgcolor='#F8F9F9',
-            title=f'{localization[language]["Percentage of Indigenous Households in Core Housing Need, by Income Category"]}, {default_year}<br>{geo}',
+            title=f'{localization[language]["Percentage of Indigenous Households in Core Housing Need, by Income and HH Size"]}, {default_year}<br>{geo}',
             legend_title=localization[language]["HH Size"]
         )
         fig2.update_yaxes(
@@ -335,7 +335,7 @@ def update_geo_figure34(geo, geo_c, year_comparison, scale, refresh, lang_query)
         # Plot layout settings
         fig2.update_layout(
             font=dict(size=10),
-            title=f'{localization[language]["Percentage of Indigenous Households in Core Housing Need, by Income Category"]}, {default_year}',
+            title=f'{localization[language]["Percentage of Indigenous Households in Core Housing Need, by Income and HH Size"]}, {default_year}',
             legend_traceorder='normal',
             modebar_color=modebar_color,
             modebar_activecolor=modebar_activecolor,
