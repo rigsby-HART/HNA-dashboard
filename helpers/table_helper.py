@@ -1,16 +1,14 @@
 import math
 import re
 
-import numpy as np
 import pandas as pd
 import plotly.express as px
-
-from typing import List, Dict
 from dash import dcc
+
 from helpers.create_engine import mapped_geo_code, partner_table, updated_csd_year, income_indigenous_year, \
-    default_year, df_geo_list, mapped_geo_code_year
-from helpers.style_helper import style_header_conditional
+    default_year, mapped_geo_code_year
 from helpers.localization import localization
+from helpers.style_helper import style_header_conditional
 
 
 # Used when people click different region scales, eg Census subdivision vs Region/Territory
@@ -86,8 +84,9 @@ def error_region_table_population(geo: str, year: int, language: str, no_cd=Fals
                           y=[''])
             no_data = localization[language]["No Data for {geo}, please try another CSD"].format(geo=geo)
         else:
-            fig = px.line(x=[localization[language]["No Data for {geo}, please try CD/Provincial level"].format(geo=geo)],
-                          y=[''])
+            fig = px.line(
+                x=[localization[language]["No Data for {geo}, please try CD/Provincial level"].format(geo=geo)],
+                y=[''])
             no_data = localization[language]["No Data for {geo}, please try CD/Provincial level"].format(geo=geo)
         table = pd.DataFrame({no_data: [""]})
         return [{"name": no_data, "id": no_data}], table.to_dict("records"), [], [], style_header_conditional, fig
@@ -164,6 +163,34 @@ def query_table_owner(geo: str, year: int, df_list, source_year=default_year, ow
         geo_code = mapped_geo_code_year[source_year].query('Geography == ' + f'"{geo}"')["Geo_Code"].item()
         geo_name = mapped_geo_code_year[year].query(f'Geo_Code == {geo_code}')["Geography"].item()
         return geo_name, df_list[year].query('Geography == ' + f'"{geo_name}"')
+
+
+def change_download_title(geo: str, geo_c: str, year_comparison: str, scale: str, title: str):
+    # When no area is selected
+    if geo == None and geo_c != None:
+        geo = geo_c
+    elif geo == None and geo_c == None:
+        geo = "Canada"
+
+    # Area Scaling up/down when user clicks area scale button on page 1
+    geo = area_scale_primary_only(geo, scale)
+    if geo_c:
+        geo = geo + "vs" + geo_c
+    config = {
+        'displayModeBar': True, 'displaylogo': False,
+        'modeBarButtonsToRemove': ['zoom', 'lasso2d', 'pan', 'select', 'zoomIn', 'zoomOut', 'autoScale',
+                                   'resetScale'],
+        "toImageButtonOptions": {
+            "filename": 'la mao'
+        }
+    }
+
+    year = default_year
+    if year_comparison:
+        original_year, compared_year = year_comparison.split("-")
+        year = f"{compared_year} vs {original_year}"
+
+    return {**config, 'toImageButtonOptions': {'filename': f'{geo}_{title}_{year}'}}
 
 
 def get_language(lang_query: str):
