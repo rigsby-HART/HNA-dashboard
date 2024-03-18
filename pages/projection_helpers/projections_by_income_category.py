@@ -76,7 +76,6 @@ def plot1_new_projection(geo, is_comparison, language, year=default_year):
 
 # Callback logic for the table/plot update
 
-
 @callback(
     Output('datatable5-interactivity', 'columns'),
     Output('datatable5-interactivity', 'data'),

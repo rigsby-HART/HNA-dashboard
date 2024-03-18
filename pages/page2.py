@@ -8,7 +8,7 @@ from dash import register_page
 from app_file import cache
 from helpers.create_engine import partner_table, default_year, default_value
 from helpers.paragraph_files import strings
-from helpers.table_helper import query_table
+from helpers.table_helper import query_table, area_scale_primary_only
 from pages.page2_helpers.page2_main import layout
 
 register_page(__name__)
@@ -26,6 +26,64 @@ import pages.page2_helpers.housing_deficit  # noqa
 import pages.page2_helpers.housing_deficit_bedrooms  # noqa
 import pages.page2_helpers.percentage_CHN_by_pp_income  # noqa
 import pages.page2_helpers.percentage_CHN_by_priority_population  # noqa
+
+
+@callback(
+    Output('graph', 'config'),
+    Output('graph2', 'config'),
+    Output('graph5', 'config'),
+    Output('graph6', 'config'),
+    Input('main-area', 'data'),
+    Input('comparison-area', 'data'),
+    Input('year-comparison', 'data'),
+    Input('area-scale-store', 'data'),
+    State('url', 'search'),
+    Input('income-category-affordability-table', 'selected_columns'),
+    cache_args_to_ignore=[-1]
+)
+@cache.memoize()
+def change_download_names(geo: str, geo_c: str, year_comparison: str, scale, lang_query, update):
+    # When no area is selected
+    if geo == None and geo_c != None:
+        geo = geo_c
+    elif geo == None and geo_c == None:
+        geo = default_value
+
+    # Area Scaling up/down when user clicks area scale button on page 1
+    geo = area_scale_primary_only(geo, scale)
+    if geo_c:
+        geo = geo + "vs" + geo_c
+    config = {
+        'displayModeBar': True, 'displaylogo': False,
+        'modeBarButtonsToRemove': ['zoom', 'lasso2d', 'pan', 'select', 'zoomIn', 'zoomOut', 'autoScale',
+                                   'resetScale'],
+        "toImageButtonOptions": {
+            "filename": 'custom_image'
+        }
+    }
+
+    if year_comparison:
+        original_year, compared_year = year_comparison.split("-")
+        return (
+            {**config, 'toImageButtonOptions':
+                {'filename': f'{geo}_Percentage of Households in Core Housing Need, by Income Category_{compared_year}vs{original_year}'}},
+            {**config, 'toImageButtonOptions':
+                {'filename': f'{geo}_Percentage of Households in Core Housing Need, by Income Category and HH Size_{compared_year}vs{original_year}'}},
+            {**config, 'toImageButtonOptions':
+                {'filename': f'{geo}_Percentage of Households in Core Housing Need, by Priority Population_{compared_year}vs{original_year}'}},
+            {**config, 'toImageButtonOptions':
+                {'filename': f'{geo}_Percentage of Households in Core Housing Need, by Priority Population and Income Category_{compared_year}vs{original_year}'}},
+        )
+    return (
+        {**config, 'toImageButtonOptions':
+            {'filename': f'{geo}_Percentage of Households in Core Housing Need, by Income Category_2021'}},
+        {**config, 'toImageButtonOptions':
+            {'filename': f'{geo}_Percentage of Households in Core Housing Need, by Income Category and HH Size_2021'}},
+        {**config, 'toImageButtonOptions':
+            {'filename': f'{geo}_Percentage of Households in Core Housing Need, by Priority Population_2021'}},
+        {**config, 'toImageButtonOptions':
+            {'filename': f'{geo}_Percentage of Households in Core Housing Need, by Priority Population and Income Category_2021'}},
+    )
 
 
 @callback(
@@ -91,14 +149,14 @@ def change_descriptions(year_comparison, refresh):
             ),
         )
     return (
-            dcc.Markdown(
-                strings['percentage-CHN-by-priority-population-page2']
-                , link_target="_blank"
-            ),
-            dcc.Markdown(
-                strings['percentage-CHN-by-pp-income-page2']
-                , link_target="_blank"
-            ),
+        dcc.Markdown(
+            strings['percentage-CHN-by-priority-population-page2']
+            , link_target="_blank"
+        ),
+        dcc.Markdown(
+            strings['percentage-CHN-by-pp-income-page2']
+            , link_target="_blank"
+        ),
     )
 
 

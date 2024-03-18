@@ -11,9 +11,14 @@ joined_df_filtered = partner_table[default_year].query('Geography == "Fraser Val
 table = joined_df_filtered[['Rent 20% of AMHI', 'Rent 50% of AMHI']]
 table2 = joined_df_filtered[['Rent 20% of AMHI', 'Rent 50% of AMHI']]
 fig = px.line(x=['Not Available'], y=['Not Available'])
-config = {'displayModeBar': True, 'displaylogo': False,
-          'modeBarButtonsToRemove': ['zoom', 'lasso2d', 'pan', 'select', 'zoomIn', 'zoomOut', 'autoScale',
-                                     'resetScale']}
+config = {
+    'displayModeBar': True, 'displaylogo': False,
+    'modeBarButtonsToRemove': ['zoom', 'lasso2d', 'pan', 'select', 'zoomIn', 'zoomOut', 'autoScale',
+                               'resetScale'],
+    "toImageButtonOptions": {
+        "filename": 'custom_image'
+    }
+}
 
 
 # TODO: Make the table actually select by year
@@ -132,7 +137,7 @@ def layout(year: int = default_year):
                                             strings['percentage-CHN-by-income-graph-page2'],
                                             link_target="_blank"
                                         )
-                                    ],  id='percent-IC-HH-CHN-description-pg2',
+                                    ], id='percent-IC-HH-CHN-description-pg2',
                                         className='muni-reg-text-lgeo'),
 
                                     # Graph
@@ -203,7 +208,7 @@ def layout(year: int = default_year):
                                         ], className='pg2-table-lgeo'
                                         ),
                                     ]
-                                    ),# Description
+                                    ),  # Description
                                     html.Div([
                                         dcc.Markdown(
                                             strings["housing-deficit-bedrooms-page2"],
@@ -267,7 +272,7 @@ def layout(year: int = default_year):
                                             strings["percentage-CHN-by-priority-population-page2"],
                                             link_target="_blank"
                                         )
-                                        ],
+                                    ],
                                         id='percent-CHN-PP-description-pg2',
                                         className='muni-reg-text-lgeo'
                                     ),
@@ -295,11 +300,11 @@ def layout(year: int = default_year):
                                         id='pct-pp-ic-chn-pg2'),
                                     # Description
                                     html.Div([
-                                            dcc.Markdown(
-                                                strings["percentage-CHN-by-pp-income-page2"] ,
-                                                link_target="_blank"
-                                            )
-                                        ],
+                                        dcc.Markdown(
+                                            strings["percentage-CHN-by-pp-income-page2"],
+                                            link_target="_blank"
+                                        )
+                                    ],
                                         id='percent-CHN-PP-IC-description-pg2',
                                         className='muni-reg-text-lgeo'
                                     ),
@@ -346,4 +351,4 @@ def layout(year: int = default_year):
                             ], className='dashboard-pg2-lgeo'
                         ),
                     ], className='background-pg2-lgeo'
-    )
+                    )

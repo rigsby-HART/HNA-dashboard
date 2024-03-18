@@ -1,8 +1,15 @@
 # Importing Libraries
-from dash import register_page, Output, Input, State, callback
+import warnings
+
+import pandas as pd
+from dash import dcc, Input, Output, ctx, callback, State, html, clientside_callback
+from dash import register_page
+
+from app_file import cache
 from helpers.create_engine import default_year
+from helpers.table_helper import area_scale_primary_only
 from pages.projection_helpers.page3_main import layout
-import dash_bootstrap_components as dbc
+
 register_page(__name__)
 # Default selected area
 default_value = 'Canada'
@@ -23,6 +30,10 @@ import pages.projection_helpers.projections_by_hh_size_and_IC # noqa
 # import pages.projection_helpers.bedroom_projections_delta # noqa
 import pages.projection_helpers.projections_by_household_size # noqa
 import pages.projection_helpers.projections_by_income_category # noqa
+
+import pages.projection_helpers.download_text # noqa
+
+
 
 
 # 
