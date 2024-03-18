@@ -25,7 +25,7 @@ default_year = 2021
 default_value = 'Canada'
 
 # This stuff should be the same every year (unless places change which I cannot think of a good idea to fix it)
-engine_current = engine_list[default_year] # Current Year
+engine_current = engine_list[default_year]  # Current Year
 
 # Importing Projection Data
 
@@ -42,15 +42,14 @@ df_province_list.columns = df_geo_list.columns
 mapped_geo_code = pd.read_sql_table('geocodes_integrated', engine_current.connect())
 
 # Repeat the data processing for each year
-partner_table: Dict[int, pd.DataFrame] = {} # Jhin Zhao wtf is this
-income_indigenous_year: Dict[int, pd.DataFrame] = {} # Contains data for indigenous census (page4)
-income_ownership_year: Dict[int, pd.DataFrame] = {} # Contains data for ownership census (page5)
-updated_csd_year: Dict[int, pd.DataFrame] = {} # Data for CSD level projections
-updated_cd_year: Dict[int, pd.DataFrame] = {} # Data for CD level projections
-mapped_geo_code_year: Dict[int, pd.DataFrame] = {} # Maps data from Geocode to label (123 4567 > Burnaby (CSD, BC))
-bedrooms_table: Dict[int, pd.DataFrame] = {} # Contains data for bedroom predition (page2)
-subsidized_rent_table: Dict[int, pd.DataFrame] = {} # Contains data for subsidized vs unsubbed renters (page5)
-
+partner_table: Dict[int, pd.DataFrame] = {}  # Jhin Zhao wtf is this
+income_indigenous_year: Dict[int, pd.DataFrame] = {}  # Contains data for indigenous census (page4)
+income_ownership_year: Dict[int, pd.DataFrame] = {}  # Contains data for ownership census (page5)
+updated_csd_year: Dict[int, pd.DataFrame] = {}  # Data for CSD level projections
+updated_cd_year: Dict[int, pd.DataFrame] = {}  # Data for CD level projections
+mapped_geo_code_year: Dict[int, pd.DataFrame] = {}  # Maps data from Geocode to label (123 4567 > Burnaby (CSD, BC))
+bedrooms_table: Dict[int, pd.DataFrame] = {}  # Contains data for bedroom predition (page2)
+subsidized_rent_table: Dict[int, pd.DataFrame] = {}  # Contains data for subsidized vs unsubbed renters (page5)
 
 for year in engine_list.keys():
     income_category = pd.read_sql_table('income', engine_list[year].connect())
@@ -73,4 +72,3 @@ for year in engine_list.keys():
     updated_cd_year[year] = pd.read_sql_table('cd_hh_projections', engine_list[year].connect())
     mapped_geo_code_year[year] = pd.read_sql_table('geocodes_integrated', engine_list[year].connect())
     bedrooms_table[year] = pd.read_sql_table('bedrooms', engine_list[year].connect())
-

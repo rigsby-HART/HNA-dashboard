@@ -209,7 +209,7 @@ def layout(year: int = default_year):
                                     # Title
                                     html.H3(
                                         children=html.Strong(
-                                            f'Income Categories and Affordable Shelter Costs for Subsidized and Unsubsidized Renters, {year}'),
+                                            f'Income Categories and Affordable Shelter Costs for Subsidized vs Unsubsidized Renters, {year}'),
                                         id='income-category-subsidized-title-page5'),
                                     # Description
                                     html.Div([
@@ -268,7 +268,7 @@ def layout(year: int = default_year):
                                 html.Div([
                                     # Title
                                     html.H3(children=html.Strong(
-                                        f'Percentage of Households in Core Housing Need, by Income Category, {year}'),
+                                        f'Percentage of Households in Core Housing Need for Subsidized vs Unsubsidized Renters, by Income Category, {year}'),
                                         id='percent-HH-CHN-subsidized-title-page5'),
                                     # Description
                                     html.Div([
@@ -314,7 +314,7 @@ def layout(year: int = default_year):
                                     html.Div(children=[
 
                                         dcc.Graph(
-                                            id='CHN-by-IC-HH-graph-subsidized-pg5',
+                                            id='CHN-by-IC-HH-subsidized-graph-pg5',
                                             figure=fig,
                                             config=config,
                                         )

@@ -21,6 +21,7 @@ import pages.renter_owner_helpers.subsidized_income_categories                  
 import pages.renter_owner_helpers.subsidized_percentage_CHN_by_income   # noqa
 import pages.renter_owner_helpers.subsidized_percentage_CHN_by_HH_type  # noqa
 import pages.renter_owner_helpers.subsidized_housing_deficit            # noqa
+import pages.renter_owner_helpers.download_text            # noqa
 
 
 # Setting layout for dashboard

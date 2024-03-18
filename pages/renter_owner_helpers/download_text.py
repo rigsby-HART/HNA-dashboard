@@ -7,18 +7,16 @@ from pages.page3 import default_value
 
 
 @callback(
-    Output('graph9', 'config'),
-    Output('graph10', 'config'),
-    Output('graph-h', 'config'),
-    Output('graph11', 'config'),
-    Output('graph12', 'config'),
-    Output('graph13', 'config'),
+    Output('graph-pg5', 'config'),
+    Output('graph2-pg5', 'config'),
+    Output('percent-HH-CHN-subsidized-graph-pg5', 'config'),
+    Output('CHN-by-IC-HH-subsidized-graph-pg5', 'config'),
     Input('main-area', 'data'),
     Input('comparison-area', 'data'),
     Input('year-comparison', 'data'),
     Input('area-scale-store', 'data'),
     State('url', 'search'),
-    Input('projected-hh-by-hh-size-income', 'selected_columns'),
+    Input('income-category-affordability-table-pg5', 'selected_columns'),
     cache_args_to_ignore=[-1]
 )
 @cache.memoize()
@@ -50,13 +48,9 @@ def change_download_names(geo: str, geo_c: str, year_comparison: str, scale, lan
         {**config, 'toImageButtonOptions':
             {'filename': f'{geo}_Percentage of Households in Core Housing Need, by Income Category_{year}'}},
         {**config, 'toImageButtonOptions':
-            {'filename': f'{geo}_Percentage of Households in Core Housing Need, by Income Category and HH Size_{year}'}},
+            {'filename': f'{geo}_Percentage of Households in Core Housing Need, by Income Category and Housing Type_{year}'}},
         {**config, 'toImageButtonOptions':
-            {'filename': f'{geo}_Percentage of Households in Core Housing Need, by Priority Population_{year}'}},
+            {'filename': f'{geo}_Percentage of Households in Core Housing Need for Subsidized vs Unsubsidized Renters, by Income Category_{year}'}},
         {**config, 'toImageButtonOptions':
-            {'filename': f'{geo}_Percentage of Households in Core Housing Need, by Priority Population and Income Category_{year}'}},
-        {**config, 'toImageButtonOptions':
-            {'filename': f'{geo}_Percentage of Households in Core Housing Need, by Priority Population_{year}'}},
-        {**config, 'toImageButtonOptions':
-            {'filename': f'{geo}_Percentage of Households in Core Housing Need, by Priority Population and Income Category_{year}'}},
+            {'filename': f'{geo}_Percentage of Households in Core Housing Need for Subsidized vs Unsubsidized Renters, by Income Category and Housing Type_{year}'}},
     )

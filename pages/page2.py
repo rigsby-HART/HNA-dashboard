@@ -61,28 +61,19 @@ def change_download_names(geo: str, geo_c: str, year_comparison: str, scale, lan
             "filename": 'custom_image'
         }
     }
-
+    year = default_year
     if year_comparison:
         original_year, compared_year = year_comparison.split("-")
-        return (
-            {**config, 'toImageButtonOptions':
-                {'filename': f'{geo}_Percentage of Households in Core Housing Need, by Income Category_{compared_year}vs{original_year}'}},
-            {**config, 'toImageButtonOptions':
-                {'filename': f'{geo}_Percentage of Households in Core Housing Need, by Income Category and HH Size_{compared_year}vs{original_year}'}},
-            {**config, 'toImageButtonOptions':
-                {'filename': f'{geo}_Percentage of Households in Core Housing Need, by Priority Population_{compared_year}vs{original_year}'}},
-            {**config, 'toImageButtonOptions':
-                {'filename': f'{geo}_Percentage of Households in Core Housing Need, by Priority Population and Income Category_{compared_year}vs{original_year}'}},
-        )
+        year = f"{compared_year} vs {original_year}"
     return (
         {**config, 'toImageButtonOptions':
-            {'filename': f'{geo}_Percentage of Households in Core Housing Need, by Income Category_2021'}},
+            {'filename': f'{geo}_Percentage of Households in Core Housing Need, by Income Category_{year}'}},
         {**config, 'toImageButtonOptions':
-            {'filename': f'{geo}_Percentage of Households in Core Housing Need, by Income Category and HH Size_2021'}},
+            {'filename': f'{geo}_Percentage of Households in Core Housing Need, by Income Category and HH Size_{year}'}},
         {**config, 'toImageButtonOptions':
-            {'filename': f'{geo}_Percentage of Households in Core Housing Need, by Priority Population_2021'}},
+            {'filename': f'{geo}_Percentage of Households in Core Housing Need, by Priority Population_{year}'}},
         {**config, 'toImageButtonOptions':
-            {'filename': f'{geo}_Percentage of Households in Core Housing Need, by Priority Population and Income Category_2021'}},
+            {'filename': f'{geo}_Percentage of Households in Core Housing Need, by Priority Population and Income Category_{year}'}},
     )
 
 

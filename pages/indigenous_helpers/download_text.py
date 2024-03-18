@@ -7,18 +7,14 @@ from pages.page3 import default_value
 
 
 @callback(
-    Output('graph9', 'config'),
-    Output('graph10', 'config'),
-    Output('graph-h', 'config'),
-    Output('graph11', 'config'),
-    Output('graph12', 'config'),
-    Output('graph13', 'config'),
+    Output('graph_ind', 'config'),
+    Output('graph2_ind', 'config'),
     Input('main-area', 'data'),
     Input('comparison-area', 'data'),
     Input('year-comparison', 'data'),
     Input('area-scale-store', 'data'),
     State('url', 'search'),
-    Input('projected-hh-by-hh-size-income', 'selected_columns'),
+    Input('datatable-interactivity_ind', 'selected_columns'),
     cache_args_to_ignore=[-1]
 )
 @cache.memoize()
@@ -48,15 +44,7 @@ def change_download_names(geo: str, geo_c: str, year_comparison: str, scale, lan
         year = f"{compared_year} vs {original_year}"
     return (
         {**config, 'toImageButtonOptions':
-            {'filename': f'{geo}_Percentage of Households in Core Housing Need, by Income Category_{year}'}},
+            {'filename': f'{geo}_Percentage of Indigenous Households in Core Housing Need, by Income Category_{year}'}},
         {**config, 'toImageButtonOptions':
-            {'filename': f'{geo}_Percentage of Households in Core Housing Need, by Income Category and HH Size_{year}'}},
-        {**config, 'toImageButtonOptions':
-            {'filename': f'{geo}_Percentage of Households in Core Housing Need, by Priority Population_{year}'}},
-        {**config, 'toImageButtonOptions':
-            {'filename': f'{geo}_Percentage of Households in Core Housing Need, by Priority Population and Income Category_{year}'}},
-        {**config, 'toImageButtonOptions':
-            {'filename': f'{geo}_Percentage of Households in Core Housing Need, by Priority Population_{year}'}},
-        {**config, 'toImageButtonOptions':
-            {'filename': f'{geo}_Percentage of Households in Core Housing Need, by Priority Population and Income Category_{year}'}},
+            {'filename': f'{geo}_Percentage of Indigenous Households in Core Housing Need, by Income Category and HH Size_{year}'}},
     )

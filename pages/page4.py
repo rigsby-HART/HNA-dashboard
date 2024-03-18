@@ -28,6 +28,7 @@ layout = layout(default_year)
 import pages.indigenous_helpers.income_categories                     # noqa
 import pages.indigenous_helpers.percentage_CHN_by_income_and_HH_size              # noqa
 import pages.indigenous_helpers.housing_deficit             # noqa
+import pages.indigenous_helpers.download_text             # noqa
 
 
 # Download This Community

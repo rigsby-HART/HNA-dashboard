@@ -75,7 +75,7 @@ def plot_df_core_housing_need_by_amhi(geo: str, IsComparison: bool, language: st
 # Callback logic for the plot update
 
 @callback(
-    Output('CHN-by-IC-HH-graph-subsidized-pg5', 'figure'),
+    Output('CHN-by-IC-HH-subsidized-graph-pg5', 'figure'),
     Input('main-area', 'data'),
     Input('comparison-area', 'data'),
     Input('year-comparison', 'data'),
