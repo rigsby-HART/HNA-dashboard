@@ -11,7 +11,8 @@ from plotly.subplots import make_subplots
 from app_file import cache
 from helpers.create_engine import income_indigenous_year, default_year, default_value
 from helpers.style_helper import style_data_conditional, style_header_conditional
-from helpers.table_helper import area_scale_comparison, area_scale_primary_only, error_indigenous_table, error_indigenous_figure, query_table, get_language
+from helpers.table_helper import area_scale_comparison, area_scale_primary_only, error_indigenous_table, \
+    error_indigenous_figure, query_table, get_language, change_download_title
 from helpers.localization import localization
 
 from pages.indigenous_helpers.page4_main import layout
@@ -28,8 +29,35 @@ layout = layout(default_year)
 import pages.indigenous_helpers.income_categories                     # noqa
 import pages.indigenous_helpers.percentage_CHN_by_income_and_HH_size              # noqa
 import pages.indigenous_helpers.housing_deficit             # noqa
-import pages.indigenous_helpers.download_text             # noqa
+# import pages.indigenous_helpers.download_text             # noqa
 
+@callback(
+    Output('graph_ind', 'config'),
+    Input('main-area', 'data'),
+    Input('comparison-area', 'data'),
+    Input('year-comparison', 'data'),
+    Input('area-scale-store', 'data'),
+    State('url', 'search'),
+    Input('datatable-interactivity_ind', 'selected_columns'),
+    cache_args_to_ignore=[-1]
+)
+def change_download_names_p4_0(geo: str, geo_c: str, year_comparison: str, scale, lang_query, update):
+    return change_download_title(geo, geo_c, year_comparison, scale,
+                       "Percentage of Indigenous Households in Core Housing Need, by Income Category")
+
+@callback(
+    Output('graph2_ind', 'config'),
+    Input('main-area', 'data'),
+    Input('comparison-area', 'data'),
+    Input('year-comparison', 'data'),
+    Input('area-scale-store', 'data'),
+    State('url', 'search'),
+    Input('datatable-interactivity_ind', 'selected_columns'),
+    cache_args_to_ignore=[-1]
+)
+def change_download_names_p4_1(geo: str, geo_c: str, year_comparison: str, scale, lang_query, update):
+    return change_download_title(geo, geo_c, year_comparison, scale,
+                       "Percentage of Indigenous Households in Core Housing Need, by Income Category and HH Size")
 
 # Download This Community
 

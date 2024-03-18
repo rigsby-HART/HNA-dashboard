@@ -8,7 +8,7 @@ from dash import register_page
 from app_file import cache
 from helpers.create_engine import partner_table, default_year, default_value
 from helpers.paragraph_files import strings
-from helpers.table_helper import query_table, area_scale_primary_only
+from helpers.table_helper import query_table, area_scale_primary_only, change_download_title
 from pages.page2_helpers.page2_main import layout
 
 register_page(__name__)
@@ -26,11 +26,62 @@ import pages.page2_helpers.housing_deficit  # noqa
 import pages.page2_helpers.housing_deficit_bedrooms  # noqa
 import pages.page2_helpers.percentage_CHN_by_pp_income  # noqa
 import pages.page2_helpers.percentage_CHN_by_priority_population  # noqa
-import pages.page2_helpers.download_text  # noqa
+# import pages.page2_helpers.download_text  # noqa
 
 
 
-
+@callback(
+    Output('graph', 'config'),
+    Input('main-area', 'data'),
+    Input('comparison-area', 'data'),
+    Input('year-comparison', 'data'),
+    Input('area-scale-store', 'data'),
+    State('url', 'search'),
+    Input('income-category-affordability-table', 'selected_columns'),
+    cache_args_to_ignore=[-1]
+)
+def change_download_names_p2_0(geo: str, geo_c: str, year_comparison: str, scale, lang_query, update):
+    return change_download_title(geo, geo_c, year_comparison, scale,
+                       "Percentage of Households in Core Housing Need, by Income Category")
+@callback(
+    Output('graph2', 'config'),
+    Input('main-area', 'data'),
+    Input('comparison-area', 'data'),
+    Input('year-comparison', 'data'),
+    Input('area-scale-store', 'data'),
+    State('url', 'search'),
+    Input('income-category-affordability-table', 'selected_columns'),
+    cache_args_to_ignore=[-1]
+)
+def change_download_names_p2_1(geo: str, geo_c: str, year_comparison: str, scale, lang_query, update):
+    return change_download_title(geo, geo_c, year_comparison, scale,
+                       "Percentage of Households in Core Housing Need, by Income Category and HH Size")
+@callback(
+    Output('graph5', 'config'),
+    Input('main-area', 'data'),
+    Input('comparison-area', 'data'),
+    Input('year-comparison', 'data'),
+    Input('area-scale-store', 'data'),
+    State('url', 'search'),
+    Input('income-category-affordability-table', 'selected_columns'),
+    cache_args_to_ignore=[-1]
+)
+def change_download_names_p2_2(geo: str, geo_c: str, year_comparison: str, scale, lang_query, update):
+    return change_download_title(geo, geo_c, year_comparison, scale,
+                       "Percentage of Households in Core Housing Need, by Priority Population")
+@callback(
+    Output('graph6', 'config'),
+    Input('main-area', 'data'),
+    Input('comparison-area', 'data'),
+    Input('year-comparison', 'data'),
+    Input('area-scale-store', 'data'),
+    State('url', 'search'),
+    Input('income-category-affordability-table', 'selected_columns'),
+    cache_args_to_ignore=[-1]
+)
+def change_download_names_p2_3(geo: str, geo_c: str, year_comparison: str, scale, lang_query, update):
+    return change_download_title(geo, geo_c, year_comparison, scale,
+                       "Percentage of Households in Core Housing Need, by Priority Population and Income Category")
 
 
 

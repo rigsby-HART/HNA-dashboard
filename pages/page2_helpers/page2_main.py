@@ -15,9 +15,6 @@ config = {
     'displayModeBar': True, 'displaylogo': False,
     'modeBarButtonsToRemove': ['zoom', 'lasso2d', 'pan', 'select', 'zoomIn', 'zoomOut', 'autoScale',
                                'resetScale'],
-    "toImageButtonOptions": {
-        "filename": 'custom_image'
-    }
 }
 
 

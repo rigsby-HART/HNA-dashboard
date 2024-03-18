@@ -199,3 +199,6 @@ def get_language(lang_query: str):
     if output not in localization.keys():
         return "en"
     return output
+
+
+default_value = 'Canada'

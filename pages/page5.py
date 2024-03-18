@@ -6,7 +6,7 @@ from dash import dcc, Input, Output, ctx, callback, State, html, register_page
 
 from app_file import cache
 from helpers.create_engine import income_ownership_year, default_year, default_value
-from helpers.table_helper import query_table, get_language
+from helpers.table_helper import query_table, get_language, change_download_title
 from pages.renter_owner_helpers.page5_main import layout
 
 register_page(__name__)
@@ -21,12 +21,72 @@ import pages.renter_owner_helpers.subsidized_income_categories                  
 import pages.renter_owner_helpers.subsidized_percentage_CHN_by_income   # noqa
 import pages.renter_owner_helpers.subsidized_percentage_CHN_by_HH_type  # noqa
 import pages.renter_owner_helpers.subsidized_housing_deficit            # noqa
-import pages.renter_owner_helpers.download_text            # noqa
+# import pages.renter_owner_helpers.download_text            # noqa
 
 
 # Setting layout for dashboard
 
 layout = layout(default_year)
+
+@callback(
+    Output('graph-pg5', 'config'),
+    Input('main-area', 'data'),
+    Input('comparison-area', 'data'),
+    Input('year-comparison', 'data'),
+    Input('area-scale-store', 'data'),
+    State('url', 'search'),
+    Input('income-category-affordability-table-pg5', 'selected_columns'),
+    cache_args_to_ignore=[-1]
+)
+def change_download_names_p5_0(geo: str, geo_c: str, year_comparison: str, scale, lang_query, update):
+    return change_download_title(geo, geo_c, year_comparison, scale,
+                       "Percentage of Households in Core Housing Need, by Income Category")
+
+
+@callback(
+    Output('graph2-pg5', 'config'),
+    Input('main-area', 'data'),
+    Input('comparison-area', 'data'),
+    Input('year-comparison', 'data'),
+    Input('area-scale-store', 'data'),
+    State('url', 'search'),
+    Input('income-category-affordability-table-pg5', 'selected_columns'),
+    cache_args_to_ignore=[-1]
+)
+def change_download_names_p5_1(geo: str, geo_c: str, year_comparison: str, scale, lang_query, update):
+    return change_download_title(geo, geo_c, year_comparison, scale,
+                       "Percentage of Households in Core Housing Need, by Income Category and Housing Type")
+
+
+@callback(
+    Output('percent-HH-CHN-subsidized-graph-pg5', 'config'),
+    Input('main-area', 'data'),
+    Input('comparison-area', 'data'),
+    Input('year-comparison', 'data'),
+    Input('area-scale-store', 'data'),
+    State('url', 'search'),
+    Input('income-category-affordability-table-pg5', 'selected_columns'),
+    cache_args_to_ignore=[-1]
+)
+def change_download_names_p5_2(geo: str, geo_c: str, year_comparison: str, scale, lang_query, update):
+    return change_download_title(geo, geo_c, year_comparison, scale,
+                       "Percentage of Households in Core Housing Need for Subsidized vs Unsubsidized Renters, by Income Category")
+
+
+@callback(
+    Output('CHN-by-IC-HH-subsidized-graph-pg5', 'config'),
+    Input('main-area', 'data'),
+    Input('comparison-area', 'data'),
+    Input('year-comparison', 'data'),
+    Input('area-scale-store', 'data'),
+    State('url', 'search'),
+    Input('income-category-affordability-table-pg5', 'selected_columns'),
+    cache_args_to_ignore=[-1]
+)
+def change_download_names_p5_3(geo: str, geo_c: str, year_comparison: str, scale, lang_query, update):
+    return change_download_title(geo, geo_c, year_comparison, scale,
+                       "Percentage of Households in Core Housing Need for Subsidized vs Unsubsidized Renters, by Income Category and Housing Type")
+
 
 
 # Plot/table generators and callbacks

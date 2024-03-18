@@ -12,8 +12,8 @@ from helpers.localization import localization
 from helpers.style_helper import colors, modebar_color, modebar_activecolor, columns_color_fill, style_data_conditional, \
     style_header_conditional, comparison_font_size, bar_colors
 from helpers.table_helper import get_language, area_scale_primary_only, error_region_table_population, \
-    area_scale_comparison
-from pages.page3 import default_value
+    area_scale_comparison, default_value
+
 
 # 2031 Household Projections by Income Category
 

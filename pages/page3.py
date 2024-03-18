@@ -1,18 +1,14 @@
 # Importing Libraries
-import warnings
 
-import pandas as pd
-from dash import dcc, Input, Output, ctx, callback, State, html, clientside_callback
+from dash import Input, Output, callback, State
 from dash import register_page
 
-from app_file import cache
 from helpers.create_engine import default_year
-from helpers.table_helper import area_scale_primary_only
+from helpers.table_helper import change_download_title
 from pages.projection_helpers.page3_main import layout
 
 register_page(__name__)
 # Default selected area
-default_value = 'Canada'
 
 # Setting layout for dashboard
 layout = layout(default_year)
@@ -31,9 +27,86 @@ import pages.projection_helpers.projections_by_hh_size_and_IC # noqa
 import pages.projection_helpers.projections_by_household_size # noqa
 import pages.projection_helpers.projections_by_income_category # noqa
 
-import pages.projection_helpers.download_text # noqa
+# import pages.projection_helpers.download_text # noqa
 
-
+@callback(
+    Output('graph9', 'config'),
+    Input('main-area', 'data'),
+    Input('comparison-area', 'data'),
+    Input('year-comparison', 'data'),
+    Input('area-scale-store', 'data'),
+    State('url', 'search'),
+    Input('datatable9-interactivity', 'selected_columns'),
+    cache_args_to_ignore=[-1]
+)
+def change_download_names_p3_0(geo: str, geo_c: str, year_comparison: str, scale, lang_query, update):
+    return change_download_title(geo, geo_c, year_comparison, scale,
+                       "Projected Household Gain/Loss by Income")
+@callback(
+    Output('graph10', 'config'),
+    Input('main-area', 'data'),
+    Input('comparison-area', 'data'),
+    Input('year-comparison', 'data'),
+    Input('area-scale-store', 'data'),
+    State('url', 'search'),
+    Input('datatable9-interactivity', 'selected_columns'),
+    cache_args_to_ignore=[-1]
+)
+def change_download_names_p3_1(geo: str, geo_c: str, year_comparison: str, scale, lang_query, update):
+    return change_download_title(geo, geo_c, year_comparison, scale,
+                       "Projected Household Gain/Loss by Household Size")
+@callback(
+    Output('graph-h', 'config'),
+    Input('main-area', 'data'),
+    Input('comparison-area', 'data'),
+    Input('year-comparison', 'data'),
+    Input('area-scale-store', 'data'),
+    State('url', 'search'),
+    Input('datatable9-interactivity', 'selected_columns'),
+    cache_args_to_ignore=[-1]
+)
+def change_download_names_p3_2(geo: str, geo_c: str, year_comparison: str, scale, lang_query, update):
+    return change_download_title(geo, geo_c, year_comparison, scale,
+                       "Projected Household Gain/Loss by Household Size and Income")
+@callback(
+    Output('graph11', 'config'),
+    Input('main-area', 'data'),
+    Input('comparison-area', 'data'),
+    Input('year-comparison', 'data'),
+    Input('area-scale-store', 'data'),
+    State('url', 'search'),
+    Input('datatable9-interactivity', 'selected_columns'),
+    cache_args_to_ignore=[-1]
+)
+def change_download_names_p3_3(geo: str, geo_c: str, year_comparison: str, scale, lang_query, update):
+    return change_download_title(geo, geo_c, year_comparison, scale,
+                       "Projected Household Gain/Loss by Household Size and Income Delta")
+@callback(
+    Output('graph12', 'config'),
+    Input('main-area', 'data'),
+    Input('comparison-area', 'data'),
+    Input('year-comparison', 'data'),
+    Input('area-scale-store', 'data'),
+    State('url', 'search'),
+    Input('datatable9-interactivity', 'selected_columns'),
+    cache_args_to_ignore=[-1]
+)
+def change_download_names_p3_4(geo: str, geo_c: str, year_comparison: str, scale, lang_query, update):
+    return change_download_title(geo, geo_c, year_comparison, scale,
+                       "Projected Municipal Household Growth Rates by Income Category")
+@callback(
+    Output('graph13', 'config'),
+    Input('main-area', 'data'),
+    Input('comparison-area', 'data'),
+    Input('year-comparison', 'data'),
+    Input('area-scale-store', 'data'),
+    State('url', 'search'),
+    Input('datatable9-interactivity', 'selected_columns'),
+    cache_args_to_ignore=[-1]
+)
+def change_download_names_p3_5(geo: str, geo_c: str, year_comparison: str, scale, lang_query, update):
+    return change_download_title(geo, geo_c, year_comparison, scale,
+                       "Projected Community and Regional Household Growth Rates")
 
 
 # 
