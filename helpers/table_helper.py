@@ -172,11 +172,13 @@ def change_download_title(geo: str, geo_c: str, year_comparison: str, scale: str
         geo = geo_c
     elif geo == None and geo_c == None:
         geo = "Canada"
-
     # Area Scaling up/down when user clicks area scale button on page 1
-    geo = area_scale_primary_only(geo, scale)
     if geo_c:
+        geo, geo_c = area_scale_comparison(geo, geo_c, scale)
         geo = geo + "vs" + geo_c
+    else:
+        geo = area_scale_primary_only(geo, scale)
+
     config = {
         'displayModeBar': True, 'displaylogo': False,
         'modeBarButtonsToRemove': ['zoom', 'lasso2d', 'pan', 'select', 'zoomIn', 'zoomOut', 'autoScale',
