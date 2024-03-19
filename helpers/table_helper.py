@@ -173,9 +173,14 @@ def change_download_title(geo: str, geo_c: str, year_comparison: str, scale: str
     elif geo == None and geo_c == None:
         geo = "Canada"
     # Area Scaling up/down when user clicks area scale button on page 1
-    if geo_c:
+    year = default_year
+    if year_comparison:
+        original_year, compared_year = year_comparison.split("-")
+        year = f"{compared_year} vs {original_year}"
+
+    if not year_comparison and geo_c:
         geo, geo_c = area_scale_comparison(geo, geo_c, scale)
-        geo = geo + "vs" + geo_c
+        geo = geo + " vs " + geo_c
     else:
         geo = area_scale_primary_only(geo, scale)
 
@@ -188,10 +193,7 @@ def change_download_title(geo: str, geo_c: str, year_comparison: str, scale: str
         }
     }
 
-    year = default_year
-    if year_comparison:
-        original_year, compared_year = year_comparison.split("-")
-        year = f"{compared_year} vs {original_year}"
+
 
     return {**config, 'toImageButtonOptions': {'filename': f'{geo}_{title}_{year}'}}
 
