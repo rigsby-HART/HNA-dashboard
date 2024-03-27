@@ -1,3 +1,7 @@
+### Warning
+These files are redundant as of 2024-03-25, I've added these files to the database generation in [this repo](https://github.com/UBC-HART/HNA-DataGen).
+If you are looking at this past this point, don't bother, just look at the other repo.
+
 # How to use
 These scripts were written after the original database generation by 
 Licker Geospatial.  The original database is a SQLite file, which contains
@@ -36,6 +40,3 @@ this will generate a table in the SQLite file.
 This was built to add transgender and nonbinary data to the minority table.
 1. If required, run the `transgeder/convert_2016_to_2021.py` script to convert 2016 to have the same labels as the 2021 data
 2. run `transgender/transgender_data.py` file.  This will append the required data to the partners table in the SQLite database file.
-
-Also, the reason why all the csvs are read as spanish in the scripts is because we have French things.  
-Default encoding will fail.

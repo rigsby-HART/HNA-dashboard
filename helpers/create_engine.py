@@ -72,3 +72,6 @@ for year in engine_list.keys():
     updated_cd_year[year] = pd.read_sql_table('cd_hh_projections', engine_list[year].connect())
     mapped_geo_code_year[year] = pd.read_sql_table('geocodes_integrated', engine_list[year].connect())
     bedrooms_table[year] = pd.read_sql_table('bedrooms', engine_list[year].connect())
+
+# Transit distance
+transit_distance = pd.read_csv('sources/smaller.csv')

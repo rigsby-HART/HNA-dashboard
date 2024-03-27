@@ -94,15 +94,17 @@ def change_download_names_p5_3(geo: str, geo_c: str, year_comparison: str, scale
     Output("percent-HH-CHN-title-page5", "children"),
     Output("percent-IC-HH-CHN-title-page5", "children"),
     Output("housing-deficit-page5", "children"),
-    State('main-area', 'data'),
-    State('comparison-area', 'data'),
+    Input('main-area', 'data'),
+    Input('comparison-area', 'data'),
     Input('year-comparison', 'data'),
     State('area-scale-store', 'data'),
     State('url', 'search'),
+    # State doesn't properly update
+    Input('area-scale-store', 'modified_timestamp'),
     cache_args_to_ignore=[0, 1, 3, 4]
 )
 @cache.memoize()
-def change_title_labels(geo, geo_c, year_comparison, scale, refresh, lang_query):
+def change_title_labels(geo, geo_c, year_comparison, scale, lang_query, refresh):
     language = get_language(lang_query)
     # change based off of url
     if year_comparison:
@@ -136,16 +138,16 @@ def func_ov7(n_clicks, geo, geo_c, year_comparison):
         geo = default_value
 
     if "ov7-download-csv-pg5" == ctx.triggered_id:
-        # if year_comparison:
-        #     original_year, compared_year = year_comparison.split("-")
-        #     _, joined_df_geo = query_table(geo, int(original_year), income_ownership_year)
-        #     _, joined_df_geo_c = query_table(geo, int(compared_year), income_ownership_year)
-        #     joined_df_download = pd.concat([joined_df_geo, joined_df_geo_c])
-        #     joined_df_download = joined_df_download.drop(columns=['pk_x', 'pk_y'])
-        #     return dcc.send_data_frame(joined_df_download.to_csv, "result.csv")
-        # else:
-        _, joined_df_geo = query_table(geo, default_year, income_ownership_year)
-        _, joined_df_geo_c = query_table(geo_c, default_year, income_ownership_year)
-        joined_df_download = pd.concat([joined_df_geo, joined_df_geo_c])
+        if year_comparison:
+            original_year, compared_year = year_comparison.split("-")
+            _, joined_df_geo = query_table(geo, int(original_year), income_ownership_year)
+            _, joined_df_geo_c = query_table(geo, int(compared_year), income_ownership_year)
+            joined_df_download = pd.concat([joined_df_geo, joined_df_geo_c])
 
-        return dcc.send_data_frame(joined_df_download.to_csv, "result.csv")
+            return dcc.send_data_frame(joined_df_download.to_csv, "result.csv")
+        else:
+            _, joined_df_geo = query_table(geo, default_year, income_ownership_year)
+            _, joined_df_geo_c = query_table(geo_c, default_year, income_ownership_year)
+            joined_df_download = pd.concat([joined_df_geo, joined_df_geo_c])
+
+            return dcc.send_data_frame(joined_df_download.to_csv, "result.csv")

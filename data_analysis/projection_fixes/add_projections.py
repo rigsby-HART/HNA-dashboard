@@ -27,7 +27,7 @@ cd_hh_projection.to_sql("cd_hh_projections", engine, index=False)
 csd_hh_projection = pd.read_sql_table('csd_hh_projections', engine.connect())
 
 # For some dumbass reason our original dataset's name uses some weird long "-" like "–".  This makes it so our new
-# data label is incompatable.  As it would be a MASSIVE pita to fix this, I will avoid this issue.
+# data label is incompatible.  As it would be a MASSIVE pita to fix this, I will avoid this issue.
 column_rename_map = {
     'Total - Private households by household type including census family structure - Total - Private households by household income proportion to AMHI_1 -   1pp':
         'Total - Private households by household type including census family structure - Total – Private households by household income proportion to AMHI_1 -   1pp',

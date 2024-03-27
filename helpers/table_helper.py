@@ -193,8 +193,6 @@ def change_download_title(geo: str, geo_c: str, year_comparison: str, scale: str
         }
     }
 
-
-
     return {**config, 'toImageButtonOptions': {'filename': f'{geo}_{title}_{year}'}}
 
 

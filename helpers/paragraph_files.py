@@ -68,6 +68,9 @@ strings["percentage-CHN-by-IC-HH-size-subsidized-page5"] = 'The following chart 
 
 strings["housing-deficit-subsidized-page5"] = 'The following table shows the total number of subsidized and unsubsidized renter households in CHN by income category, which may be considered as the existing deficit of housing options in the community. '
 
+# Transportation Distance (page6)
+strings["table-description-page6"] = 'The following table shows the total number of subsidized and unsubsidized renter households in CHN by income category, which may be considered as the existing deficit of housing options in the community. '
+
 
 # Link map
 links: Dict[str, str] = {
