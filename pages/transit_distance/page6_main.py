@@ -33,12 +33,12 @@ def layout(year: int = default_year):
                     html.Div([
                         # Title
                         html.H3(
-                            children=html.Strong(f'Transportation Distance'),
+                            children=html.Strong(f'Public Transit Distance'),
                             id='title-page6'),
                         # Description
                         html.Div([
                             dcc.Markdown(
-                                "This is the transportation distance page.",
+                                strings["table-description-page6"],
                                 link_target="_blank"
                             )
                         ], className='muni-reg-text-lgeo'),

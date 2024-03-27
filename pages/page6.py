@@ -97,7 +97,7 @@ clientside_callback(
         if (input > 0) {
             console.log("Downloading page")
             html2canvas(document.body, { allowTaint: true , scrollX:0, scrollY: 0  }).then(function(canvas) {
-                saveAs(canvas.toDataURL(), 'Transportation.png');
+                saveAs(canvas.toDataURL(), 'PublicTransit.png');
             });
         }
         

@@ -69,7 +69,7 @@ strings["percentage-CHN-by-IC-HH-size-subsidized-page5"] = 'The following chart 
 strings["housing-deficit-subsidized-page5"] = 'The following table shows the total number of subsidized and unsubsidized renter households in CHN by income category, which may be considered as the existing deficit of housing options in the community. '
 
 # Transportation Distance (page6)
-strings["table-description-page6"] = 'The following table shows the total number of subsidized and unsubsidized renter households in CHN by income category, which may be considered as the existing deficit of housing options in the community. '
+strings["table-description-page6"] = 'The following table shows the Public Transit Proximity by Statistics Canada by Census Subdivision (CSD) or Census Division (CD).  The data is split into quintiles to match the methodology by Statistics Canada.  The specific indexes differ, as the database provided by Statistics Canada differs from the data shown on the site due to suppression. For a visual breakdown of each CSD visit the Statistics Canada website.  '
 
 
 # Link map
@@ -81,6 +81,7 @@ links: Dict[str, str] = {
     'impacted by CERB': 'https://hart.ubc.ca/understanding-2021-core-housing-need-data/',
     'high risk of experiencing housing need': 'https://hart.ubc.ca/housing-glossary/#priority-populations',
     'unit mix methodology': 'https://hart.ubc.ca/HNA-Methodology.pdf#page=27',
+    'Public Transit Proximity by Statistics Canada': 'https://www150.statcan.gc.ca/n1/pub/71-607-x/71-607-x2020011-eng.htm',
 }
 # These are the quirky ones im gonna regex to do
 re_links: Dict[str, str] = {
