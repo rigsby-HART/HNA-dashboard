@@ -79,7 +79,11 @@ def layout(year: int = default_year):
                                 ),
                             ]),
                         ]),
+                        # Whitespace
 
+                        html.Div(
+                            style={"height": "70px"},
+                        ),
                         # Raw data download button
 
                         html.Div([
@@ -88,7 +92,7 @@ def layout(year: int = default_year):
                         ],
                             className='region-button-lgeo'
                         ),
-                        html.P(id='placeholder'),
+                        html.P(id='placeholder-pg6'),
 
                         # Hee hee it's only me jack this time
 

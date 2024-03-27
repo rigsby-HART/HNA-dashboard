@@ -4,7 +4,7 @@ import pandas as pd
 import numpy as np
 import plotly.graph_objects as go
 import warnings
-from dash import dcc, html, Input, Output, ctx, callback, State, register_page
+from dash import dcc, html, Input, Output, ctx, callback, State, register_page, clientside_callback
 from dash.dash_table.Format import Format, Scheme, Group
 from plotly.subplots import make_subplots
 
@@ -58,7 +58,22 @@ def change_download_names_p4_1(geo: str, geo_c: str, year_comparison: str, scale
                        "Percentage of Indigenous Households in Core Housing Need, by Income Category and HH Size")
 
 # Download This Community
+clientside_callback(
+    """
+    async function (input) {
+        if (input > 0) {
+            console.log("Downloading page")
+            html2canvas(document.body, { allowTaint: true , scrollX:0, scrollY: 0  }).then(function(canvas) {
+                saveAs(canvas.toDataURL(), 'IndigenousCoreHousingNeed.png');
+            });
+        }
 
+        return "";
+    }
+    """,
+    Output("placeholder-pg4", "children"),
+    Input("ov7-download-csv_ind", "n_clicks"),
+)
 
 @callback(
     Output("ov7-download-text_ind", "data"),

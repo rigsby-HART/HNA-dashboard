@@ -208,11 +208,12 @@ def layout(year):
                                 # Raw data download button
 
                                 html.Div([
-                                    html.Button("Download This Community", id="ov7-download-csv_ind"),
-                                    dcc.Download(id="ov7-download-text_ind")
-                                ],
+                                        html.Button("Download This Community", id="ov7-download-csv_ind"),
+                                        dcc.Download(id="ov7-download-text_ind")
+                                    ],
                                     className='region-button-lgeo'
                                 ),
+                                html.P(id='placeholder-pg4'),
 
                                 # LGEO
 

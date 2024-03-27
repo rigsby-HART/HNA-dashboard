@@ -330,6 +330,7 @@ def layout(year: int = default_year):
                                 ],
                                     className='region-button-lgeo'
                                 ),
+                                html.P(id='placeholder-pg2'),
 
                                 # LGEO
 

@@ -2,7 +2,7 @@
 
 import pandas as pd
 import warnings
-from dash import dcc, Input, Output, ctx, callback, State, html, register_page
+from dash import dcc, Input, Output, ctx, callback, State, html, register_page, clientside_callback
 
 from app_file import cache
 from helpers.create_engine import income_ownership_year, default_year, default_value
@@ -125,6 +125,23 @@ def change_title_labels(geo, geo_c, year_comparison, scale, lang_query, refresh)
         html.Strong(f'{default_year} Affordable Housing Deficit'),
     )
 
+
+clientside_callback(
+    """
+    async function (input) {
+        if (input > 0) {
+            console.log("Downloading page")
+            html2canvas(document.body, { allowTaint: true , scrollX:0, scrollY: 0 }).then(function(canvas) {
+                saveAs(canvas.toDataURL(), 'OwnerVsRenterCoreHousingNeed.png');
+            });
+        }
+
+        return "";
+    }
+    """,
+    Output("placeholder-pg5", "children"),
+    Input("ov7-download-csv-pg5", "n_clicks"),
+)
 
 @callback(
     Output("ov7-download-text-pg5", "data"),

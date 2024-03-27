@@ -1,6 +1,6 @@
 # Importing Libraries
 
-from dash import Input, Output, callback, State
+from dash import Input, Output, callback, State, clientside_callback
 from dash import register_page
 
 from helpers.create_engine import default_year
@@ -103,6 +103,22 @@ def change_download_names_p3_5(geo: str, geo_c: str, year_comparison: str, scale
                        "Projected Municipal Household Growth Rates by Household Size")
 
 
+clientside_callback(
+    """
+    async function (input) {
+        if (input > 0) {
+            console.log("Downloading page")
+            html2canvas(document.body, { allowTaint: true , scrollX:0, scrollY: 0  }).then(function(canvas) {
+                saveAs(canvas.toDataURL(), 'HouseholdProjections.png');
+            });
+        }
+
+        return "";
+    }
+    """,
+    Output("placeholder-pg3", "children"),
+    Input("download-csv-pg3", "n_clicks"),
+)
 # 
 # @callback(
 #     Output("HH-IC-page3", "children"),

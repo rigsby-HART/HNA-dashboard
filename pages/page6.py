@@ -56,10 +56,10 @@ def update_transportation_table(geo, geo_c, scale, update, lang_query):
             geo_c_code = mapped_geo_code.loc[mapped_geo_code['Geography'] == geo_c, :]["Geo_Code"].tolist()[0]
         df = get_quintile_info(geo_code)
     except:
-            # No data for the selected region
-            no_data = f"No Data for {geo}, please try CD/Provincial level"
-            table = pd.DataFrame({no_data: [""]})
-            return [{"name": no_data, "id": no_data}], table.to_dict("records"), [], [], style_header_conditional
+        # No data for the selected region
+        no_data = f"No Data for {geo}, please try CD/Provincial level"
+        table = pd.DataFrame({no_data: [""]})
+        return [{"name": no_data, "id": no_data}], table.to_dict("records"), [], [], style_header_conditional
     # Generating callback output to update table
     col_list = []
     for i in df.columns:
@@ -71,7 +71,6 @@ def update_transportation_table(geo, geo_c, scale, update, lang_query):
                              scheme=Scheme.fixed,
                              precision=0
                          )})
-    
 
     style_cell_conditional = [
                                  {
@@ -92,13 +91,12 @@ def update_transportation_table(geo, geo_c, scale, update, lang_query):
         'records'), style_data_conditional, style_cell_conditional, style_header_conditional
 
 
-
 clientside_callback(
     """
     async function (input) {
         if (input > 0) {
             console.log("Downloading page")
-            html2canvas(document.body).then(function(canvas) {
+            html2canvas(document.body, { allowTaint: true , scrollX:0, scrollY: 0  }).then(function(canvas) {
                 saveAs(canvas.toDataURL(), 'Transportation.png');
             });
         }
@@ -106,9 +104,11 @@ clientside_callback(
         return "";
     }
     """,
-    Output("placeholder", "children"),
+    Output("placeholder-pg6", "children"),
     Input("ov7-download-csv-pg6", "n_clicks"),
 )
+
+
 @callback(
     Output("ov7-download-text-pg6", "data"),
     Input("ov7-download-csv-pg6", "n_clicks"),

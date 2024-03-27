@@ -671,6 +671,15 @@ def layout(year=default_year):
                                         ),
                                     ], className='pg3-table-plot-box-lgeo'),
 
+                                    # Raw data download button
+
+                                    html.Div([
+                                        html.Button("Download This Community", id="download-csv-pg3"),
+                                        dcc.Download(id="download-text-pg3")
+                                    ],
+                                        className='region-button-lgeo'
+                                    ),
+                                    html.P(id='placeholder-pg3'),
                                     # LGEO
 
                                     html.Div([

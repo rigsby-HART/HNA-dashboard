@@ -389,6 +389,8 @@ def layout(year: int = default_year):
                                     className='region-button-lgeo'
                                 ),
 
+                                html.P(id='placeholder-pg5'),
+
                                 # Hee hee it's only me jack this time
 
                                 # Whitespace

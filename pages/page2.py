@@ -156,6 +156,22 @@ def change_descriptions(year_comparison, refresh):
     )
 
 
+clientside_callback(
+    """
+    async function (input) {
+        if (input > 0) {
+            console.log("Downloading page")
+            html2canvas(document.body, { allowTaint: true , scrollX:0, scrollY: 0  }).then(function(canvas) {
+                saveAs(canvas.toDataURL(), 'CoreHousingNeed.png');
+            });
+        }
+
+        return "";
+    }
+    """,
+    Output("placeholder-pg2", "children"),
+    Input("ov7-download-csv", "n_clicks"),
+)
 @callback(
     Output("ov7-download-text", "data"),
     Input("ov7-download-csv", "n_clicks"),
