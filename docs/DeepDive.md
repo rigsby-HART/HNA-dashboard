@@ -50,6 +50,10 @@ only opening 2 instances instead of 5 on the webpage).
 None of these changes exist in the 2016 version of the page, so you can use it as a reference if I messed something up and
 you'd like to revert it, or just use the github history (the correct way).
 
+
+04-02-2024 - Added transit distance to page 6.  It's live on https://hart.ubc.ca/housing-needs-assessment-tool-3/.  Copy
+the JS on the code block that makes the map to export to live if we ever wanna.  Also added exporting page as png.
+
 ## Repo structure
 
 This project was initially developed with Licker Geo, but has been internally worked on since 2023-10.  I, Jack have handed
@@ -67,7 +71,7 @@ host the Flask app (Dash is just a framework on top of Flask).
 The way the data flows through the individual python files are:
 
 1. `app.py` is the root of all the pages.  It acts as a router to the specific each page.  `pages/page1.py` is the map,
-while `page2.py` to `page5.py` are the data tables.
+while `page2.py` to `page6.py` are the data tables.  They are in the same order as the buttons on the hna page.
 2. All of these pages are written with a Dash framework.  As such, they are able to share information about the current
 selected geography using `dcc.store` variables (can be found in `helpers/table_helper.py`)
 3. The table information is all sourced from `create_engine.py` to prevent redundant memory usage.  The file dynamically
