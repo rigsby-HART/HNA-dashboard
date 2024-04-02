@@ -18,7 +18,7 @@ def get_quintile_info(geo_code, is_second=False) -> pd.DataFrame:
         df_data = transit_distance[transit_distance['CSDUID'].astype(str).str.startswith(str(geo_code))]
     # Calculate the population for each quintile and the total population
     df_output = pd.DataFrame(
-        columns=["0 to 20%", "20 to 40%", "40 to 60%", "60 to 80%", "80 to 100%", "No Data", "Total"],
+        columns=["0 to 20%", "20 to 40%", "40 to 60%", "60 to 80%", "80 to 100%", "No Transit Available", "Total"],
         index=["Quintile Range", "Population"]
     )
     for i in range(1, 6):
@@ -28,12 +28,12 @@ def get_quintile_info(geo_code, is_second=False) -> pd.DataFrame:
 
     quintile_values = (quintiles.iloc[:-1].reset_index(drop=True).astype(str) + " - " + quintiles.iloc[1:].reset_index(
         drop=True).astype(str))
-    quintile_values.at["No Data"] = ""
+    quintile_values.at["No Transit Available"] = ""
     quintile_values.at["Total"] = "0 - 1.0"
-    df_output.at["Population", "No Data"] = df_data[df_data["prox_idx_transit"].isna()]["DBPOP"].sum()
+    df_output.at["Population", "No Transit Available"] = df_data[df_data["prox_idx_transit"].isna()]["DBPOP"].sum()
     quintile_values.index = df_output.columns
     df_output.loc["Quintile Range"] = quintile_values
-    df_output.at["Population", "Total"] = df_output.loc["Population", :"No Data"].sum()
+    df_output.at["Population", "Total"] = df_output.loc["Population", :"No Transit Available"].sum()
 
     # Craig wants it the other direction, no agreedge from me
     df_output = df_output.T
