@@ -7,7 +7,7 @@ from dash.dash_table.Format import Format, Group, Scheme
 
 from app_file import cache
 from helpers.create_engine import transit_distance, default_year, default_value, mapped_geo_code
-from helpers.style_helper import columns_color_fill, style_data_conditional, style_header_conditional
+from helpers.style_helper import columns_color_fill, style_header_conditional, comparison_font_size
 from helpers.table_helper import query_table, area_scale_primary_only, area_scale_comparison
 from pages.transit_distance.page6_main import layout
 from pages.transit_distance.population import get_quintile_info
@@ -54,6 +54,7 @@ def update_transportation_table(geo, geo_c, scale, update, lang_query):
         geo_code = mapped_geo_code.loc[mapped_geo_code['Geography'] == geo, :]["Geo_Code"].tolist()[0]
         if geo_c:
             geo_c_code = mapped_geo_code.loc[mapped_geo_code['Geography'] == geo_c, :]["Geo_Code"].tolist()[0]
+            df_c = get_quintile_info(geo_c_code, True)
         df = get_quintile_info(geo_code)
     except:
         # No data for the selected region
@@ -61,34 +62,127 @@ def update_transportation_table(geo, geo_c, scale, update, lang_query):
         table = pd.DataFrame({no_data: [""]})
         return [{"name": no_data, "id": no_data}], table.to_dict("records"), [], [], style_header_conditional
     # Generating callback output to update table
-    col_list = []
-    for i in df.columns:
-        col_list.append({"name": [geo, i],
-                         "id": i,
-                         "type": 'numeric',
-                         "format": Format(
-                             group=Group.yes,
-                             scheme=Scheme.fixed,
-                             precision=0
-                         )})
+    if not geo_c:
 
-    style_cell_conditional = [
-                                 {
-                                     'if': {'column_id': c},
-                                     'backgroundColor': columns_color_fill[1],
+        col_list = []
+        for i in df.columns:
+            col_list.append({"name": [geo, i],
+                             "id": i,
+                             "type": 'numeric',
+                             "format": Format(
+                                 group=Group.yes,
+                                 scheme=Scheme.fixed,
+                                 precision=0
+                             )})
 
-                                     # "maxWidth" : "100px"
-                                 } for c in df.columns[1:]
-                             ] + [
-                                 {
-                                     'if': {'column_id': df.columns[0]},
-                                     'backgroundColor': columns_color_fill[0],
+        style_cell_conditional = [
+                                     {
+                                         'if': {'column_id': c},
+                                         'backgroundColor': columns_color_fill[1],
 
-                                 }
-                             ] + [
-                             ]
-    return col_list, df.to_dict(
-        'records'), style_data_conditional, style_cell_conditional, style_header_conditional
+                                         # "maxWidth" : "100px"
+                                     } for c in df.columns[1:]
+                                 ] + [
+                                     {
+                                         'if': {'column_id': df.columns[0]},
+                                         'backgroundColor': columns_color_fill[0],
+
+                                     }
+                                 ]
+        style_data_conditional = [
+                                     {
+                                         'if': {'row_index': 0},
+                                         'backgroundColor': '#b0e6fc',
+                                         'color': '#000000'
+                                     },
+                                     {
+                                         'if': {'row_index': len(df.index) - 1},
+                                         'backgroundColor': '#39c0f7',
+                                         'color': '#000000'
+                                     }
+                                 ] + [
+                                     {
+                                         'if': {'row_index': i},
+                                         'backgroundColor': '#74d3f9',
+                                         'color': '#000000'
+                                     }
+                                     for i in range(1, len(df.index) - 1, 2)
+                                 ] + [
+                                     {
+                                         'if': {'row_index': i},
+                                         'backgroundColor': '#b0e6fc',
+                                         'color': '#000000'
+                                     }
+                                     for i in range(2, len(df.index) - 1, 2)
+                                 ]
+        return col_list, df.to_dict(
+            'records'), style_data_conditional, style_cell_conditional, style_header_conditional
+    else:
+        col_list = []
+        df_m = pd.concat([df, df_c.iloc[:, 2]], axis=1)
+        for idx, i in enumerate(df.columns):
+            if idx < 2:
+                col_list.append({"name": ["Area", i], "id": i})
+            else:
+                col_list.append({"name": [geo, i], "id": i})
+
+        for i in df_c.columns[2:]:
+            col_list.append({"name": [geo_c, i], "id": i})
+
+        style_cell_conditional = \
+            [
+                {
+                    'if': {'column_id': c},
+                    'backgroundColor': columns_color_fill[1]
+                } for c in df.columns[1:]
+            ] + \
+            [
+                {
+                    'if': {'column_id': c},
+                    'backgroundColor': columns_color_fill[2]
+                } for c in df.columns[1:]
+            ] + \
+            [
+                {
+                    'if': {'column_id': df.columns[0]},
+                    'backgroundColor': columns_color_fill[0]
+                }
+            ] + \
+            [
+                {
+                    'font_size': comparison_font_size,
+                    "width": "25%",
+                }
+            ]
+
+        style_data_conditional = [
+                                     {
+                                         'if': {'row_index': 0},
+                                         'backgroundColor': '#b0e6fc',
+                                         'color': '#000000'
+                                     },
+                                     {
+                                         'if': {'row_index': len(df_m.index) - 1},
+                                         'backgroundColor': '#39c0f7',
+                                         'color': '#000000'
+                                     }
+                                 ] + [
+                                     {
+                                         'if': {'row_index': i},
+                                         'backgroundColor': '#74d3f9',
+                                         'color': '#000000'
+                                     }
+                                     for i in range(1, len(df_m.index) - 1, 2)
+                                 ] + [
+                                     {
+                                         'if': {'row_index': i},
+                                         'backgroundColor': '#b0e6fc',
+                                         'color': '#000000'
+                                     }
+                                     for i in range(2, len(df_m.index) - 1, 2)
+                                 ]
+        return col_list, df_m.to_dict(
+            'records'), style_data_conditional, style_cell_conditional, style_header_conditional
 
 
 clientside_callback(

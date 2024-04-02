@@ -33,7 +33,7 @@ def layout(year: int = default_year):
                     html.Div([
                         # Title
                         html.H3(
-                            children=html.Strong(f'Public Transit Distance'),
+                            children=html.Strong(f'Public Transit Proximity'),
                             id='title-page6'),
                         # Description
                         html.Div([
