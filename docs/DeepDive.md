@@ -54,6 +54,9 @@ you'd like to revert it, or just use the github history (the correct way).
 04-02-2024 - Added transit distance to page 6.  It's live on https://hart.ubc.ca/housing-needs-assessment-tool-3/.  Copy
 the JS on the code block that makes the map to export to live if we ever wanna.  Also added exporting page as png.
 
+04-05-2024 - Added HART elearning.  All content is found in `/static/`.  This content is served by Flask (the underlying)
+technology behind Dash.  It's just static html + css + js.
+
 ## Repo structure
 
 This project was initially developed with Licker Geo, but has been internally worked on since 2023-10.  I, Jack have handed

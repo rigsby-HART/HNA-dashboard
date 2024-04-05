@@ -58,6 +58,7 @@ It is recommended to just use the requirements file, as you most likely will be 
     - page3: Household Projections page
     - page4: Indigenous Household Core Housing Need page
     - page5: Renter vs Owners (and Subsidized Renters) page
+    - page6: Public Transit Distance (hidden for now)
     
 ## Technical Support
 
