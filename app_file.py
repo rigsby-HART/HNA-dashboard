@@ -5,8 +5,7 @@ import diskcache
 import sys
 from os import path as path
 
-
-
+from flask import Flask
 
 # Diskcache for non-production apps when developing locally
 
@@ -25,5 +24,6 @@ else:
 app = dash.Dash(__name__, 
                 external_stylesheets=[dbc.themes.BOOTSTRAP], 
                 meta_tags=[{"name": "viewport", "content": "width=device-width"}],
-                use_pages=True
+                use_pages=True,
+                # server=Flask("dash", static_folder='static', static_url_path='/static'),
                 )
