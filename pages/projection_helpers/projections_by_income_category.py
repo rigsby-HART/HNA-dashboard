@@ -27,8 +27,9 @@ def plot1_new_projection(geo, is_comparison, language, year=default_year):
     updated_csd_filtered_current_plot1 = updated_csd_filtered[[
         'Total - Private households by household type including census family structure -   Households with income 20% or under of area median household income (AMHI) - Total - Household size',
         'Total - Private households by household type including census family structure -   Households with income 21% to 50% of AMHI - Total - Household size',
-        'Total - Private households by household type including census family structure -   Households with income 51% to 80% of AMHI - Total - Household size',
+        # swapped the order for 51-80 and 81-120 because the associated values for median and moderate household were somehow swapped later
         'Total - Private households by household type including census family structure -   Households with income 81% to 120% of AMHI - Total - Household size',
+        'Total - Private households by household type including census family structure -   Households with income 51% to 80% of AMHI - Total - Household size',
         'Total - Private households by household type including census family structure -   Households with income 121% or over of AMHI - Total - Household size'
     ]].T.reset_index().drop(columns=['index'])
     # This predicts 10 years into the future.  I will hardcode the assumption of year + 10
@@ -36,8 +37,9 @@ def plot1_new_projection(geo, is_comparison, language, year=default_year):
     updated_csd_filtered_future_plot1 = updated_csd_filtered[[
         f'{prediction_year} Population Delta with income 20% or under of area median household income (AMHI)',
         f'{prediction_year} Population Delta with income 21% to 50% of AMHI',
-        f'{prediction_year} Population Delta with income 51% to 80% of AMHI',
+        # swapped the order for 51-80 and 81-120 because the associated values for median and moderate household were somehow swapped later
         f'{prediction_year} Population Delta with income 81% to 120% of AMHI',
+        f'{prediction_year} Population Delta with income 51% to 80% of AMHI',
         f'{prediction_year} Population Delta with income 121% or over of AMHI'
     ]].T.reset_index().drop(columns=['index'])
 
