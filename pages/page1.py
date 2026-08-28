@@ -63,7 +63,7 @@ gdf_p_code_added["rand"] = np.random.randint(1, 100, len(gdf_p_code_added))
 
 fig_m = go.Figure()
 
-fig_m.add_trace(go.Choroplethmapbox(geojson=json.loads(gdf_p_code_added.geometry.to_json()),
+fig_m.add_trace(go.Choroplethmap(geojson=json.loads(gdf_p_code_added.geometry.to_json()),
                                     locations=gdf_p_code_added.index,
                                     z=gdf_p_code_added.rand,
                                     showscale=False,
@@ -71,12 +71,12 @@ fig_m.add_trace(go.Choroplethmapbox(geojson=json.loads(gdf_p_code_added.geometry
                                     marker=dict(opacity=opacity_value),
                                     marker_line_width=.5))
 
-fig_m.update_layout(mapbox_style="carto-positron",
-                    mapbox_center={"lat": gdf_p_code_added.geometry.centroid.y.mean() + 10,
+fig_m.update_layout(map_style="carto-positron",
+                    map_center={"lat": gdf_p_code_added.geometry.centroid.y.mean() + 10,
                                    "lon": gdf_p_code_added.geometry.centroid.x.mean()},
                     height=500,
                     width=1000,
-                    mapbox_zoom=1.4,
+                    map_zoom=1.4,
                     autosize=True)
 
 # Setting layout for dashboard
