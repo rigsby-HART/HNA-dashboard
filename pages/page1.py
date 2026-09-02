@@ -224,7 +224,7 @@ def province_map(value, random_color):
 
     fig_m = go.Figure()
 
-    fig_m.add_trace(go.Choroplethmapbox(geojson=json.loads(gdf_p_code_added.geometry.to_json()),
+    fig_m.add_trace(go.Choroplethmap(geojson=json.loads(gdf_p_code_added.geometry.to_json()),
                                         locations=gdf_p_code_added.index,
                                         z=gdf_p_code_added.rand,
                                         showscale=False,
@@ -233,10 +233,10 @@ def province_map(value, random_color):
                                         hovertemplate='%{text} - %{location}<extra></extra>',
                                         marker=dict(opacity=opacity_value),
                                         marker_line_width=.5))
-    fig_m.update_layout(mapbox_style="carto-positron",
-                        mapbox_center={"lat": gdf_p_code_added['lat'].mean() + 10,
+    fig_m.update_layout(map_style="carto-positron",
+                        map_center={"lat": gdf_p_code_added['lat'].mean() + 10,
                                        "lon": gdf_p_code_added['lon'].mean()},
-                        mapbox_zoom=2.0,
+                        map_zoom=2.0,
                         margin=dict(b=0, t=10, l=0, r=10),
                         modebar_color=modebar_color, modebar_activecolor=modebar_activecolor,
                         autosize=True)
@@ -271,7 +271,7 @@ def region_map(value, random_color, clicked_code):
 
     fig_mr = go.Figure()
 
-    fig_mr.add_trace(go.Choroplethmapbox(geojson=json.loads(gdf_r_filtered.geometry.to_json()),
+    fig_mr.add_trace(go.Choroplethmap(geojson=json.loads(gdf_r_filtered.geometry.to_json()),
                                          locations=gdf_r_filtered.index,
                                          z=gdf_r_filtered.rand,
                                          showscale=False,
@@ -281,9 +281,9 @@ def region_map(value, random_color, clicked_code):
                                          marker=dict(opacity=opacity_value),
                                          marker_line_width=.5))
 
-    fig_mr.update_layout(mapbox_style="carto-positron",
-                         mapbox_center={"lat": gdf_r_filtered['lat'].mean(), "lon": gdf_r_filtered['lon'].mean()},
-                         mapbox_zoom=3.0,
+    fig_mr.update_layout(map_style="carto-positron",
+                         map_center={"lat": gdf_r_filtered['lat'].mean(), "lon": gdf_r_filtered['lon'].mean()},
+                         map_zoom=3.0,
                          margin=dict(b=0, t=10, l=0, r=10),
                          modebar_color=modebar_color, modebar_activecolor=modebar_activecolor,
                          autosize=True)
@@ -326,7 +326,7 @@ def subregion_map(value, random_color, clicked_code):
 
     fig_msr = go.Figure()
 
-    fig_msr.add_trace(go.Choroplethmapbox(geojson=json.loads(gdf_sr_filtered.geometry.to_json()),
+    fig_msr.add_trace(go.Choroplethmap(geojson=json.loads(gdf_sr_filtered.geometry.to_json()),
                                           locations=gdf_sr_filtered.index,
                                           z=gdf_sr_filtered.rand,
                                           showscale=False,
@@ -344,9 +344,9 @@ def subregion_map(value, random_color, clicked_code):
     if len(gdf_sr_filtered) == 1:
         zoom = 9
 
-    fig_msr.update_layout(mapbox_style="carto-positron",
-                          mapbox_center={"lat": gdf_sr_filtered['lat'].mean(), "lon": gdf_sr_filtered['lon'].mean()},
-                          mapbox_zoom=zoom,
+    fig_msr.update_layout(map_style="carto-positron",
+                          map_center={"lat": gdf_sr_filtered['lat'].mean(), "lon": gdf_sr_filtered['lon'].mean()},
+                          map_zoom=zoom,
                           margin=dict(b=0, t=10, l=0, r=10),
                           modebar_color=modebar_color, modebar_activecolor=modebar_activecolor,
                           autosize=True)
